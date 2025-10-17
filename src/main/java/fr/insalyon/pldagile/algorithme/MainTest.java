@@ -45,6 +45,7 @@ public class MainTest {
 
             double distanceTotale = 0;
             List<Chemin> chemins = tournee.getChemins();
+
             for (int i = 0; i < chemins.size(); i++) {
                 Chemin c = chemins.get(i);
                 NoeudDePassage depart = c.getNoeudDePassageDepart();
@@ -75,6 +76,7 @@ public class MainTest {
                 distanceTotale += distanceChemin;
             }
 
+            //  Résumé de la tournée
             System.out.println("=== Résumé de la tournée ===");
             System.out.printf("Distance totale : %.0f m\n", distanceTotale);
             System.out.printf("Durée totale : %.0f s\n", tournee.getDureeTotale());
