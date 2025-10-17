@@ -10,12 +10,12 @@ public class MainTest {
     public static void main(String[] args) {
         try {
             //  Charger la carte
-            File fichierCarte = new File("");
+            File fichierCarte = new File("src/main/resources/donnees/plans/grandPlan.xml");
             Carte ville = CarteParseurXML.loadFromFile(fichierCarte);
             System.out.println("Carte chargée.");
 
             //  Charger la demande de livraison
-            File fichierDemande = new File("");
+            File fichierDemande = new File("src/main/resources/donnees/demandes/demandeMoyen3.xml");
             DemandeDeLivraison demande = DemandeDeLivraisonParseurXML.loadFromFile(fichierDemande, ville);
             System.out.println("Demande de livraison chargée.");
 
