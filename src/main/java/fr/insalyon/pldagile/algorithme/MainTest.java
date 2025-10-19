@@ -1,6 +1,7 @@
 package fr.insalyon.pldagile.algorithme;
 
 import fr.insalyon.pldagile.modele.*;
+import fr.insalyon.pldagile.sortie.FeuilleDeRoute;
 
 import java.io.File;
 import java.time.LocalTime;
@@ -36,7 +37,9 @@ public class MainTest {
             System.out.println("\nCalcul de la tournée...");
             Tournee tournee = calculTournee.calculerTournee();
             System.out.println("Tournée calculée.\n");
-
+            FeuilleDeRoute feuilleDeRoute = new FeuilleDeRoute(tournee);
+            feuilleDeRoute.GenerateFeuilleDeRoute(tournee);
+            //  Affichage détaillé des chemins
             System.out.println("=== Tournée détaillée ===");
             DateTimeFormatter formatHeure = DateTimeFormatter.ofPattern("HH:mm:ss");
 

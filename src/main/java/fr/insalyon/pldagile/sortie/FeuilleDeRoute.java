@@ -25,7 +25,7 @@ public class FeuilleDeRoute {
             try (FileWriter writer = new FileWriter("src/main/java/fr/insalyon/pldagile/sortie/feuilleDeRoute.txt")) {
                 writer.write("L'heure de départ de l'entrepôt : 08:00\n\n");
 
-                List< Chemin> chemins = tournee.getChemins();
+                List <Chemin> chemins = tournee.getChemins();
                 for(int i = 0; i < chemins.size() ; i++) {
                     Chemin chemin = chemins.get(i);
                     writer.write("Chemin " + i+1 + "\n");
