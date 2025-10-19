@@ -64,9 +64,6 @@ public class TSPAvecPrecedence extends TemplateTSP {
         // Tri des candidats par coût croissant depuis le sommet courant
         candidats.sort(Comparator.comparingDouble(v -> g.getCout(sommetCrt, v)));
 
-        // Debug : affichage des candidats valides pour chaque sommet courant
-        System.out.println("Sommet " + sommetCrt + " -> candidats valides: " + candidats);
-
         return candidats.iterator();
     }
 }

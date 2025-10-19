@@ -6,12 +6,14 @@ public class NoeudDePassage extends Noeud {
     private TypeNoeud type;
     private double duree;
     private LocalTime horaireArrivee;
+    private LocalTime horaireDepart;
 
     public NoeudDePassage(long id, double latitude, double longitude, TypeNoeud type, double duree, LocalTime horaireArrivee) {
         super(id, latitude, longitude);
         this.type = type;
         this.duree = duree;
         this.horaireArrivee = horaireArrivee;
+        this.horaireDepart = null; // initialement null, sera calculé plus tard
     }
 
     public TypeNoeud getType() {
@@ -26,6 +28,10 @@ public class NoeudDePassage extends Noeud {
         return this.horaireArrivee;
     }
 
+    public LocalTime getHoraireDepart() {
+        return this.horaireDepart;
+    }
+
     public void setType(TypeNoeud type) {
         this.type = type;
     }
@@ -36,6 +42,10 @@ public class NoeudDePassage extends Noeud {
 
     public void setHoraireArrivee(LocalTime horaireArrivee) {
         this.horaireArrivee = horaireArrivee;
+    }
+
+    public void setHoraireDepart(LocalTime horaireDepart) {
+        this.horaireDepart = horaireDepart;
     }
 
     @Override
@@ -51,10 +61,9 @@ public class NoeudDePassage extends Noeud {
         return Long.hashCode(this.getId());
     }
 
-
+    @Override
     public String toString() {
-        long var10000 = this.getId();
-        return "NoeudDePassage {id=" + var10000 + ", latitude=" + this.getLatitude() + ", longitude=" + this.getLongitude() + ", type=" + String.valueOf(this.type) + ", duree=" + this.duree + ", horaireArrivee=" + String.valueOf(this.horaireArrivee) + "}";
+        return "NoeudDePassage {id=" + getId() + ", latitude=" + getLatitude() + ", longitude=" + getLongitude() + ", type=" + type + ", duree=" + duree + ", horaireArrivee=" + horaireArrivee + ", horaireDepart=" + horaireDepart + "}";
     }
 
     public static enum TypeNoeud {
