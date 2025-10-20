@@ -1,5 +1,5 @@
-package fr.insalyon.pldagile.controleur;
-import Etat;
+package insalyon.pldagile.controleur;
+import insalyon.pldagile.controleur.Etat;
 
 public class  EtatTourneeCalcule implements Etat
 {
@@ -27,6 +27,9 @@ public class  EtatTourneeCalcule implements Etat
     @Override
     public void deleteLivraison(){
 
+    }
+    @Override
+    public void saveTournee(){
     }
 
 }

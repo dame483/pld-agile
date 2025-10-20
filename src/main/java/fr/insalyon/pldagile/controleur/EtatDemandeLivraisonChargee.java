@@ -1,5 +1,5 @@
-package fr.insalyon.pldagile.controleur;
-import Etat;
+package insalyon.pldagile.controleur;
+import insalyon.pldagile.controleur.Etat;
 
 public class  EtatDemandeLivraisonChargee implements Etat
 {

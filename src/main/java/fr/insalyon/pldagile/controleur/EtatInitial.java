@@ -1,5 +1,5 @@
-package fr.insalyon.pldagile.controleur;
-import Etat;
+package insalyon.pldagile.controleur;
+import insalyon.pldagile.controleur.Etat;
 
 public class  EtatInitial implements Etat
 {
@@ -9,5 +9,7 @@ public class  EtatInitial implements Etat
     }
     @Override
     public void loadCarte()
-    {}
+    {
+
+    }
 }
