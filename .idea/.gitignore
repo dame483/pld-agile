@@ -3,8 +3,9 @@
 /workspace.xml
 # Editor-based HTTP Client requests
 /httpRequests/
-/compiler.xml
-/encodings.xml
+#Datasource local storage
 /dataSources/
 /dataSources.local.xml
+/compiler.xml
+/encodings.xml
 ../target/
