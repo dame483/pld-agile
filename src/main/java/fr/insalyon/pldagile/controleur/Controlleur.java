@@ -49,7 +49,7 @@ public class Controlleur {
                 Map<String, Object> response = Map.of(
                         "message", "La demande est bien chargé ",
                         "etatCourant", this.getCurrentState(),
-                        "fichier", demande
+                        "demande", demande
                 );
                 return ResponseEntity.ok(response);
             }

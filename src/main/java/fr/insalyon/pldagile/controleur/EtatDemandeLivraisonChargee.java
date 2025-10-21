@@ -13,17 +13,33 @@ import java.io.File;
 @Component
 public class  EtatDemandeLivraisonChargee implements Etat
 {
-    public EtatDemandeLivraisonChargee(){
-
+    private final Carte carte;
+    private final DemandeDeLivraison demLivraison;
+    public EtatDemandeLivraisonChargee(Carte carte,DemandeDeLivraison demande){
+            this.carte=carte;
+            this.demLivraison=demande;
     }
     @Override
     public Carte loadCarte(Controlleur c,@RequestParam("file") MultipartFile file){
-        return null;
+        Carte carte=(Carte)uploadXML("carte", file,this.carte);
+        if(carte==null )
+        {
+            c.setCurrentState(new EtatInitial());
+            return carte;
+        }
+
+        return carte;
     }
 
     @Override
     public DemandeDeLivraison loadDemandeLivraison(Controlleur c, @RequestParam("file")  MultipartFile file, Carte carte) {
-        return null;
+        DemandeDeLivraison dem=(DemandeDeLivraison)uploadXML("demande", file, this.carte);
+        if(dem!=null ){
+            c.setCurrentState(new EtatDemandeLivraisonChargee(carte,dem));
+            return dem;
+        }
+
+        return dem;
     }
 
     /*@Override
@@ -34,14 +50,14 @@ public class  EtatDemandeLivraisonChargee implements Etat
     @Override
     public void deleteLivraison(Controlleur c) {
 
-    }
+    }*/
 
     @Override
     public void runCalculTournee(Controlleur c) {
 
     }
 
-    @Override
+    /*@Override
     public void saveTournee(Controlleur c) {
 
     }*/
@@ -58,7 +74,7 @@ public class  EtatDemandeLivraisonChargee implements Etat
             } else {
                 File tempFile = File.createTempFile(type+"-", ".xml");
                 file.transferTo(tempFile);
-                if(type=="carte") {
+                if(type.equals("carte")) {
                     carte = CarteParseurXML.loadFromFile(tempFile);
                     tempFile.delete();
                     return carte;

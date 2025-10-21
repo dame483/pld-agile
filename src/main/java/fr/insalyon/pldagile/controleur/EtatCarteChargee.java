@@ -14,7 +14,7 @@ import java.io.File;
 @Component
 public class  EtatCarteChargee implements Etat
 {
-    private Carte carte;
+    private final Carte carte;
     public EtatCarteChargee(Carte c)
     {
         this.carte=c;
@@ -38,8 +38,8 @@ public class  EtatCarteChargee implements Etat
     public DemandeDeLivraison loadDemandeLivraison(Controlleur c, @RequestParam("file") MultipartFile file, Carte carte )
     {
         DemandeDeLivraison dem=(DemandeDeLivraison)uploadXML("demande", file, this.carte);
-        if((DemandeDeLivraison)uploadXML("demande", file, this.carte)==null ){
-            c.setCurrentState(new EtatDemandeLivraisonChargee());
+        if(dem!=null ){
+            c.setCurrentState(new EtatDemandeLivraisonChargee(carte,dem));
             return dem;
         }
 
@@ -56,14 +56,14 @@ public class  EtatCarteChargee implements Etat
     @Override
     public void deleteLivraison(Controlleur c) {
 
-    }
+    }*/
 
     @Override
     public void runCalculTournee(Controlleur c) {
 
     }
 
-    @Override
+    /*@Override
     public void saveTournee(Controlleur c) {
 
     }*/
@@ -78,7 +78,7 @@ public class  EtatCarteChargee implements Etat
             } else {
                 File tempFile = File.createTempFile(type+"-", ".xml");
                 file.transferTo(tempFile);
-                if(type=="carte") {
+                if(type.equals("carte")) {
                     carte = CarteParseurXML.loadFromFile(tempFile);
                     tempFile.delete();
                     return carte;
