@@ -32,7 +32,7 @@ public class Controlleur {
             Map<String, Object> response = Map.of(
                     "message", "La carte est bien chargé ",
                     "etatCourant", this.getCurrentState(),
-                    "fichier", file.getOriginalFilename()
+                    "carte", carte
             );
             return ResponseEntity.ok(response);
         }
@@ -49,7 +49,7 @@ public class Controlleur {
                 Map<String, Object> response = Map.of(
                         "message", "La demande est bien chargé ",
                         "etatCourant", this.getCurrentState(),
-                        "fichier", file.getOriginalFilename()
+                        "fichier", demande
                 );
                 return ResponseEntity.ok(response);
             }

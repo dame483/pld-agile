@@ -1,9 +1,5 @@
 package fr.insalyon.pldagile.controleur;
 
-import fr.insalyon.pldagile.controleur.Controlleur;
-import fr.insalyon.pldagile.controleur.Etat;
-import fr.insalyon.pldagile.controleur.EtatDemandeLivraisonChargee;
-import fr.insalyon.pldagile.controleur.EtatInitial;
 import fr.insalyon.pldagile.modele.Carte;
 import fr.insalyon.pldagile.modele.CarteParseurXML;
 import fr.insalyon.pldagile.modele.DemandeDeLivraison;
