@@ -38,7 +38,8 @@
         try{
             const response=await fetch("http://localhost:8080/api/upload-carte",{method:"POST",body:formData});
             if(!response.ok){alert(await response.text());return;}
-            carteData=await response.json();
+            rep=await response.json();
+            carteData=rep.carte;
             drawCarte(carteData);
             document.getElementById('xmlDemande').disabled=false;
             document.getElementById('labelDemande').style.backgroundColor="#b2d1d2";
