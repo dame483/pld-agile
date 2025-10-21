@@ -1,45 +1,93 @@
-package insalyon.pldagile.controleur;
+package fr.insalyon.pldagile.controleur;
 
-import insalyon.pldagile.controleur.*;
+import fr.insalyon.pldagile.modele.Carte;
+import fr.insalyon.pldagile.modele.DemandeDeLivraison;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.Map;
 
 
-
+@RestController
+@RequestMapping({"/api"})
+@CrossOrigin(
+        origins = {"*"}
+)
 public class Controlleur {
     protected Etat etatActuelle;
 
 
-    public Controlleur(EtatInitial initial) {
-         etatActuelle= initial;
+    public Controlleur() {
+         etatActuelle= new EtatInitial();
     }
 
-    public void loadCarte() {
-            etatActuelle.loadCarte(this);
+
+    @PostMapping({"/upload-carte"})
+    public ResponseEntity<?> loadCarte(@RequestParam("file") MultipartFile file) {
+
+        Carte carte = etatActuelle.loadCarte(this,file);
+
+        if (carte != null) {
+            Map<String, Object> response = Map.of(
+                    "message", "La carte est bien chargé ",
+                    "etatCourant", this.getCurrentState(),
+                    "fichier", file.getOriginalFilename()
+            );
+            return ResponseEntity.ok(response);
+        }
+        else{
+            return ResponseEntity.badRequest().body("Erreur ");
+        }
+
     }
 
-    public void loadDemandeLivraison(){
+    @PostMapping({"/upload-demande"})
+    public ResponseEntity<?> loadDemandeLivraison(@RequestParam("file") MultipartFile file, Carte carte){
+            DemandeDeLivraison demande=etatActuelle.loadDemandeLivraison(this,file,carte);
+            if(demande != null){
+                Map<String, Object> response = Map.of(
+                        "message", "La demande est bien chargé ",
+                        "etatCourant", this.getCurrentState(),
+                        "fichier", file.getOriginalFilename()
+                );
+                return ResponseEntity.ok(response);
+            }
+            else{
+                return ResponseEntity.badRequest().body("Erreur ");
+            }
 
     }
-    public void addLivraison(){
 
+    /*@PostMapping({"/upload-demande"})
+    public void addLivraison(@RequestParam("file") MultipartFile file, Carte carte){
+        etatActuelle.addLivraison(this, file,carte);
     }
-    public void deleteLivraison(){
 
+    public void deleteLivraison(Carte carte){
+        etatActuelle.deleteLivraison(this);
     }
+
     public void runCalculTournee(){
-
+        etatActuelle.runCalculTournee(this);
     }
     public void saveTournee(){
-
-    }
-    public void leftClick(){
+        etatActuelle.saveTournee(this);
+    }*/
+    /*public void leftClick(){
 
     }
     public void rightClick(){
 
-    }
+    }*/
 
-    protected void SetCurrentState(Etat etat) {
+
+
+    public void setCurrentState(Etat etat) {
         this.etatActuelle = etat;
+    }
+    public String getCurrentState() {
+        return etatActuelle.getName();
     }
 }
 
