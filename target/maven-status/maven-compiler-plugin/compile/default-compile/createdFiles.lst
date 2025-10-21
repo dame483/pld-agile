@@ -1,4 +1,5 @@
 fr\insalyon\pldagile\modele\Chemin.class
+fr\insalyon\pldagile\exception\XMLFormatException.class
 fr\insalyon\pldagile\modele\DemandeDeLivraison.class
 fr\insalyon\pldagile\algorithme\FloydWarshall.class
 fr\insalyon\pldagile\modele\CarteParseurXML.class
@@ -20,4 +21,5 @@ fr\insalyon\pldagile\modele\Noeud.class
 fr\insalyon\pldagile\algorithme\Graphe.class
 fr\insalyon\pldagile\algorithme\TSPAvecPrecedence.class
 fr\insalyon\pldagile\algorithme\MainTest.class
+fr\insalyon\pldagile\modele\NoeudDePassage$TypeNoeud.class
 fr\insalyon\pldagile\modele\Livreur.class
