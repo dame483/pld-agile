@@ -1,9 +1,10 @@
 # Default ignored files
 /shelf/
-/compiler.xml
-/encodings.xml
-
 /workspace.xml
 # Editor-based HTTP Client requests
 /httpRequests/
+/compiler.xml
+/encodings.xml
+/dataSources/
+/dataSources.local.xml
 ../target/
