@@ -1,8 +1,6 @@
 package fr.insalyon.pldagile.controleur;
 import fr.insalyon.pldagile.modele.Carte;
 import fr.insalyon.pldagile.modele.CarteParseurXML;
-import fr.insalyon.pldagile.modele.DemandeDeLivraison;
-import fr.insalyon.pldagile.controleur.EtatCarteChargee;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,7 +24,7 @@ public class  EtatInitial implements Etat {
     }
 
     @Override
-    public DemandeDeLivraison loadDemandeLivraison(Controlleur c, @RequestParam("file")  MultipartFile file, Carte carte) {
+    public Object loadDemandeLivraison(Controlleur c, @RequestParam("file")  MultipartFile file, Carte carte) {
         return null;
     }
 
@@ -40,13 +38,13 @@ public class  EtatInitial implements Etat {
     @Override
     public void deleteLivraison(Controlleur c) {
 
-    }
+    }*/
 
     @Override
     public void runCalculTournee(Controlleur c) {
 
     }
-
+/*
     @Override
     public void saveTournee(Controlleur c) {
 
@@ -67,7 +65,7 @@ public class  EtatInitial implements Etat {
                 return carte;
             }
         } catch (Exception e) {
-            return e.getMessage();
+            return e;
         }
     }
 

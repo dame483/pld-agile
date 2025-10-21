@@ -44,17 +44,26 @@ public class Controlleur {
 
     @PostMapping({"/upload-demande"})
     public ResponseEntity<?> loadDemandeLivraison(@RequestParam("file") MultipartFile file, Carte carte){
-            DemandeDeLivraison demande=etatActuelle.loadDemandeLivraison(this,file,carte);
-            if(demande != null){
+            Object demande=etatActuelle.loadDemandeLivraison(this,file,carte);
+            System.out.println("Bipboup je suis un controleur");
+            System.out.println(demande);
+            if(demande instanceof  DemandeDeLivraison){
+
                 Map<String, Object> response = Map.of(
                         "message", "La demande est bien chargé ",
                         "etatCourant", this.getCurrentState(),
-                        "demande", demande
+                        "demande", (DemandeDeLivraison)demande
                 );
+                System.out.println("Bipboup je suis une Demande de Livraison");
+                System.out.println((DemandeDeLivraison) demande);
                 return ResponseEntity.ok(response);
             }
-            else{
-                return ResponseEntity.badRequest().body("Erreur ");
+            else if (demande instanceof Exception) {
+                String errorMes=((Exception) demande).getMessage();
+                return ResponseEntity.badRequest().body("Erreur : "+errorMes);
+
+        } else{
+                return ResponseEntity.badRequest().body("Erreur  ");
             }
 
     }

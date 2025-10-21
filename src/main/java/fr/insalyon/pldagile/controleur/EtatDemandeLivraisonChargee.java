@@ -32,10 +32,10 @@ public class  EtatDemandeLivraisonChargee implements Etat
     }
 
     @Override
-    public DemandeDeLivraison loadDemandeLivraison(Controlleur c, @RequestParam("file")  MultipartFile file, Carte carte) {
-        DemandeDeLivraison dem=(DemandeDeLivraison)uploadXML("demande", file, this.carte);
-        if(dem!=null ){
-            c.setCurrentState(new EtatDemandeLivraisonChargee(carte,dem));
+    public Object loadDemandeLivraison(Controlleur c, @RequestParam("file")  MultipartFile file, Carte carte) {
+        Object dem=uploadXML("demande", file, this.carte);
+        if(dem instanceof DemandeDeLivraison){
+            c.setCurrentState(new EtatDemandeLivraisonChargee(carte,(DemandeDeLivraison) dem));
             return dem;
         }
 
@@ -53,7 +53,8 @@ public class  EtatDemandeLivraisonChargee implements Etat
     }*/
 
     @Override
-    public void runCalculTournee(Controlleur c) {
+    public void runCalculTournee(Controlleur c)
+    {
 
     }
 
@@ -66,37 +67,50 @@ public class  EtatDemandeLivraisonChargee implements Etat
 
 
     @Override
-    public Object uploadXML(String type, @RequestParam("file") MultipartFile file,Carte carte ){
-
-        try {
-            if (file.isEmpty()) {
-                return null;
-            } else {
-                File tempFile = File.createTempFile(type+"-", ".xml");
-                file.transferTo(tempFile);
-                if(type.equals("carte")) {
-                    carte = CarteParseurXML.loadFromFile(tempFile);
-                    tempFile.delete();
-                    return carte;
-                }
-                else{
-                    DemandeDeLivraison demande;
-                    try {
-                        file.transferTo(tempFile);
-                        demande = DemandeDeLivraisonParseurXML.loadFromFile(tempFile, carte);
-                    } finally {
-                        tempFile.delete();
-                    }
-
-                    return demande;
-
-                }
-
-            }
-        } catch (Exception e) {
+    public Object uploadXML(String type, MultipartFile file, Carte carte) {
+        if (file == null || file.isEmpty()) {
+            System.err.println("Le fichier est vide ou nul.");
             return null;
         }
+
+        File tempFile = null;
+        try {
+
+            tempFile = File.createTempFile(type + "-", ".xml");
+            file.transferTo(tempFile);
+
+            System.out.println("Fichier temporaire créé : " + tempFile.getAbsolutePath());
+
+            Object result;
+
+            if ("carte".equalsIgnoreCase(type)) {
+
+                Carte parsedCarte = CarteParseurXML.loadFromFile(tempFile);
+                result = parsedCarte;
+            } else {
+
+                DemandeDeLivraison parsedDemande = DemandeDeLivraisonParseurXML.loadFromFile(tempFile, this.carte);
+                System.out.println(parsedDemande);
+                result = parsedDemande;
+            }
+
+            return result;
+
+        } catch (Exception e) {
+            System.err.println("Erreur lors du chargement XML : " + e.getMessage());
+            e.printStackTrace();
+            return e;
+        } finally {
+
+            if (tempFile != null && tempFile.exists()) {
+                boolean deleted = tempFile.delete();
+                if (!deleted) {
+                    System.err.println("Impossible de supprimer le fichier temporaire : " + tempFile.getAbsolutePath());
+                }
+            }
+        }
     }
+
 
     public String getName(){
         return "Etat Demande de  Livraison Chargee";

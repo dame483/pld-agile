@@ -14,78 +14,108 @@ import java.io.File;
 @Component
 public class  EtatTourneeCalcule implements Etat
 {
-    public EtatTourneeCalcule()
+    private Carte  carte;
+    private DemandeDeLivraison demande;
+
+    public EtatTourneeCalcule(Carte carte, DemandeDeLivraison demande)
     {
-
+        this.carte = carte;
+        this.demande = demande;
     }
     @Override
-    public Carte loadCarte(Controlleur c,@RequestParam("file") MultipartFile file){
-    return null;
+    public Carte loadCarte(Controlleur c,@RequestParam("file") MultipartFile file )
+    {
+        Carte carte=(Carte)uploadXML("carte", file,this.carte);
+        if(carte==null )
+        {
+            c.setCurrentState(new EtatInitial());
+            return carte;
+        }
+
+        return carte;
     }
 
     @Override
-    public DemandeDeLivraison loadDemandeLivraison(Controlleur c, @RequestParam("file")  MultipartFile file, Carte carte) {
-        return null;
+    public Object loadDemandeLivraison(Controlleur c, @RequestParam("file")  MultipartFile file, Carte carte) {
+        Object dem=uploadXML("demande", file, this.carte);
+        if(dem instanceof DemandeDeLivraison){
+            c.setCurrentState(new EtatDemandeLivraisonChargee(carte,(DemandeDeLivraison) dem));
+            return dem;
+        }
+
+        return dem;
     }
 
 
 
     /*@Override
-    public void addLivraison(Controlleur c,@RequestParam("file") MultipartFile file, Carte carte){
+    public void addLivraison(Controlleur c,@RequestParam("file")  MultipartFile file, Carte carte) {
 
     }
 
     @Override
     public void deleteLivraison(Controlleur c) {
 
-    }
+    }*/
 
     @Override
     public void runCalculTournee(Controlleur c) {
 
     }
 
-    @Override
+    /*@Override
     public void saveTournee(Controlleur c) {
 
     }*/
 
 
     @Override
-    public ResponseEntity<?> uploadXML(String type, @RequestParam("file") MultipartFile file,Carte carte ){
+    public Object uploadXML(String type, MultipartFile file, Carte carte) {
+        if (file == null || file.isEmpty()) {
+            System.err.println("Le fichier est vide ou nul.");
+            return null;
+        }
 
+        File tempFile = null;
         try {
-            if (file.isEmpty()) {
-                return ResponseEntity.badRequest().body("Aucun fichier fourni");
+
+            tempFile = File.createTempFile(type + "-", ".xml");
+            file.transferTo(tempFile);
+
+            System.out.println("Fichier temporaire créé : " + tempFile.getAbsolutePath());
+
+            Object result;
+
+            if ("carte".equalsIgnoreCase(type)) {
+
+                Carte parsedCarte = CarteParseurXML.loadFromFile(tempFile);
+                result = parsedCarte;
             } else {
-                File tempFile = File.createTempFile(type+"-", ".xml");
-                file.transferTo(tempFile);
-                if(type=="carte") {
-                    carte = CarteParseurXML.loadFromFile(tempFile);
-                    tempFile.delete();
-                    return ResponseEntity.ok(carte);
-                }
-                else{
-                    DemandeDeLivraison demande;
-                    try {
-                        file.transferTo(tempFile);
-                        demande = DemandeDeLivraisonParseurXML.loadFromFile(tempFile, carte);
-                    } finally {
-                        tempFile.delete();
-                    }
 
-                    return ResponseEntity.ok(demande);
-
-                }
-
+                DemandeDeLivraison parsedDemande = DemandeDeLivraisonParseurXML.loadFromFile(tempFile, this.carte);
+                System.out.println(parsedDemande);
+                result = parsedDemande;
             }
+
+            return result;
+
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Erreur : " + e.getMessage());
+            System.err.println("Erreur lors du chargement XML : " + e.getMessage());
+            e.printStackTrace();
+            return e;
+        } finally {
+
+            if (tempFile != null && tempFile.exists()) {
+                boolean deleted = tempFile.delete();
+                if (!deleted) {
+                    System.err.println("Impossible de supprimer le fichier temporaire : " + tempFile.getAbsolutePath());
+                }
+            }
         }
     }
 
     @Override
     public String getName() {
-        return "Etat Tournee Calcule";
+        return "Etat Livraison Ajouté";
     }
 }
