@@ -54,8 +54,8 @@
         try{
             const response=await fetch("http://localhost:8080/api/upload-demande",{method:"POST",body:formData});
             if(!response.ok){alert(await response.text());return;}
-            const demande=await response.json();
-            drawLivraisons(demande);
+            const res=await response.json();
+            drawLivraisons(res.demande);
         }catch(err){alert(err.message);}
     }
 
