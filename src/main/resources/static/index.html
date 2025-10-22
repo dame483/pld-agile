@@ -4,44 +4,72 @@
     <meta charset="UTF-8">
     <title>Optimod’Lyon</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="style.css" />
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 2em; text-align: center; background:#a6a6a6; }
-        #map { width: 100%; max-width: 1000px; height: 600px; margin: 20px auto; border: 1px solid #ccc; display: none; }
-        .file-label, #btnCalculTournee {
-          font-size: 16px; padding: 10px 20px; border-radius: 5px; cursor: pointer;
-          color: #fff; display: inline-block; border: none; margin: 10px 6px 0; background: #b2d1d2;
-        }
-        .file-label:hover, #btnCalculTournee:hover:not(:disabled) { background:#a0bcbd; }
-        #btnCalculTournee:disabled { background:#999; cursor:not-allowed; }
-        .file-container { display: inline-block; position: relative; margin-bottom: 10px; }
-        #fileNameCarte, #fileNameDemande { position: absolute; bottom: -18px; left: 0; font-size: 12px; color: #000; }
-        .legend {
-          background: rgba(255,255,255,0.85);
-          border-radius: 6px;
-          box-shadow: 0 0 5px rgba(0,0,0,0.3);
-          padding: 6px;
-          line-height: 1.2;
-          font-size: 11px;
-          width: 150px;
-        }
-        .legend div { display: flex; align-items: center; margin-bottom: 4px; }
-        .legend-symbol { width: 16px; height: 16px; margin-right: 4px; display: inline-block; }
-    </style>
 </head>
 <body>
-<h1>Optimod’Lyon</h1>
-<div class="file-container">
-    <label for="xmlCarte" class="file-label">Charger une carte</label>
+<div class="navbar">
+    <div class="navbar-left">
+        <div class="navbar-item">
+           <img src="tools/home.png" alt="Accueil" id="homeButton"/>
+        </div>
+        <div class="navbar-item">
+            <img src="tools/map-logo.png" alt="Ajouter une carte"/>
+        </div>
+        <div class="navbar-item">
+            <img src="tools/colis-logo-gray.png" alt="Ajouter une demande de livraison" class="disabled"/>
+        </div>
+        <div class="navbar-item">
+            <img src="tools/open-logo.png" alt="Charger une tournée"/>
+        </div>
+    </div>
+    <div class="navbar-logo">
+        <img src="tools/logo.png" alt="Opti'Mod Lyon"/>
+    </div>
+</div>
+
+<div id="welcome-message">
+    <div class="main-text">
+        <h1> La gestion de tournée à portée de clic ! </h1>
+    </div>
+    <div class="bulle">
+        <h2> Commencez dès maintenant en chargeant une carte ! </h2>
+    </div>
+</div>
+
+<div id="carte-chargee-message">
+    <div class="bulle">
+        <h2> Chargez à présent vos demandes de livraison ! </h2>
+    </div>
+</div>
+
+<div class="carte">
+    <div class="bandeau">
+        <span id="fileNameCarte" style="display:none;"></span>
+    </div>
     <input type="file" id="xmlCarte" accept=".xml" style="display:none;" />
-    <span id="fileNameCarte"></span>
 </div>
-<div class="file-container">
-    <label for="xmlDemande" class="file-label" id="labelDemande" style="background-color:#999; cursor:not-allowed;">Charger une demande</label>
-    <input type="file" id="xmlDemande" accept=".xml" style="display:none;" disabled />
-    <span id="fileNameDemande"></span>
+
+<div class="livraisons">
+    <div class="bandeau">
+        <span id="fileNameDemande" style="display:none;"></span>
+    </div>
+    <input type="file" id="xmlDemande" accept=".xml" style="display:none;" disabled/>
+
+    <div id="calcul-tournee">
+        <div class="bloc-livreurs">
+            <label for="nbLivreurs">Nombre de livreurs :</label>
+            <input type="number" id="nbLivreurs" min="1" value="1">
+        </div>
+
+        <button id="calculerTournee">
+            <img src="tools/tournee-logo.png" alt="Icône tournée">
+            <p>Calculer les tournées optimales</p>
+        </button>
+    </div>
+
+
 </div>
-<button id="btnCalculTournee" disabled>Calculer la tournée</button>
 <div id="map"></div>
 <script>
     let map=null, carteData=null, demandeData=null;
@@ -58,61 +86,58 @@
     const STEP_M=10;
 
     async function uploadCarte(file){
-    const formData = new FormData();
-    formData.append("file", file);
-    try {
-        const response = await fetch("http://localhost:8080/api/upload-carte", { method: "POST", body: formData });
-        if (!response.ok) {
-            alert(await response.text());
-            return;
+        const formData=new FormData();
+        formData.append("file",file);
+        try{
+            const response=await fetch("http://localhost:8080/api/upload-carte",{method:"POST",body:formData});
+            if(!response.ok){alert(await response.text());return;}
+            const res=await response.json();
+            carteData = res.carte;
+            demandeData = null;
+
+            drawCarte(carteData);
+
+            const colisButton = document.querySelector('.navbar-item img[alt="Ajouter une demande de livraison"]');
+            const mapButton = document.querySelector('.navbar-item img[alt="Ajouter une carte"]');
+
+            mapButton.style.filter = "";
+            colisButton.style.filter = "drop-shadow(0 0 10px rgba(225,225,0,1))";
+
+            const inputDemande = document.getElementById('xmlDemande');
+            const fileNameCarte = document.getElementById('fileNameCarte');
+            colisButton.src = "tools/colis-logo-white.png";
+            colisButton.style.cursor = "pointer";
+            inputDemande.disabled = false;
+            fileNameCarte.style.display = "inline";
+            document.getElementById('welcome-message').style.display = "none";
+            document.getElementById('carte-chargee-message').style.display = "flex";
+
+            // vider les layers de livraisons / entrepôt / tournée / numéros
+            if (livraisonsLayer) livraisonsLayer.clearLayers();
+            if (entrepotLayer) entrepotLayer.clearLayers();
+            if (window.tourneeLayer) window.tourneeLayer.clearLayers();
+            if (window.directionNumbersLayer) window.directionNumbersLayer.clearLayers();
+
+            // arrêter et enlever l'animation si présente
+            stopAnimation();
+            if (animControl) { map.removeControl(animControl); animControl = null; }
+            animPath = []; isAnimating = false; isPaused = false;
+
+            // 4) activer/désactiver l'input demande selon le nouvel état renvoyé (optionnel)
+            // si le backend renvoie "Etat Carte Chargee", on garde le champ demande activé
+            if (res.etatCourant && res.etatCourant.toLowerCase().includes("carte")) {
+                document.getElementById('xmlDemande').disabled = false;
+                document.getElementById('labelDemande').style.backgroundColor = "#b2d1d2";
+                document.getElementById('labelDemande').style.cursor = "pointer";
+            } else {
+                document.getElementById('xmlDemande').disabled = true;
+                document.getElementById('labelDemande').style.backgroundColor = "#999";
+                document.getElementById('labelDemande').style.cursor = "not-allowed";
+            }
+        }catch(err){
+            alert(err.message);
         }
-        const res = await response.json();
-
-        // 1) données carte reçues
-        carteData = res.carte;
-
-        // 2) dessiner la carte (remplace proprement les tronçons)
-        drawCarte(carteData);
-
-        // 3) RESET UI / données liées à l'ancienne demande et à la tournée
-        // vider les données JS
-        demandeData = null;
-
-        // vider l'affichage des fichiers côté UI
-        document.getElementById('xmlDemande').value = "";         // vide l'input file
-        document.getElementById('fileNameDemande').textContent = "";
-
-        // désactiver le bouton calcul (il sera activé seulement après chargement d'une nouvelle demande)
-        btnCalculTournee.disabled = true;
-
-        // vider les layers de livraisons / entrepôt / tournée / numéros
-        if (livraisonsLayer) livraisonsLayer.clearLayers();
-        if (entrepotLayer) entrepotLayer.clearLayers();
-        if (window.tourneeLayer) window.tourneeLayer.clearLayers();
-        if (window.directionNumbersLayer) window.directionNumbersLayer.clearLayers();
-
-        // arrêter et enlever l'animation si présente
-        stopAnimation();
-        if (animControl) { map.removeControl(animControl); animControl = null; }
-        animPath = []; isAnimating = false; isPaused = false;
-
-        // 4) activer/désactiver l'input demande selon le nouvel état renvoyé (optionnel)
-        // si le backend renvoie "Etat Carte Chargee", on garde le champ demande activé
-        if (res.etatCourant && res.etatCourant.toLowerCase().includes("carte")) {
-            document.getElementById('xmlDemande').disabled = false;
-            document.getElementById('labelDemande').style.backgroundColor = "#b2d1d2";
-            document.getElementById('labelDemande').style.cursor = "pointer";
-        } else {
-            document.getElementById('xmlDemande').disabled = true;
-            document.getElementById('labelDemande').style.backgroundColor = "#999";
-            document.getElementById('labelDemande').style.cursor = "not-allowed";
-        }
-
-    } catch (err) {
-        alert(err.message);
     }
-}
-
 
     async function uploadDemande(file){
         resetTournee();
@@ -123,11 +148,23 @@
             const response=await fetch("http://localhost:8080/api/upload-demande",{method:"POST",body:formData});
             if(!response.ok){alert(await response.text());return;}
             const res=await response.json();
-             demandeData=res.demande;
+            demandeData = res.demande;
             drawLivraisons(demandeData);
             drawEntrepot(demandeData.entrepot);
-            if(carteData) btnCalculTournee.disabled=false;
-        }catch(err){alert(err.message);}
+
+            const colisButton = document.querySelector('.navbar-item img[alt="Ajouter une demande de livraison"]');
+            colisButton.style.filter = "";
+
+            const fileNameCarte = document.getElementById('fileNameCarte');
+            fileNameCarte.style.display = "none";
+            const fileNameDemande = document.getElementById('fileNameDemande');
+            fileNameDemande.style.display = "inline";
+            document.getElementById('carte-chargee-message').style.display = "none";
+            document.getElementById('calcul-tournee').style.display = "flex";
+
+        }catch(err){
+            alert(err.message);
+        }
     }
 
     function resetTournee(){
@@ -333,9 +370,65 @@
     }
 
     document.addEventListener('DOMContentLoaded',()=>{
-      xmlCarte.addEventListener('change',()=>{ const f=xmlCarte.files[0]; fileNameCarte.textContent=f?f.name:""; if(f) uploadCarte(f); });
-      xmlDemande.addEventListener('change',()=>{ const f=xmlDemande.files[0]; fileNameDemande.textContent=f?f.name:""; if(f) uploadDemande(f); });
-      btnCalculTournee.addEventListener('click', async ()=>{ await calculTournee(); });
+        const inputCarte = document.getElementById('xmlCarte');
+        const inputDemande = document.getElementById('xmlDemande');
+
+        const mapButton = document.querySelector('.navbar-item img[alt="Ajouter une carte"]');
+        const colisButton = document.querySelector('.navbar-item img[alt="Ajouter une demande de livraison"]');
+
+        mapButton.style.filter = "drop-shadow(0 0 10px rgba(225,225,0,1))";
+        mapButton.addEventListener('click', () => {
+            inputCarte.click();
+        });
+        colisButton.addEventListener('click', () => {
+            if (!inputDemande.disabled) {
+                inputDemande.click();
+            }
+        });
+
+        document.getElementById('xmlCarte').addEventListener('change', function() {
+            const file = this.files[0];
+            document.getElementById('fileNameCarte').textContent = file ? `Affichage de ${file.name}` : "";
+            if (file) uploadCarte(file);
+        });
+
+        document.getElementById('xmlDemande').addEventListener('change', function() {
+            const file = this.files[0];
+            document.getElementById('fileNameDemande').textContent = file ? `Affichage de ${file.name}` : "";
+            if (file) uploadDemande(file);
+        });
+
+        document.getElementById('homeButton').addEventListener('click', () => {
+            const confirmReset = confirm("Voulez-vous vraiment revenir à la page d’accueil ? Toutes les données chargées seront perdues.");
+
+            if (confirmReset) {
+                carteData = null;
+                map = null;
+
+                const mapDiv = document.getElementById('map');
+                mapDiv.style.display = "none";
+                mapDiv.innerHTML = "";
+
+                document.getElementById('xmlCarte').value = "";
+                document.getElementById('xmlDemande').value = "";
+                document.getElementById('xmlDemande').disabled = true;
+
+                document.getElementById('fileNameCarte').style.display = "none";
+                document.getElementById('fileNameDemande').style.display = "none";
+                document.getElementById('carte-chargee-message').style.display = "none";
+                document.getElementById('welcome-message').style.display = "flex";
+
+                const mapButton = document.querySelector('.navbar-item img[alt="Ajouter une carte"]');
+                const colisButton = document.querySelector('.navbar-item img[alt="Ajouter une demande de livraison"]');
+
+                mapButton.style.filter = "drop-shadow(0 0 10px rgba(225,225,0,1))";
+                colisButton.src = "tools/colis-logo-gray.png";
+                colisButton.style.filter = "";
+                colisButton.style.cursor = "default";
+
+                document.getElementById('calcul-tournee').style.display = "none";
+            }
+        });
     });
 </script>
 </body>

@@ -6,7 +6,6 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <link rel="stylesheet" href="style.css" />
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-    <script src="script.js"></script>
 </head>
 <body>
 <div class="navbar">
@@ -70,5 +69,168 @@
     </div>
 </div>
 <div id="map"></div>
+<script>
+    let map=null;
+    let carteData=null;
+    const colors=['#e6194b','#3cb44b','#ffe119','#4363d8','#f58231','#911eb4','#46f0f0','#f032e6','#bcf60c','#fabebe'];
+
+    async function uploadCarte(file){
+        const formData=new FormData();
+        formData.append("file",file);
+        try{
+            const response=await fetch("http://localhost:8080/api/upload-carte",{method:"POST",body:formData});
+            if(!response.ok){alert(await response.text());return;}
+            carteData=await response.json();
+            drawCarte(carteData);
+            const colisButton = document.querySelector('.navbar-item img[alt="Ajouter une demande de livraison"]');
+            const mapButton = document.querySelector('.navbar-item img[alt="Ajouter une carte"]');
+
+            mapButton.style.filter = "";
+            colisButton.style.filter = "drop-shadow(0 0 10px rgba(225,225,0,1))";
+
+            const inputDemande = document.getElementById('xmlDemande');
+            const fileNameCarte = document.getElementById('fileNameCarte');
+            colisButton.src = "tools/colis-logo-white.png";
+            colisButton.style.cursor = "pointer";
+            inputDemande.disabled = false;
+            fileNameCarte.style.display = "inline";
+            document.getElementById('welcome-message').style.display = "none";
+            document.getElementById('carte-chargee-message').style.display = "flex";
+
+        }
+        catch(err){
+            alert(err.message);
+        }
+    }
+
+    async function uploadDemande(file){
+        if(!carteData){alert("Charger le plan XML d'abord."); return;}
+        const formData=new FormData();
+        formData.append("file",file);
+        try{
+            const response=await fetch("http://localhost:8080/api/upload-demande",{method:"POST",body:formData});
+            if(!response.ok){alert(await response.text());return;}
+            const demande=await response.json();
+
+            const colisButton = document.querySelector('.navbar-item img[alt="Ajouter une demande de livraison"]');
+            colisButton.style.filter = "";
+
+            const fileNameCarte = document.getElementById('fileNameCarte');
+            fileNameCarte.style.display = "none";
+            const fileNameDemande = document.getElementById('fileNameDemande');
+            fileNameDemande.style.display = "inline";
+            document.getElementById('carte-chargee-message').style.display = "none";
+            document.getElementById('calcul-tournee').style.display = "flex";
+            drawLivraisons(demande);
+        }
+        catch(err){
+            alert(err.message);
+        }
+    }
+
+    function drawCarte(carte){
+        const nodes=carte.noeuds||{};
+        const troncons=carte.troncons||[];
+        const mapDiv=document.getElementById('map');
+        mapDiv.style.display="block";
+        if(!map){
+            map=L.map('map');
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap contributors'}).addTo(map);
+        }else{
+            map.eachLayer(layer=>{if(layer instanceof L.Polyline||layer instanceof L.CircleMarker||layer instanceof L.Marker) map.removeLayer(layer);});
+        }
+        troncons.forEach(t=>{
+            const origine=nodes[t.idOrigine.toString()];
+            const dest=nodes[t.idDestination.toString()];
+            if(!origine||!dest) return;
+            L.polyline([[origine.latitude,origine.longitude],[dest.latitude,dest.longitude]],{color:'#1a74bb',weight:2}).addTo(map);
+        });
+        const allLatLngs=Object.values(nodes).map(n=>[n.latitude,n.longitude]);
+        if(allLatLngs.length>0) map.fitBounds(L.latLngBounds(allLatLngs).pad(0.1));
+    }
+
+    function drawLivraisons(demande){
+        if(!map) return;
+        const nodes=carteData.noeuds||{};
+        let colorIndex=0;
+        demande.livraisons.forEach(livraison=>{
+            const color=colors[colorIndex%colors.length];
+            colorIndex++;
+            const enlevNode=nodes[livraison.adresseEnlevement.id.toString()];
+            const livrNode=nodes[livraison.adresseLivraison.id.toString()];
+            if(!enlevNode||!livrNode) return;
+            L.marker([enlevNode.latitude, enlevNode.longitude], {
+                icon: L.divIcon({
+                    className: 'square-marker',
+                    iconSize: [16, 16],
+                    html: `<div style="width:16px; height:16px; background:${color}; border:2px solid black;"></div>`
+                })
+            }).addTo(map).bindPopup(`Enlèvement : ${livraison.adresseEnlevement.id}`);
+            L.circleMarker([livrNode.latitude, livrNode.longitude],{color:'black',fillColor:color,radius:8,fillOpacity:0.8}).addTo(map).bindPopup(`Livraison : ${livraison.adresseLivraison.id}`);
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded',()=>{
+        const inputCarte = document.getElementById('xmlCarte');
+        const inputDemande = document.getElementById('xmlDemande');
+
+        const mapButton = document.querySelector('.navbar-item img[alt="Ajouter une carte"]');
+        const colisButton = document.querySelector('.navbar-item img[alt="Ajouter une demande de livraison"]');
+
+        mapButton.style.filter = "drop-shadow(0 0 10px rgba(225,225,0,1))";
+        mapButton.addEventListener('click', () => {
+            inputCarte.click();
+        });
+        colisButton.addEventListener('click', () => {
+            if (!inputDemande.disabled) {
+                inputDemande.click();
+            }
+        });
+
+        document.getElementById('xmlCarte').addEventListener('change', function() {
+            const file = this.files[0];
+            document.getElementById('fileNameCarte').textContent = file ? `Affichage de ${file.name}` : "";
+            if (file) uploadCarte(file);
+        });
+
+        document.getElementById('xmlDemande').addEventListener('change', function() {
+            const file = this.files[0];
+            document.getElementById('fileNameDemande').textContent = file ? `Affichage de ${file.name}` : "";
+            if (file) uploadDemande(file);
+        });
+
+        document.getElementById('homeButton').addEventListener('click', () => {
+            const confirmReset = confirm("Voulez-vous vraiment revenir à la page d’accueil ? Toutes les données chargées seront perdues.");
+
+            if (confirmReset) {
+                carteData = null;
+                map = null;
+
+                const mapDiv = document.getElementById('map');
+                mapDiv.style.display = "none";
+                mapDiv.innerHTML = "";
+
+                document.getElementById('xmlCarte').value = "";
+                document.getElementById('xmlDemande').value = "";
+                document.getElementById('xmlDemande').disabled = true;
+
+                document.getElementById('fileNameCarte').style.display = "none";
+                document.getElementById('fileNameDemande').style.display = "none";
+                document.getElementById('carte-chargee-message').style.display = "none";
+                document.getElementById('welcome-message').style.display = "flex";
+
+                const mapButton = document.querySelector('.navbar-item img[alt="Ajouter une carte"]');
+                const colisButton = document.querySelector('.navbar-item img[alt="Ajouter une demande de livraison"]');
+
+                mapButton.style.filter = "drop-shadow(0 0 10px rgba(225,225,0,1))";
+                colisButton.src = "tools/colis-logo-gray.png";
+                colisButton.style.filter = "";
+                colisButton.style.cursor = "default";
+
+                document.getElementById('calcul-tournee').style.display = "none";
+            }
+        });
+    });
+</script>
 </body>
 </html>
