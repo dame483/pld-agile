@@ -37,8 +37,11 @@ public class MainTest {
             System.out.println("\nCalcul de la tournée...");
             Tournee tournee = calculTournee.calculerTournee();
             System.out.println("Tournée calculée.\n");
+            //Génération de feuille de route
             FeuilleDeRoute feuilleDeRoute = new FeuilleDeRoute(tournee);
-            feuilleDeRoute.GenerateFeuilleDeRoute(tournee);
+            feuilleDeRoute.generateFeuilleDeRoute();
+            //Sauvegarde tournée
+            feuilleDeRoute.sauvegarderTournee();
             //  Affichage détaillé des chemins
             System.out.println("=== Tournée détaillée ===");
             DateTimeFormatter formatHeure = DateTimeFormatter.ofPattern("HH:mm:ss");
