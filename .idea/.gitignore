@@ -1,14 +1,20 @@
 # Default ignored files
 /shelf/
+/compiler.xml
+/encodings.xml
+
 /workspace.xml
 # Editor-based HTTP Client requests
 /httpRequests/
+../target/
+../src/main/java/fr.insalyon.pldagile/controleur/TourneeService.java
+../src/main/java/fr.insalyon.pldagile/controleur/EtatTourneeCalcule
+../src/main/java/fr.insalyon.pldagile/controleur/EtatSupresionLivraison
+../src/main/java/fr.insalyon.pldagile/controleur/EtatAjouterLivraison
 # Datasource local storage ignored files
 /dataSources/
 /dataSources.local.xml
 
-../target
-/compiler.xml
-/encodings.xml
+
 
 
