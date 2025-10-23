@@ -1,338 +1,1125 @@
 {"tournee": [
     {
-        "arrivee": "( 26155372,PICKUP )",
-        "rues": [
-            "Continuez 126.80616 m  sur Route de Genas\n",
-            "Continuez 115.18777 m  sur Route de Genas\n",
-            "Continuez 62.660088 m  sur Boulevard Pinel\n",
-            "Continuez 91.766914 m  sur Cours Docteur Long\n",
-            "Continuez 81.12767 m  sur Cours Docteur Long\n",
-            "Continuez 6.254207 m  sur Cours Docteur Long\n",
-            "Continuez 2.0872772 m  sur Cours Docteur Long\n",
-            "Continuez 73.11533 m  sur Cours Docteur Long\n",
-            "Continuez 51.39518 m  sur Cours Docteur Long\n",
-            "Continuez 47.484478 m  sur Cours Docteur Long\n",
-            "Continuez 45.51251 m  sur Cours Docteur Long\n",
-            "Continuez 63.785366 m  sur Cours Docteur Long\n",
-            "Continuez 65.708916 m  sur Cours Docteur Long\n",
-            "Continuez 123.8789 m  sur Cours Docteur Long\n",
-            "Continuez 92.53872 m  sur Cours Docteur Long\n",
-            "Continuez 72.582924 m  sur Cours Docteur Long\n",
-            "Continuez 76.63646 m  sur Rue Louise\n"
-        ],
-        "id": 1,
-        "depart": "( 4150019167,ENTREPOT )",
-        "heureArrivee": "08:04:48"
+        "NoeudDePassageDepart": {
+            "latitude": 45.731087,
+            "typeNoeud": "ENTREPOT",
+            "horaireArrivee": "09:31:18",
+            "id": 1349383079,
+            "longitude": 4.9053183
+        },
+        "longueurTotale": 3192.031951,
+        "NoeudDePassageArrivee": {
+            "latitude": 45.733128,
+            "typeNoeud": "PICKUP",
+            "horaireArrivee": "08:12:47",
+            "id": 27362899,
+            "longitude": 4.8794765
+        },
+        "troncons": [
+            {
+                "longueur": 71.41139,
+                "idDestination": 245031103,
+                "nomRue": "Avenue des Colonnes",
+                "idOrigine": 1349383079
+            },
+            {
+                "longueur": 211.03992,
+                "idDestination": 245031105,
+                "nomRue": "Avenue Pasteur",
+                "idOrigine": 245031103
+            },
+            {
+                "longueur": 77.516174,
+                "idDestination": 245031108,
+                "nomRue": "Rue Villard",
+                "idOrigine": 245031105
+            },
+            {
+                "longueur": 94.03229,
+                "idDestination": 245031106,
+                "nomRue": "Rue Villard",
+                "idOrigine": 245031108
+            },
+            {
+                "longueur": 152.82278,
+                "idDestination": 245023208,
+                "nomRue": "Avenue du Bois",
+                "idOrigine": 245031106
+            },
+            {
+                "longueur": 65.48641,
+                "idDestination": 245023220,
+                "nomRue": "Rue du Square",
+                "idOrigine": 245023208
+            },
+            {
+                "longueur": 48.51341,
+                "idDestination": 245023215,
+                "nomRue": "Rue du Square",
+                "idOrigine": 245023220
+            },
+            {
+                "longueur": 125.08781,
+                "idDestination": 245023123,
+                "nomRue": "Rue des Roses",
+                "idOrigine": 245023215
+            },
+            {
+                "longueur": 70.26581,
+                "idDestination": 2292223595,
+                "nomRue": "Rue Jean Jaurès",
+                "idOrigine": 245023123
+            },
+            {
+                "longueur": 64.90494,
+                "idDestination": 245023120,
+                "nomRue": "Rue Jean Jaurès",
+                "idOrigine": 2292223595
+            },
+            {
+                "longueur": 182.80875,
+                "idDestination": 60901987,
+                "nomRue": "Rue Jean Jaurès",
+                "idOrigine": 245023120
+            },
+            {
+                "longueur": 143.89633,
+                "idDestination": 60901983,
+                "nomRue": "Rue de la Paix",
+                "idOrigine": 60901987
+            },
+            {
+                "longueur": 36.52154,
+                "idDestination": 60901982,
+                "nomRue": "Rue de la Paix",
+                "idOrigine": 60901983
+            },
+            {
+                "longueur": 41.994125,
+                "idDestination": 60901948,
+                "nomRue": "Rue de la Paix",
+                "idOrigine": 60901982
+            },
+            {
+                "longueur": 46.31201,
+                "idDestination": 245054847,
+                "nomRue": "Rue de la Paix",
+                "idOrigine": 60901948
+            },
+            {
+                "longueur": 63.36775,
+                "idDestination": 60901949,
+                "nomRue": "Rue de la Paix",
+                "idOrigine": 245054847
+            },
+            {
+                "longueur": 10.420416,
+                "idDestination": 60901989,
+                "nomRue": "Rue de la Paix",
+                "idOrigine": 60901949
+            },
+            {
+                "longueur": 78.73703,
+                "idDestination": 60901942,
+                "nomRue": "Rue de la Paix",
+                "idOrigine": 60901989
+            },
+            {
+                "longueur": 95.17963,
+                "idDestination": 60901940,
+                "nomRue": "Rue de la Paix",
+                "idOrigine": 60901942
+            },
+            {
+                "longueur": 115.95791,
+                "idDestination": 60901937,
+                "nomRue": "Rue de la Paix",
+                "idOrigine": 60901940
+            },
+            {
+                "longueur": 53.73686,
+                "idDestination": 60901938,
+                "nomRue": "Rue de la Paix",
+                "idOrigine": 60901937
+            },
+            {
+                "longueur": 67.53967,
+                "idDestination": 1315984607,
+                "nomRue": "Rue des Essarts",
+                "idOrigine": 60901938
+            },
+            {
+                "longueur": 60.116817,
+                "idDestination": 21715082,
+                "nomRue": "Rue des Essarts",
+                "idOrigine": 1315984607
+            },
+            {
+                "longueur": 9.241578,
+                "idDestination": 21715081,
+                "nomRue": "Rue Laennec",
+                "idOrigine": 21715082
+            },
+            {
+                "longueur": 31.705185,
+                "idDestination": 21715080,
+                "nomRue": "Rue Laennec",
+                "idOrigine": 21715081
+            },
+            {
+                "longueur": 322.69272,
+                "idDestination": 1201354422,
+                "nomRue": "Rue Laennec",
+                "idOrigine": 21715080
+            },
+            {
+                "longueur": 53.975243,
+                "idDestination": 1201354435,
+                "nomRue": "Rue Laennec",
+                "idOrigine": 1201354422
+            },
+            {
+                "longueur": 21.996416,
+                "idDestination": 21717930,
+                "nomRue": "Rue Laennec",
+                "idOrigine": 1201354435
+            },
+            {
+                "longueur": 41.57947,
+                "idDestination": 21717929,
+                "nomRue": "Rue Laennec",
+                "idOrigine": 21717930
+            },
+            {
+                "longueur": 84.67725,
+                "idDestination": 21717928,
+                "nomRue": "Rue Thomas Blanchet",
+                "idOrigine": 21717929
+            },
+            {
+                "longueur": 62.809677,
+                "idDestination": 21717927,
+                "nomRue": "Boulevard Ambroise Paré",
+                "idOrigine": 21717928
+            },
+            {
+                "longueur": 72.0598,
+                "idDestination": 21717934,
+                "nomRue": "Boulevard Ambroise Paré",
+                "idOrigine": 21717927
+            },
+            {
+                "longueur": 26.576775,
+                "idDestination": 2388251460,
+                "nomRue": "Boulevard Ambroise Paré",
+                "idOrigine": 21717934
+            },
+            {
+                "longueur": 19.179264,
+                "idDestination": 21717932,
+                "nomRue": "Boulevard Ambroise Paré",
+                "idOrigine": 2388251460
+            },
+            {
+                "longueur": 76.54216,
+                "idDestination": 471133022,
+                "nomRue": "Boulevard Ambroise Paré",
+                "idOrigine": 21717932
+            },
+            {
+                "longueur": 41.212082,
+                "idDestination": 21717939,
+                "nomRue": "Boulevard Ambroise Paré",
+                "idOrigine": 471133022
+            },
+            {
+                "longueur": 304.35153,
+                "idDestination": 21718033,
+                "nomRue": "Boulevard Ambroise Paré",
+                "idOrigine": 21717939
+            },
+            {
+                "longueur": 10.411665,
+                "idDestination": 21718034,
+                "nomRue": "Boulevard Ambroise Paré",
+                "idOrigine": 21718033
+            },
+            {
+                "longueur": 35.351364,
+                "idDestination": 27362899,
+                "nomRue": "Avenue Jean Mermoz",
+                "idOrigine": 21718034
+            }
+        ]
     },
     {
-        "arrivee": "( 26317393,PICKUP )",
-        "rues": [
-            "Continuez 68.19679 m  sur Rue Louise\n",
-            "Continuez 28.787182 m  sur Rue Julie\n",
-            "Continuez 111.934784 m  sur Rue du Général Brulard\n",
-            "Continuez 351.61423 m  sur Avenue des Acacias\n"
-        ],
-        "id": 2,
-        "depart": "( 26155372,PICKUP )",
-        "heureArrivee": "08:15:03"
+        "NoeudDePassageDepart": {
+            "latitude": 45.733128,
+            "typeNoeud": "PICKUP",
+            "horaireArrivee": "08:12:47",
+            "id": 27362899,
+            "longitude": 4.8794765
+        },
+        "longueurTotale": 3065.309029,
+        "NoeudDePassageArrivee": {
+            "latitude": 45.74841,
+            "typeNoeud": "PICKUP",
+            "horaireArrivee": "08:28:04",
+            "id": 26121686,
+            "longitude": 4.859172
+        },
+        "troncons": [
+            {
+                "longueur": 73.15029,
+                "idDestination": 27362900,
+                "nomRue": "Avenue Jean Mermoz",
+                "idOrigine": 27362899
+            },
+            {
+                "longueur": 80.95538,
+                "idDestination": 21714982,
+                "nomRue": "Avenue Jean Mermoz",
+                "idOrigine": 27362900
+            },
+            {
+                "longueur": 8.570351,
+                "idDestination": 143402,
+                "nomRue": "Rue du Professeur Joseph Nicolas",
+                "idOrigine": 21714982
+            },
+            {
+                "longueur": 185.30594,
+                "idDestination": 21718033,
+                "nomRue": "Avenue Jean Mermoz",
+                "idOrigine": 143402
+            },
+            {
+                "longueur": 140.30666,
+                "idDestination": 143403,
+                "nomRue": "Avenue Jean Mermoz",
+                "idOrigine": 21718033
+            },
+            {
+                "longueur": 102.46916,
+                "idDestination": 143408,
+                "nomRue": "Avenue Jean Mermoz",
+                "idOrigine": 143403
+            },
+            {
+                "longueur": 93.240364,
+                "idDestination": 932576340,
+                "nomRue": "Avenue Jean Mermoz",
+                "idOrigine": 143408
+            },
+            {
+                "longueur": 110.37043,
+                "idDestination": 21718263,
+                "nomRue": "Avenue Jean Mermoz",
+                "idOrigine": 932576340
+            },
+            {
+                "longueur": 356.9862,
+                "idDestination": 1957527553,
+                "nomRue": "Avenue Jean Mermoz",
+                "idOrigine": 21718263
+            },
+            {
+                "longueur": 35.666096,
+                "idDestination": 1957527534,
+                "nomRue": "Avenue Jean Mermoz",
+                "idOrigine": 1957527553
+            },
+            {
+                "longueur": 19.478073,
+                "idDestination": 1957527546,
+                "nomRue": "Rue Marius Berliet",
+                "idOrigine": 1957527534
+            },
+            {
+                "longueur": 290.75473,
+                "idDestination": 21703552,
+                "nomRue": "Rue Marius Berliet",
+                "idOrigine": 1957527546
+            },
+            {
+                "longueur": 57.092308,
+                "idDestination": 143431,
+                "nomRue": "Rue Marius Berliet",
+                "idOrigine": 21703552
+            },
+            {
+                "longueur": 86.09836,
+                "idDestination": 9214909,
+                "nomRue": "Rue Marius Berliet",
+                "idOrigine": 143431
+            },
+            {
+                "longueur": 100.70395,
+                "idDestination": 9214919,
+                "nomRue": "Rue Marius Berliet",
+                "idOrigine": 9214909
+            },
+            {
+                "longueur": 81.69053,
+                "idDestination": 143415,
+                "nomRue": "Rue Marius Berliet",
+                "idOrigine": 9214919
+            },
+            {
+                "longueur": 76.228615,
+                "idDestination": 143435,
+                "nomRue": "Rue Marius Berliet",
+                "idOrigine": 143415
+            },
+            {
+                "longueur": 97.55205,
+                "idDestination": 21600355,
+                "nomRue": "Rue Marius Berliet",
+                "idOrigine": 143435
+            },
+            {
+                "longueur": 109.829926,
+                "idDestination": 21600354,
+                "nomRue": "Rue Marius Berliet",
+                "idOrigine": 21600355
+            },
+            {
+                "longueur": 56.340656,
+                "idDestination": 21600353,
+                "nomRue": "Rue Marius Berliet",
+                "idOrigine": 21600354
+            },
+            {
+                "longueur": 182.2734,
+                "idDestination": 18697393,
+                "nomRue": "Rue Marius Berliet",
+                "idOrigine": 21600353
+            },
+            {
+                "longueur": 166.30196,
+                "idDestination": 18697378,
+                "nomRue": "Rue Santos Dumont",
+                "idOrigine": 18697393
+            },
+            {
+                "longueur": 143.45154,
+                "idDestination": 18697402,
+                "nomRue": "Rue Louis Jouvet",
+                "idOrigine": 18697378
+            },
+            {
+                "longueur": 113.63658,
+                "idDestination": 18697383,
+                "nomRue": "Rue Louis Jouvet",
+                "idOrigine": 18697402
+            },
+            {
+                "longueur": 120.04825,
+                "idDestination": 18697372,
+                "nomRue": "Avenue des Frères Lumière",
+                "idOrigine": 18697383
+            },
+            {
+                "longueur": 34.76711,
+                "idDestination": 26576953,
+                "nomRue": "Grande Rue de la Guillotière",
+                "idOrigine": 18697372
+            },
+            {
+                "longueur": 26.16321,
+                "idDestination": 26576954,
+                "nomRue": "Grande Rue de la Guillotière",
+                "idOrigine": 26576953
+            },
+            {
+                "longueur": 115.87691,
+                "idDestination": 26121686,
+                "nomRue": "Boulevard des Tchécoslovaques",
+                "idOrigine": 26576954
+            }
+        ]
     },
     {
-        "arrivee": "( 25610684,PICKUP )",
-        "rues": [
-            "Continuez 351.61423 m  sur Avenue des Acacias\n",
-            "Continuez 111.934784 m  sur Rue du Général Brulard\n",
-            "Continuez 77.67057 m  sur Rue Bonnand\n",
-            "Continuez 90.45478 m  sur Rue Bonnand\n",
-            "Continuez 2.5734012 m  sur Rue Bonnand\n",
-            "Continuez 21.431295 m  sur Rue Bonnand\n",
-            "Continuez 88.70358 m  sur Rue Bonnand\n",
-            "Continuez 80.1679 m  sur Rue Bonnand\n",
-            "Continuez 53.426987 m  sur Rue Ferdinand Buisson\n",
-            "Continuez 160.52829 m  sur Rue Jean-Marc Bernard\n",
-            "Continuez 68.1403 m  sur Avenue Lacassagne\n",
-            "Continuez 87.94591 m  sur Avenue Lacassagne\n",
-            "Continuez 73.98266 m  sur Avenue Lacassagne\n",
-            "Continuez 92.09046 m  sur Avenue Lacassagne\n",
-            "Continuez 30.700241 m  sur Avenue Lacassagne\n",
-            "Continuez 125.646904 m  sur Avenue Lacassagne\n",
-            "Continuez 51.055664 m  sur Avenue Lacassagne\n",
-            "Continuez 96.53003 m  sur Avenue Lacassagne\n",
-            "Continuez 13.61647 m  sur Avenue Lacassagne\n",
-            "Continuez 83.41324 m  sur Avenue Lacassagne\n",
-            "Continuez 35.136753 m  sur Avenue Lacassagne\n",
-            "Continuez 18.365248 m  sur Avenue Lacassagne\n",
-            "Continuez 34.147205 m  sur Avenue Lacassagne\n",
-            "Continuez 25.763437 m  sur Avenue Lacassagne\n",
-            "Continuez 11.316352 m  sur Boulevard Pinel\n",
-            "Continuez 33.104446 m  sur Boulevard Pinel\n",
-            "Continuez 91.04423 m  sur Boulevard Pinel\n",
-            "Continuez 15.771056 m  sur Boulevard Pinel\n",
-            "Continuez 22.654398 m  sur Boulevard Pinel\n"
-        ],
-        "id": 3,
-        "depart": "( 26317393,PICKUP )",
-        "heureArrivee": "08:25:16"
+        "NoeudDePassageDepart": {
+            "latitude": 45.74841,
+            "typeNoeud": "PICKUP",
+            "horaireArrivee": "08:28:04",
+            "id": 26121686,
+            "longitude": 4.859172
+        },
+        "longueurTotale": 3378.1519951,
+        "NoeudDePassageArrivee": {
+            "latitude": 45.759853,
+            "typeNoeud": "PICKUP",
+            "horaireArrivee": "08:46:36",
+            "id": 55444018,
+            "longitude": 4.8953767
+        },
+        "troncons": [
+            {
+                "longueur": 84.053215,
+                "idDestination": 2841904735,
+                "nomRue": "Boulevard des Tchécoslovaques",
+                "idOrigine": 26121686
+            },
+            {
+                "longueur": 45.08708,
+                "idDestination": 2034547839,
+                "nomRue": "Boulevard des Tchécoslovaques",
+                "idOrigine": 2841904735
+            },
+            {
+                "longueur": 53.609547,
+                "idDestination": 25719228,
+                "nomRue": "Rue du Général Mouton-Duvernet Cours Albert Thomas",
+                "idOrigine": 2034547839
+            },
+            {
+                "longueur": 7.7847524,
+                "idDestination": 3393859920,
+                "nomRue": "Rue du Général Mouton-Duvernet",
+                "idOrigine": 25719228
+            },
+            {
+                "longueur": 53.857296,
+                "idDestination": 195262,
+                "nomRue": "Rue du Général Mouton-Duvernet",
+                "idOrigine": 3393859920
+            },
+            {
+                "longueur": 256.8284,
+                "idDestination": 25321302,
+                "nomRue": "Rue du Dauphiné",
+                "idOrigine": 195262
+            },
+            {
+                "longueur": 54.717278,
+                "idDestination": 195266,
+                "nomRue": "Rue du Dauphiné",
+                "idOrigine": 25321302
+            },
+            {
+                "longueur": 96.7444,
+                "idDestination": 195268,
+                "nomRue": "Rue du Dauphiné",
+                "idOrigine": 195266
+            },
+            {
+                "longueur": 95.865654,
+                "idDestination": 195270,
+                "nomRue": "Rue du Dauphiné",
+                "idOrigine": 195268
+            },
+            {
+                "longueur": 117.45386,
+                "idDestination": 25336178,
+                "nomRue": "Rue du Dauphiné",
+                "idOrigine": 195270
+            },
+            {
+                "longueur": 222.6015,
+                "idDestination": 25336189,
+                "nomRue": "Rue du Dauphiné",
+                "idOrigine": 25336178
+            },
+            {
+                "longueur": 73.50747,
+                "idDestination": 2026239409,
+                "nomRue": "Rue du Dauphiné",
+                "idOrigine": 25336189
+            },
+            {
+                "longueur": 69.514244,
+                "idDestination": 26125366,
+                "nomRue": "Rue du Dauphiné",
+                "idOrigine": 2026239409
+            },
+            {
+                "longueur": 71.13966,
+                "idDestination": 565375197,
+                "nomRue": "Rue du Dauphiné",
+                "idOrigine": 26125366
+            },
+            {
+                "longueur": 32.646736,
+                "idDestination": 26317248,
+                "nomRue": "Rue du Dauphiné",
+                "idOrigine": 565375197
+            },
+            {
+                "longueur": 38.124634,
+                "idDestination": 26317212,
+                "nomRue": "Rue du Dauphiné",
+                "idOrigine": 26317248
+            },
+            {
+                "longueur": 110.82931,
+                "idDestination": 26317242,
+                "nomRue": "Rue du Dauphiné",
+                "idOrigine": 26317212
+            },
+            {
+                "longueur": 139.95462,
+                "idDestination": 25611428,
+                "nomRue": "Rue du Dauphiné",
+                "idOrigine": 26317242
+            },
+            {
+                "longueur": 63.594482,
+                "idDestination": 1368674799,
+                "nomRue": "Rue du Dauphiné",
+                "idOrigine": 25611428
+            },
+            {
+                "longueur": 36.126144,
+                "idDestination": 1368674800,
+                "nomRue": "Route de Genas",
+                "idOrigine": 1368674799
+            },
+            {
+                "longueur": 33.922108,
+                "idDestination": 1368674806,
+                "nomRue": "Place des Maisons Neuves",
+                "idOrigine": 1368674800
+            },
+            {
+                "longueur": 49.524254,
+                "idDestination": 1368674809,
+                "nomRue": "Place des Maisons Neuves",
+                "idOrigine": 1368674806
+            },
+            {
+                "longueur": 30.600428,
+                "idDestination": 55463789,
+                "nomRue": "Place des Maisons Neuves",
+                "idOrigine": 1368674809
+            },
+            {
+                "longueur": 32.672306,
+                "idDestination": 55463792,
+                "nomRue": "Place des Maisons Neuves",
+                "idOrigine": 55463789
+            },
+            {
+                "longueur": 77.77078,
+                "idDestination": 55463796,
+                "nomRue": "Place des Maisons Neuves",
+                "idOrigine": 55463792
+            },
+            {
+                "longueur": 99.45865,
+                "idDestination": 4193445730,
+                "nomRue": "Rue Jean Jaurès",
+                "idOrigine": 55463796
+            },
+            {
+                "longueur": 6.4504447,
+                "idDestination": 55463826,
+                "nomRue": "Rue Jean Jaurès",
+                "idOrigine": 4193445730
+            },
+            {
+                "longueur": 97.08675,
+                "idDestination": 55463829,
+                "nomRue": "Rue Jean Jaurès",
+                "idOrigine": 55463826
+            },
+            {
+                "longueur": 31.402689,
+                "idDestination": 2392360249,
+                "nomRue": "Rue Jean Jaurès",
+                "idOrigine": 55463829
+            },
+            {
+                "longueur": 166.48314,
+                "idDestination": 2282805720,
+                "nomRue": "Rue Jean Jaurès",
+                "idOrigine": 2392360249
+            },
+            {
+                "longueur": 27.940016,
+                "idDestination": 55474916,
+                "nomRue": "Rue Jean Jaurès",
+                "idOrigine": 2282805720
+            },
+            {
+                "longueur": 81.181366,
+                "idDestination": 60493268,
+                "nomRue": "Rue Jean Jaurès",
+                "idOrigine": 55474916
+            },
+            {
+                "longueur": 101.16821,
+                "idDestination": 55463831,
+                "nomRue": "Rue Jean Jaurès",
+                "idOrigine": 60493268
+            },
+            {
+                "longueur": 29.078337,
+                "idDestination": 1918509928,
+                "nomRue": "Place Jules Grandclément",
+                "idOrigine": 55463831
+            },
+            {
+                "longueur": 118.163864,
+                "idDestination": 55463564,
+                "nomRue": "Place Jules Grandclément",
+                "idOrigine": 1918509928
+            },
+            {
+                "longueur": 44.765503,
+                "idDestination": 55463767,
+                "nomRue": "Place Jules Grandclément",
+                "idOrigine": 55463564
+            },
+            {
+                "longueur": 129.06993,
+                "idDestination": 55463770,
+                "nomRue": "Place Jules Grandclément",
+                "idOrigine": 55463767
+            },
+            {
+                "longueur": 131.11026,
+                "idDestination": 55435051,
+                "nomRue": "Place Jules Grandclément",
+                "idOrigine": 55463770
+            },
+            {
+                "longueur": 23.662397,
+                "idDestination": 55435003,
+                "nomRue": "Rue Léon Blum",
+                "idOrigine": 55435051
+            },
+            {
+                "longueur": 64.29078,
+                "idDestination": 55435089,
+                "nomRue": "Rue Léon Blum",
+                "idOrigine": 55435003
+            },
+            {
+                "longueur": 98.5397,
+                "idDestination": 55435139,
+                "nomRue": "Rue Léon Blum",
+                "idOrigine": 55435089
+            },
+            {
+                "longueur": 179.7698,
+                "idDestination": 55444018,
+                "nomRue": "Rue Léon Blum",
+                "idOrigine": 55435139
+            }
+        ]
     },
     {
-        "arrivee": "( 21717915,DELIVERY )",
-        "rues": [
-            "Continuez 22.654398 m  sur Boulevard Pinel\n",
-            "Continuez 97.84345 m  sur Avenue Esquirol\n",
-            "Continuez 77.646965 m  sur Avenue Esquirol\n",
-            "Continuez 78.70763 m  sur Avenue Esquirol\n",
-            "Continuez 82.86288 m  sur Avenue Esquirol\n",
-            "Continuez 81.220024 m  sur Avenue Esquirol\n",
-            "Continuez 70.70675 m  sur Cours Eugénie\n",
-            "Continuez 92.293686 m  sur Cours Eugénie\n",
-            "Continuez 133.25873 m  sur Avenue Rockefeller\n",
-            "Continuez 9.786228 m  sur Rue Victor de Laprade\n",
-            "Continuez 200.07085 m  sur Rue Victor de Laprade\n"
-        ],
-        "id": 4,
-        "depart": "( 25610684,PICKUP )",
-        "heureArrivee": "08:32:04"
+        "NoeudDePassageDepart": {
+            "latitude": 45.759853,
+            "typeNoeud": "PICKUP",
+            "horaireArrivee": "08:46:36",
+            "id": 55444018,
+            "longitude": 4.8953767
+        },
+        "longueurTotale": 657.641344,
+        "NoeudDePassageArrivee": {
+            "latitude": 45.75707,
+            "typeNoeud": "DELIVERY",
+            "horaireArrivee": "08:50:14",
+            "id": 505061101,
+            "longitude": 4.8998
+        },
+        "troncons": [
+            {
+                "longueur": 181.73573,
+                "idDestination": 191134601,
+                "nomRue": "Rue Louis Ducroize",
+                "idOrigine": 55444018
+            },
+            {
+                "longueur": 119.70782,
+                "idDestination": 191134606,
+                "nomRue": "Rue Antoine Primat",
+                "idOrigine": 191134601
+            },
+            {
+                "longueur": 229.41527,
+                "idDestination": 191134595,
+                "nomRue": "Rue Antoine Primat",
+                "idOrigine": 191134606
+            },
+            {
+                "longueur": 126.782524,
+                "idDestination": 505061101,
+                "nomRue": "Rue Émile Decorps",
+                "idOrigine": 191134595
+            }
+        ]
     },
     {
-        "arrivee": "( 1400900990,PICKUP )",
-        "rues": [
-            "Continuez 197.03235 m  sur Rue Volney Rue Victor de Laprade\n",
-            "Continuez 65.603874 m  sur Boulevard Ambroise Paré\n",
-            "Continuez 86.87499 m  sur Boulevard Ambroise Paré\n",
-            "Continuez 41.154457 m  sur Rue Thomas Blanchet\n",
-            "Continuez 117.360016 m  sur Rue Thomas Blanchet\n",
-            "Continuez 147.43497 m  sur Rue Thomas Blanchet\n",
-            "Continuez 29.340376 m  sur Rue Thomas Blanchet\n",
-            "Continuez 17.646217 m  sur Rue Bataille\n",
-            "Continuez 163.45201 m  sur Rue Bataille\n",
-            "Continuez 9.953976 m  sur Rue Bataille\n",
-            "Continuez 54.97757 m  sur Rue Bataille\n",
-            "Continuez 54.121277 m  sur Rue Bataille\n",
-            "Continuez 27.954714 m  sur Rue Bataille\n",
-            "Continuez 63.958065 m  sur Rue Bataille\n",
-            "Continuez 112.03445 m  sur Rue Bataille\n",
-            "Continuez 197.70412 m  sur Rue Bataille\n",
-            "Continuez 12.784036 m  sur Rue Bataille\n",
-            "Continuez 338.89694 m  sur Rue Bataille\n",
-            "Continuez 22.184088 m  sur Rue Bataille\n",
-            "Continuez 57.092308 m  sur Rue Marius Berliet\n",
-            "Continuez 86.09836 m  sur Rue Marius Berliet\n",
-            "Continuez 100.70395 m  sur Rue Marius Berliet\n",
-            "Continuez 81.69053 m  sur Rue Marius Berliet\n",
-            "Continuez 76.228615 m  sur Rue Marius Berliet\n",
-            "Continuez 97.55205 m  sur Rue Marius Berliet\n",
-            "Continuez 59.294033 m  sur Rue Saint-Gervais\n",
-            "Continuez 47.378006 m  sur Rue Saint-Gervais\n",
-            "Continuez 5.386798 m  sur Impasse Saint-Gervais\n"
-        ],
-        "id": 5,
-        "depart": "( 21717915,DELIVERY )",
-        "heureArrivee": "08:50:34"
+        "NoeudDePassageDepart": {
+            "latitude": 45.75707,
+            "typeNoeud": "DELIVERY",
+            "horaireArrivee": "08:50:14",
+            "id": 505061101,
+            "longitude": 4.8998
+        },
+        "longueurTotale": 447.120483,
+        "NoeudDePassageArrivee": {
+            "latitude": 45.754635,
+            "typeNoeud": "DELIVERY",
+            "horaireArrivee": "08:58:01",
+            "id": 191134392,
+            "longitude": 4.9022007
+        },
+        "troncons": [
+            {
+                "longueur": 24.685703,
+                "idDestination": 505061092,
+                "nomRue": "Rue Émile Decorps",
+                "idOrigine": 505061101
+            },
+            {
+                "longueur": 195.15364,
+                "idDestination": 191134429,
+                "nomRue": "Rue Émile Decorps",
+                "idOrigine": 505061092
+            },
+            {
+                "longueur": 227.28114,
+                "idDestination": 191134392,
+                "nomRue": "Avenue Paul Krüger",
+                "idOrigine": 191134429
+            }
+        ]
     },
     {
-        "arrivee": "( 1036842078,DELIVERY )",
-        "rues": [
-            "Continuez 5.386798 m  sur Impasse Saint-Gervais\n",
-            "Continuez 90.66148 m  sur Rue Saint-Gervais\n",
-            "Continuez 119.63905 m  sur Rue Saint-Gervais\n",
-            "Continuez 97.02868 m  sur Rue Saint-Gervais\n",
-            "Continuez 113.31147 m  sur Rue Saint-Gervais\n",
-            "Continuez 98.343346 m  sur Rue des Tuiliers\n",
-            "Continuez 186.07007 m  sur Rue Saint-Hippolyte\n",
-            "Continuez 86.49793 m  sur Petite Rue de Monplaisir\n",
-            "Continuez 75.947624 m  sur Petite Rue de Monplaisir\n",
-            "Continuez 130.47949 m  sur Cours Albert Thomas\n",
-            "Continuez 73.04839 m  sur Cours Albert Thomas\n",
-            "Continuez 74.09365 m  sur Boulevard Vivier-Merle Cours Albert Thomas\n"
-        ],
-        "id": 6,
-        "depart": "( 1400900990,PICKUP )",
-        "heureArrivee": "08:58:11"
+        "NoeudDePassageDepart": {
+            "latitude": 45.754635,
+            "typeNoeud": "DELIVERY",
+            "horaireArrivee": "08:58:01",
+            "id": 191134392,
+            "longitude": 4.9022007
+        },
+        "longueurTotale": 1398.0657350000001,
+        "NoeudDePassageArrivee": {
+            "latitude": 45.749653,
+            "typeNoeud": "DELIVERY",
+            "horaireArrivee": "09:12:37",
+            "id": 26470086,
+            "longitude": 4.895372
+        },
+        "troncons": [
+            {
+                "longueur": 90.601555,
+                "idDestination": 191134439,
+                "nomRue": "Rue Cyprian",
+                "idOrigine": 191134392
+            },
+            {
+                "longueur": 203.79407,
+                "idDestination": 191134387,
+                "nomRue": "Rue Cyprian",
+                "idOrigine": 191134439
+            },
+            {
+                "longueur": 39.202938,
+                "idDestination": 239603465,
+                "nomRue": "Route de Genas",
+                "idOrigine": 191134387
+            },
+            {
+                "longueur": 83.29809,
+                "idDestination": 240470316,
+                "nomRue": "Route de Genas",
+                "idOrigine": 239603465
+            },
+            {
+                "longueur": 107.79249,
+                "idDestination": 240470318,
+                "nomRue": "Rue des Paquerettes",
+                "idOrigine": 240470316
+            },
+            {
+                "longueur": 96.39112,
+                "idDestination": 239602382,
+                "nomRue": "Rue des Paquerettes",
+                "idOrigine": 240470318
+            },
+            {
+                "longueur": 82.1013,
+                "idDestination": 240470311,
+                "nomRue": "Rue des Paquerettes",
+                "idOrigine": 239602382
+            },
+            {
+                "longueur": 128.6978,
+                "idDestination": 240470314,
+                "nomRue": "Rue des Bruyères",
+                "idOrigine": 240470311
+            },
+            {
+                "longueur": 206.53967,
+                "idDestination": 25611158,
+                "nomRue": "Avenue Doyen Jean Lépine",
+                "idOrigine": 240470314
+            },
+            {
+                "longueur": 25.209368,
+                "idDestination": 26470491,
+                "nomRue": "Boulevard Pinel",
+                "idOrigine": 25611158
+            },
+            {
+                "longueur": 92.098854,
+                "idDestination": 26470490,
+                "nomRue": "Rue Gelas",
+                "idOrigine": 26470491
+            },
+            {
+                "longueur": 50.25045,
+                "idDestination": 52561460,
+                "nomRue": "Rue Gelas",
+                "idOrigine": 26470490
+            },
+            {
+                "longueur": 103.86472,
+                "idDestination": 52561455,
+                "nomRue": "Place Charles Dufraine",
+                "idOrigine": 52561460
+            },
+            {
+                "longueur": 88.22331,
+                "idDestination": 26470086,
+                "nomRue": "Place Charles Dufraine",
+                "idOrigine": 52561455
+            }
+        ]
     },
     {
-        "arrivee": "( 208769083,DELIVERY )",
-        "rues": [
-            "Continuez 123.36402 m  sur Boulevard Vivier-Merle\n",
-            "Continuez 304.3873 m  sur Boulevard Vivier-Merle\n",
-            "Continuez 62.200565 m  sur Avenue Félix Faure\n",
-            "Continuez 112.49038 m  sur Avenue Félix Faure\n",
-            "Continuez 127.18727 m  sur Avenue Félix Faure\n",
-            "Continuez 48.468773 m  sur Avenue Félix Faure\n",
-            "Continuez 214.0224 m  sur Avenue Félix Faure\n",
-            "Continuez 26.020561 m  sur Avenue Félix Faure\n",
-            "Continuez 240.98518 m  sur Rue Baraban\n",
-            "Continuez 153.978 m  sur Rue Baraban\n",
-            "Continuez 66.22617 m  sur Rue Baraban\n",
-            "Continuez 47.348785 m  sur Rue Baraban\n",
-            "Continuez 29.557299 m  sur Rue Baraban\n",
-            "Continuez 106.253914 m  sur Avenue Georges Pompidou\n",
-            "Continuez 39.416725 m  sur Rue Nazareth\n",
-            "Continuez 10.284923 m  sur Rue Nazareth\n",
-            "Continuez 83.729836 m  sur Rue Nazareth\n"
-        ],
-        "id": 7,
-        "depart": "( 1036842078,DELIVERY )",
-        "heureArrivee": "09:05:23"
-    },
-    {
-        "arrivee": "( 21992645,PICKUP )",
-        "rues": [
-            "Continuez 94.49828 m  sur Rue Claudius Pionchon\n",
-            "Continuez 43.43769 m  sur Rue Sainte-Anne de Baraban\n",
-            "Continuez 67.38149 m  sur Rue Sainte-Anne de Baraban\n",
-            "Continuez 138.84 m  sur Rue Sainte-Anne de Baraban\n",
-            "Continuez 47.348785 m  sur Rue Baraban\n",
-            "Continuez 66.22617 m  sur Rue Baraban\n",
-            "Continuez 79.02355 m  sur Rue Antoine Charial\n",
-            "Continuez 145.00984 m  sur Rue Turbil\n",
-            "Continuez 232.252 m  sur Rue Turbil\n",
-            "Continuez 61.443684 m  sur Place Rouget de l'Isle\n",
-            "Continuez 58.81714 m  sur Avenue Lacassagne\n",
-            "Continuez 175.30086 m  sur Avenue Lacassagne\n",
-            "Continuez 73.50747 m  sur Rue du Dauphiné\n",
-            "Continuez 157.39076 m  sur Rue du Professeur Paul Sisley\n",
-            "Continuez 75.26833 m  sur Rue du Professeur Paul Sisley\n",
-            "Continuez 72.58715 m  sur Rue du Professeur Paul Sisley\n",
-            "Continuez 29.069725 m  sur Rue du Professeur Paul Sisley\n",
-            "Continuez 83.59344 m  sur Rue du Professeur Paul Sisley\n",
-            "Continuez 115.403114 m  sur Rue Villon\n",
-            "Continuez 112.01783 m  sur Rue Villon\n",
-            "Continuez 16.661806 m  sur Rue Villon\n",
-            "Continuez 68.33527 m  sur Rue Villon\n",
-            "Continuez 43.62228 m  sur Rue Villon\n",
-            "Continuez 90.10593 m  sur Rue Villon\n",
-            "Continuez 88.25528 m  sur Rue Villon\n",
-            "Continuez 21.3945 m  sur Rue Villon\n",
-            "Continuez 91.36231 m  sur Rue Villon\n",
-            "Continuez 120.9714 m  sur Rue Villon\n",
-            "Continuez 140.03229 m  sur Rue Villon\n",
-            "Continuez 77.211784 m  sur Rue Villon\n",
-            "Continuez 76.228615 m  sur Rue Marius Berliet\n",
-            "Continuez 97.55205 m  sur Rue Marius Berliet\n",
-            "Continuez 109.829926 m  sur Rue Marius Berliet\n",
-            "Continuez 112.29348 m  sur Rue de l'Épargne\n",
-            "Continuez 112.88493 m  sur Rue de l'Éternité\n",
-            "Continuez 10.267049 m  sur Rue de l'Éternité\n",
-            "Continuez 162.6578 m  sur Avenue de l'Europe\n"
-        ],
-        "id": 8,
-        "depart": "( 208769083,DELIVERY )",
-        "heureArrivee": "09:22:53"
-    },
-    {
-        "arrivee": "( 60755991,DELIVERY )",
-        "rues": [
-            "Continuez 44.685192 m  sur Rue Audibert et Lavirotte\n",
-            "Continuez 186.6627 m  sur Rue des Hérideaux\n",
-            "Continuez 92.84373 m  sur Rue des Hérideaux\n",
-            "Continuez 104.90395 m  sur Rue Villon\n",
-            "Continuez 165.04675 m  sur Rue Villon\n",
-            "Continuez 19.765337 m  sur Rue Villon\n",
-            "Continuez 76.59745 m  sur Rue Villon\n",
-            "Continuez 151.7849 m  sur Rue Villon\n",
-            "Continuez 216.35162 m  sur Rue Villon\n",
-            "Continuez 18.736483 m  sur Rue Pierre Delore\n",
-            "Continuez 19.149618 m  sur Rue Pierre Delore\n",
-            "Continuez 105.25669 m  sur Rue Pierre Delore\n",
-            "Continuez 27.630648 m  sur Rue Pierre Delore\n",
-            "Continuez 56.082497 m  sur Rue Pierre Delore\n",
-            "Continuez 70.53315 m  sur Rue Pierre Delore\n",
-            "Continuez 33.08308 m  sur Rue Pierre Delore\n",
-            "Continuez 10.959218 m  sur Rue Pierre Delore\n",
-            "Continuez 52.69905 m  sur Avenue Francis de Pressensé\n",
-            "Continuez 178.23439 m  sur Avenue Francis de Pressensé\n",
-            "Continuez 21.66321 m  sur Avenue Francis de Pressensé\n",
-            "Continuez 149.27708 m  sur Rue Louise Michel\n",
-            "Continuez 18.740826 m  sur \n",
-            "Continuez 13.350509 m  sur \n",
-            "Continuez 52.846222 m  sur Rue Louise Michel\n",
-            "Continuez 54.309757 m  sur Rue Louise Michel\n",
-            "Continuez 12.09084 m  sur \n",
-            "Continuez 23.058268 m  sur Rue du Professeur Roux\n",
-            "Continuez 55.361126 m  sur Rue du Professeur Roux\n"
-        ],
-        "id": 9,
-        "depart": "( 21992645,PICKUP )",
-        "heureArrivee": "09:37:01"
-    },
-    {
-        "arrivee": "( 55444215,DELIVERY )",
-        "rues": [
-            "Continuez 71.26703 m  sur Rue du Professeur Roux\n",
-            "Continuez 88.76887 m  sur Rue du Professeur Roux\n",
-            "Continuez 98.11162 m  sur Rue du Moulin à Vent\n",
-            "Continuez 138.05408 m  sur Rue du Moulin à Vent\n",
-            "Continuez 55.75696 m  sur Avenue Francis de Pressensé\n",
-            "Continuez 102.86875 m  sur Rue Paul Cazeneuve\n",
-            "Continuez 19.913363 m  sur Rue Paul Cazeneuve\n",
-            "Continuez 194.76688 m  sur Rue Paul Cazeneuve\n",
-            "Continuez 85.4694 m  sur Rue Ludovic Arrachart\n",
-            "Continuez 66.13907 m  sur Rue Joseph Chapelle\n",
-            "Continuez 74.033134 m  sur Rue Joseph Chapelle\n",
-            "Continuez 18.490034 m  sur Rue Joseph Chapelle\n",
-            "Continuez 75.95317 m  sur Rue Joseph Chapelle\n",
-            "Continuez 91.81562 m  sur Rue Joseph Chapelle\n",
-            "Continuez 70.772934 m  sur Rue Joseph Chapelle\n",
-            "Continuez 112.64196 m  sur Rue Joseph Chapelle\n",
-            "Continuez 127.97538 m  sur Rue Joseph Chapelle\n",
-            "Continuez 68.69944 m  sur Avenue Berthelot\n",
-            "Continuez 26.447824 m  sur Boulevard Jean XXIII\n",
-            "Continuez 222.43428 m  sur Boulevard Jean XXIII\n",
-            "Continuez 287.9207 m  sur Boulevard Jean XXIII\n",
-            "Continuez 24.351454 m  sur Rue Maryse Bastié\n",
-            "Continuez 136.85303 m  sur Rue Maryse Bastié\n",
-            "Continuez 226.20677 m  sur Rue Maryse Bastié\n",
-            "Continuez 120.29001 m  sur Rue Maryse Bastié\n",
-            "Continuez 163.53062 m  sur Rue Feuillat\n",
-            "Continuez 136.54433 m  sur Rue Feuillat\n",
-            "Continuez 58.375137 m  sur Rue Feuillat\n",
-            "Continuez 92.586105 m  sur Rue Feuillat\n",
-            "Continuez 90.44906 m  sur Rue Feuillat\n",
-            "Continuez 64.89446 m  sur Rue Feuillat\n",
-            "Continuez 153.72511 m  sur Rue Feuillat\n",
-            "Continuez 83.108986 m  sur Rue Feuillat\n",
-            "Continuez 111.942184 m  sur Rue Feuillat\n",
-            "Continuez 238.35002 m  sur Rue Feuillat\n",
-            "Continuez 104.732445 m  sur Rue Meunier\n",
-            "Continuez 77.77078 m  sur Place des Maisons Neuves\n",
-            "Continuez 99.45865 m  sur Rue Jean Jaurès\n",
-            "Continuez 6.4504447 m  sur Rue Jean Jaurès\n",
-            "Continuez 97.08675 m  sur Rue Jean Jaurès\n",
-            "Continuez 31.402689 m  sur Rue Jean Jaurès\n",
-            "Continuez 166.48314 m  sur Rue Jean Jaurès\n",
-            "Continuez 27.940016 m  sur Rue Jean Jaurès\n",
-            "Continuez 81.181366 m  sur Rue Jean Jaurès\n",
-            "Continuez 101.16821 m  sur Rue Jean Jaurès\n",
-            "Continuez 29.078337 m  sur Place Jules Grandclément\n",
-            "Continuez 118.163864 m  sur Place Jules Grandclément\n",
-            "Continuez 44.765503 m  sur Place Jules Grandclément\n",
-            "Continuez 129.06993 m  sur Place Jules Grandclément\n",
-            "Continuez 131.11026 m  sur Place Jules Grandclément\n",
-            "Continuez 23.662397 m  sur Rue Léon Blum\n",
-            "Continuez 64.29078 m  sur Rue Léon Blum\n",
-            "Continuez 98.5397 m  sur Rue Léon Blum\n",
-            "Continuez 179.7698 m  sur Rue Léon Blum\n",
-            "Continuez 116.74729 m  sur Rue Léon Blum\n",
-            "Continuez 307.35544 m  sur Rue Léon Blum\n"
-        ],
-        "id": 10,
-        "depart": "( 60755991,DELIVERY )",
-        "heureArrivee": "10:07:24"
-    },
-    {
-        "arrivee": "( 4150019167,ENTREPOT )",
-        "rues": [
-            "Continuez 217.2399 m  sur Rue Émile Decorps\n",
-            "Continuez 27.34875 m  sur Rue Émile Decorps\n",
-            "Continuez 126.782524 m  sur Rue Émile Decorps\n",
-            "Continuez 24.685703 m  sur Rue Émile Decorps\n",
-            "Continuez 195.15364 m  sur Rue Émile Decorps\n",
-            "Continuez 65.13197 m  sur Rue Émile Decorps\n",
-            "Continuez 117.10929 m  sur Rue Émile Decorps\n",
-            "Continuez 60.12354 m  sur Rue Émile Decorps\n",
-            "Continuez 17.99415 m  sur Rue Émile Decorps\n"
-        ],
-        "id": 11,
-        "depart": "( 55444215,DELIVERY )",
-        "heureArrivee": "10:18:49"
+        "NoeudDePassageDepart": {
+            "latitude": 45.749653,
+            "typeNoeud": "DELIVERY",
+            "horaireArrivee": "09:12:37",
+            "id": 26470086,
+            "longitude": 4.895372
+        },
+        "longueurTotale": 2918.074657,
+        "NoeudDePassageArrivee": {
+            "latitude": 45.731087,
+            "typeNoeud": "ENTREPOT",
+            "horaireArrivee": "09:31:18",
+            "id": 1349383079,
+            "longitude": 4.9053183
+        },
+        "troncons": [
+            {
+                "longueur": 26.563345,
+                "idDestination": 26470085,
+                "nomRue": "Rue Jules Massenet",
+                "idOrigine": 26470086
+            },
+            {
+                "longueur": 265.46426,
+                "idDestination": 25611153,
+                "nomRue": "Rue Chambovet",
+                "idOrigine": 26470085
+            },
+            {
+                "longueur": 122.48935,
+                "idDestination": 25611151,
+                "nomRue": "Boulevard Pinel",
+                "idOrigine": 25611153
+            },
+            {
+                "longueur": 178.05112,
+                "idDestination": 25610743,
+                "nomRue": "Boulevard Pinel",
+                "idOrigine": 25611151
+            },
+            {
+                "longueur": 142.73347,
+                "idDestination": 25611054,
+                "nomRue": "Boulevard Pinel",
+                "idOrigine": 25610743
+            },
+            {
+                "longueur": 30.305285,
+                "idDestination": 25611052,
+                "nomRue": "Boulevard Pinel",
+                "idOrigine": 25611054
+            },
+            {
+                "longueur": 10.298906,
+                "idDestination": 25611046,
+                "nomRue": "Boulevard Pinel",
+                "idOrigine": 25611052
+            },
+            {
+                "longueur": 21.57322,
+                "idDestination": 25611043,
+                "nomRue": "Boulevard Pinel",
+                "idOrigine": 25611046
+            },
+            {
+                "longueur": 11.316352,
+                "idDestination": 25611040,
+                "nomRue": "Boulevard Pinel",
+                "idOrigine": 25611043
+            },
+            {
+                "longueur": 33.104446,
+                "idDestination": 25611037,
+                "nomRue": "Boulevard Pinel",
+                "idOrigine": 25611040
+            },
+            {
+                "longueur": 91.04423,
+                "idDestination": 25610704,
+                "nomRue": "Boulevard Pinel",
+                "idOrigine": 25611037
+            },
+            {
+                "longueur": 15.771056,
+                "idDestination": 25610709,
+                "nomRue": "Boulevard Pinel",
+                "idOrigine": 25610704
+            },
+            {
+                "longueur": 22.654398,
+                "idDestination": 25610684,
+                "nomRue": "Boulevard Pinel",
+                "idOrigine": 25610709
+            },
+            {
+                "longueur": 178.51085,
+                "idDestination": 1921830160,
+                "nomRue": "Boulevard Pinel",
+                "idOrigine": 25610684
+            },
+            {
+                "longueur": 160.61214,
+                "idDestination": 21715072,
+                "nomRue": "Boulevard Pinel",
+                "idOrigine": 1921830160
+            },
+            {
+                "longueur": 11.252497,
+                "idDestination": 21715071,
+                "nomRue": "Boulevard Pinel",
+                "idOrigine": 21715072
+            },
+            {
+                "longueur": 10.438765,
+                "idDestination": 21715069,
+                "nomRue": "Avenue Rockefeller",
+                "idOrigine": 21715071
+            },
+            {
+                "longueur": 47.93603,
+                "idDestination": 21715067,
+                "nomRue": "Avenue Franklin Roosevelt",
+                "idOrigine": 21715069
+            },
+            {
+                "longueur": 46.391113,
+                "idDestination": 194605193,
+                "nomRue": "Avenue Franklin Roosevelt",
+                "idOrigine": 21715067
+            },
+            {
+                "longueur": 31.737026,
+                "idDestination": 21715078,
+                "nomRue": "Avenue Franklin Roosevelt",
+                "idOrigine": 194605193
+            },
+            {
+                "longueur": 85.61649,
+                "idDestination": 60901944,
+                "nomRue": "Avenue Franklin Roosevelt",
+                "idOrigine": 21715078
+            },
+            {
+                "longueur": 142.58736,
+                "idDestination": 60901945,
+                "nomRue": "Avenue Franklin Roosevelt",
+                "idOrigine": 60901944
+            },
+            {
+                "longueur": 141.66014,
+                "idDestination": 2864851043,
+                "nomRue": "Rue Pierre Bourdan",
+                "idOrigine": 60901945
+            },
+            {
+                "longueur": 167.81659,
+                "idDestination": 60901949,
+                "nomRue": "Rue Pierre Bourdan",
+                "idOrigine": 2864851043
+            },
+            {
+                "longueur": 63.36775,
+                "idDestination": 245054847,
+                "nomRue": "Rue de la Paix",
+                "idOrigine": 60901949
+            },
+            {
+                "longueur": 46.31201,
+                "idDestination": 60901948,
+                "nomRue": "Rue de la Paix",
+                "idOrigine": 245054847
+            },
+            {
+                "longueur": 41.994125,
+                "idDestination": 60901982,
+                "nomRue": "Rue de la Paix",
+                "idOrigine": 60901948
+            },
+            {
+                "longueur": 36.52154,
+                "idDestination": 60901983,
+                "nomRue": "Rue de la Paix",
+                "idOrigine": 60901982
+            },
+            {
+                "longueur": 143.89633,
+                "idDestination": 60901987,
+                "nomRue": "Rue de la Paix",
+                "idOrigine": 60901983
+            },
+            {
+                "longueur": 182.80875,
+                "idDestination": 245023120,
+                "nomRue": "Rue Jean Jaurès",
+                "idOrigine": 60901987
+            },
+            {
+                "longueur": 64.90494,
+                "idDestination": 2292223595,
+                "nomRue": "Rue Jean Jaurès",
+                "idOrigine": 245023120
+            },
+            {
+                "longueur": 70.26581,
+                "idDestination": 245023123,
+                "nomRue": "Rue Jean Jaurès",
+                "idOrigine": 2292223595
+            },
+            {
+                "longueur": 120.2091,
+                "idDestination": 245023124,
+                "nomRue": "Rue Jean Jaurès",
+                "idOrigine": 245023123
+            },
+            {
+                "longueur": 52.302273,
+                "idDestination": 245025987,
+                "nomRue": "Avenue du Bois",
+                "idOrigine": 245023124
+            },
+            {
+                "longueur": 99.56359,
+                "idDestination": 1349383079,
+                "nomRue": "Avenue des Colonnes",
+                "idOrigine": 245025987
+            }
+        ]
     }
 ]}
