@@ -7,7 +7,7 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-public class MainTest {
+public class MainTest2 {
 
     public static void main(String[] args) {
         try {
@@ -22,7 +22,7 @@ public class MainTest {
             System.out.println("Demande de livraison chargée.");
             System.out.println("Nombre de livraisons : " + demande.getLivraisons().size());
 
-            //  Paramètres
+            //  Paramètres de la tournée
             double vitesse = 4.16; // m/s (~15 km/h)
             LocalTime heureDepart = demande.getEntrepot().getHoraireArrivee() != null
                     ? demande.getEntrepot().getHoraireArrivee()
@@ -42,7 +42,7 @@ public class MainTest {
 
                 // Créer une demande spécifique pour ce cluster
                 DemandeDeLivraison demandeCluster = new DemandeDeLivraison(demande.getEntrepot(), clusterLivraisons);
-                CalculTournee calculTournee = new CalculTournee(ville, demandeCluster, vitesse, heureDepart);
+                CalculTournee2 calculTournee = new CalculTournee2(ville, demandeCluster, vitesse, heureDepart);
                 Tournee tournee = calculTournee.calculerTournee();
 
                 System.out.println("\n=== Tournée livreur " + (i + 1) + " ===");
@@ -74,7 +74,7 @@ public class MainTest {
                     System.out.printf("  Distance : %.0f m\n\n", distanceChemin);
                 }
 
-                // Utiliser CalculTournee pour récupérer longueur et durée totales
+                // Récupérer longueur et durée totales depuis CalculTournee2
                 System.out.printf("Distance totale : %.0f m\n", calculTournee.getLongueurTotale());
                 System.out.printf("Durée totale : %.0f s\n", calculTournee.getDureeTotale());
 

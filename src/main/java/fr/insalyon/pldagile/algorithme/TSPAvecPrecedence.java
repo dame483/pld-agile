@@ -8,7 +8,7 @@ import java.util.*;
 public class TSPAvecPrecedence extends TemplateTSP {
 
     private final Map<Integer, Integer> precedences; // delivery -> pickup
-    private final List<NoeudDePassage> noeuds;
+    protected final List<NoeudDePassage> noeuds;
 
     public TSPAvecPrecedence(List<NoeudDePassage> noeuds, List<Livraison> livraisons, Graphe g) {
         super(g);

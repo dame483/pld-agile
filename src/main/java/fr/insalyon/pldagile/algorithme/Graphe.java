@@ -17,12 +17,5 @@ public interface Graphe {
 
     public abstract void setCout(int i, int j, double cout);
 
-    /**
-	 * @param i 
-	 * @param j 
-	 * @return true si <code>(i,j)</code> est un arc de <code>this</code>
-	 */
-	public abstract boolean estArc(int i, int j);
-
 
 }
