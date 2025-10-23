@@ -4,28 +4,73 @@
     <meta charset="UTF-8">
     <title>Optimod’Lyon</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="style.css" />
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-    <style>
-        body { font-family: Arial, sans-serif; margin: 2em; text-align: center; background-color: #a6a6a6; }
-        #map { width: 100%; max-width: 1000px; height: 600px; margin: 20px auto; border: 1px solid #ccc; display: none; }
-        .file-label { display: inline-block; background-color: #b2d1d2; margin-right: 10px; font-size: 16px; padding: 8px 15px; border-radius: 5px; cursor: pointer; color: white; border: none; }
-        .file-label:hover { background-color: #a0bcbd; }
-        .file-container { display: inline-block; position: relative; margin-bottom: 10px; }
-        #fileNameCarte, #fileNameDemande { position: absolute; bottom: -18px; left: 0; font-size: 12px; color: black; }
-    </style>
 </head>
 <body>
-<h1>Optimod’Lyon</h1>
-<div class="file-container">
-    <label for="xmlCarte" class="file-label">Charger une carte</label>
+<div class="navbar">
+    <div class="navbar-left">
+        <div class="navbar-item">
+            <img src="tools/home.png" alt="Accueil" id="homeButton"/>
+        </div>
+        <div class="navbar-item">
+            <img src="tools/map-logo.png" alt="Ajouter une carte"/>
+        </div>
+        <div class="navbar-item">
+            <img src="tools/colis-logo-gray.png" alt="Ajouter une demande de livraison" class="disabled"/>
+        </div>
+        <div class="navbar-item">
+            <img src="tools/open-logo.png" alt="Charger une tournée"/>
+        </div>
+    </div>
+    <div class="navbar-logo">
+        <img src="tools/logo.png" alt="Opti'Mod Lyon"/>
+    </div>
+</div>
+
+<div id="welcome-message">
+    <div class="main-text">
+        <h1> La gestion de tournée à portée de clic ! </h1>
+    </div>
+    <div class="bulle">
+        <h2> Commencez dès maintenant en chargeant une carte ! </h2>
+    </div>
+</div>
+
+<div id="carte-chargee-message">
+    <div class="bulle">
+        <h2> Chargez à présent vos demandes de livraison ! </h2>
+    </div>
+</div>
+
+<div class="carte">
+    <div class="bandeau">
+        <span id="fileNameCarte" style="display:none;"></span>
+    </div>
     <input type="file" id="xmlCarte" accept=".xml" style="display:none;" />
-    <span id="fileNameCarte"></span>
 </div>
-<div class="file-container">
-    <label for="xmlDemande" class="file-label" id="labelDemande" style="background-color:#999; cursor:not-allowed;">Charger une demande</label>
-    <input type="file" id="xmlDemande" accept=".xml" style="display:none;" disabled />
-    <span id="fileNameDemande"></span>
+
+<div class="livraisons">
+    <div class="bandeau">
+        <span id="fileNameDemande" style="display:none;"></span>
+    </div>
+    <input type="file" id="xmlDemande" accept=".xml" style="display:none;" disabled/>
+
+    <div id="calcul-tournee">
+        <div class="bloc-livreurs">
+            <label for="nbLivreurs">Nombre de livreurs :</label>
+            <input type="number" id="nbLivreurs" min="1" value="1">
+        </div>
+
+        <button id="calculerTournee">
+            <img src="tools/tournee-logo.png" alt="Icône tournée">
+            <p>Calculer les tournées optimales</p>
+        </button>
+    </div>
+
+
 </div>
+
 <div id="map"></div>
 <script>
     let map=null;
@@ -102,15 +147,64 @@
     }
 
     document.addEventListener('DOMContentLoaded',()=>{
-        document.getElementById('xmlCarte').addEventListener('change',function(){
-            const file=this.files[0];
-            document.getElementById('fileNameCarte').textContent=file?file.name:"";
-            if(file) uploadCarte(file);
+        const inputCarte = document.getElementById('xmlCarte');
+        const inputDemande = document.getElementById('xmlDemande');
+
+        const mapButton = document.querySelector('.navbar-item img[alt="Ajouter une carte"]');
+        const colisButton = document.querySelector('.navbar-item img[alt="Ajouter une demande de livraison"]');
+
+        mapButton.style.filter = "drop-shadow(0 0 10px rgba(225,225,0,1))";
+        mapButton.addEventListener('click', () => {
+            inputCarte.click();
         });
-        document.getElementById('xmlDemande').addEventListener('change',function(){
-            const file=this.files[0];
-            document.getElementById('fileNameDemande').textContent=file?file.name:"";
-            if(file) uploadDemande(file);
+        colisButton.addEventListener('click', () => {
+            if (!inputDemande.disabled) {
+                inputDemande.click();
+            }
+        });
+
+        document.getElementById('xmlCarte').addEventListener('change', function() {
+            const file = this.files[0];
+            document.getElementById('fileNameCarte').textContent = file ? `Affichage de ${file.name}` : "";
+            if (file) uploadCarte(file);
+        });
+
+        document.getElementById('xmlDemande').addEventListener('change', function() {
+            const file = this.files[0];
+            document.getElementById('fileNameDemande').textContent = file ? `Affichage de ${file.name}` : "";
+            if (file) uploadDemande(file);
+        });
+
+        document.getElementById('homeButton').addEventListener('click', () => {
+            const confirmReset = confirm("Voulez-vous vraiment revenir à la page d’accueil ? Toutes les données chargées seront perdues.");
+
+            if (confirmReset) {
+                carteData = null;
+                map = null;
+
+                const mapDiv = document.getElementById('map');
+                mapDiv.style.display = "none";
+                mapDiv.innerHTML = "";
+
+                document.getElementById('xmlCarte').value = "";
+                document.getElementById('xmlDemande').value = "";
+                document.getElementById('xmlDemande').disabled = true;
+
+                document.getElementById('fileNameCarte').style.display = "none";
+                document.getElementById('fileNameDemande').style.display = "none";
+                document.getElementById('carte-chargee-message').style.display = "none";
+                document.getElementById('welcome-message').style.display = "flex";
+
+                const mapButton = document.querySelector('.navbar-item img[alt="Ajouter une carte"]');
+                const colisButton = document.querySelector('.navbar-item img[alt="Ajouter une demande de livraison"]');
+
+                mapButton.style.filter = "drop-shadow(0 0 10px rgba(225,225,0,1))";
+                colisButton.src = "tools/colis-logo-gray.png";
+                colisButton.style.filter = "";
+                colisButton.style.cursor = "default";
+
+                document.getElementById('calcul-tournee').style.display = "none";
+            }
         });
     });
 </script>
