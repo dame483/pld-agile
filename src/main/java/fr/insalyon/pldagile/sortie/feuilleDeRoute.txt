@@ -1,7 +1,7 @@
 L'heure de départ de l'entrepôt : 08:00
 
 Chemin 0
-Tu parts de (1349383079,ENTREPOT)
+Tu pars de (1349383079,ENTREPOT)
 Continuez 71.41139 m  sur Avenue des Colonnes
 Continuez 211.03992 m  sur Avenue Pasteur
 Continuez 77.516174 m  sur Rue Villard
@@ -45,7 +45,7 @@ Tu arrives au point de livraison à 08:12:47
 L'adresse de livraison N° 0 est 27362899)
 
 Chemin 1
-Tu parts de (27362899,PICKUP)
+Tu pars de (27362899,PICKUP)
 Continuez 73.15029 m  sur Avenue Jean Mermoz
 Continuez 80.95538 m  sur Avenue Jean Mermoz
 Continuez 8.570351 m  sur Rue du Professeur Joseph Nicolas
@@ -78,7 +78,7 @@ Tu arrives au point de livraison à 08:28:04
 L'adresse de livraison N° 1 est 26121686)
 
 Chemin 2
-Tu parts de (26121686,PICKUP)
+Tu pars de (26121686,PICKUP)
 Continuez 84.053215 m  sur Boulevard des Tchécoslovaques
 Continuez 45.08708 m  sur Boulevard des Tchécoslovaques
 Continuez 53.609547 m  sur Rue du Général Mouton-Duvernet Cours Albert Thomas
@@ -125,7 +125,7 @@ Tu arrives au point de livraison à 08:46:36
 L'adresse de livraison N° 2 est 55444018)
 
 Chemin 3
-Tu parts de (55444018,PICKUP)
+Tu pars de (55444018,PICKUP)
 Continuez 181.73573 m  sur Rue Louis Ducroize
 Continuez 119.70782 m  sur Rue Antoine Primat
 Continuez 229.41527 m  sur Rue Antoine Primat
@@ -134,7 +134,7 @@ Tu arrives au point de livraison à 08:50:14
 L'adresse de livraison N° 3 est 505061101)
 
 Chemin 4
-Tu parts de (505061101,DELIVERY)
+Tu pars de (505061101,DELIVERY)
 Continuez 24.685703 m  sur Rue Émile Decorps
 Continuez 195.15364 m  sur Rue Émile Decorps
 Continuez 227.28114 m  sur Avenue Paul Krüger
@@ -142,7 +142,7 @@ Tu arrives au point de livraison à 08:58:01
 L'adresse de livraison N° 4 est 191134392)
 
 Chemin 5
-Tu parts de (191134392,DELIVERY)
+Tu pars de (191134392,DELIVERY)
 Continuez 90.601555 m  sur Rue Cyprian
 Continuez 203.79407 m  sur Rue Cyprian
 Continuez 39.202938 m  sur Route de Genas
@@ -161,7 +161,7 @@ Tu arrives au point de livraison à 09:12:37
 L'adresse de livraison N° 5 est 26470086)
 
 Chemin 6
-Tu parts de (26470086,DELIVERY)
+Tu pars de (26470086,DELIVERY)
 Continuez 26.563345 m  sur Rue Jules Massenet
 Continuez 265.46426 m  sur Rue Chambovet
 Continuez 122.48935 m  sur Boulevard Pinel

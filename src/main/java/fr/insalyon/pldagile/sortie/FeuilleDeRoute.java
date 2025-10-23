@@ -37,7 +37,7 @@ public class FeuilleDeRoute {
                     writer.write("Chemin " + i + "\n");
                     NoeudDePassage depart = chemin.getNoeudDePassageDepart();
                     NoeudDePassage arrivee = chemin.getNoeudDePassageArrivee();
-                    writer.write("Tu parts de " + "(" + depart.getId() + "," + depart.getType() + ")\n");
+                    writer.write("Tu pars de " + "(" + depart.getId() + "," + depart.getType() + ")\n");
                     for (int j = 0; j < chemin.getTroncons().size(); j++) {
                         Troncon troncon = chemin.getTroncons().get(j);
                         writer.write("Continuez " + troncon.longueur() + " m " + " sur " + troncon.getnomRue() + "\n");
