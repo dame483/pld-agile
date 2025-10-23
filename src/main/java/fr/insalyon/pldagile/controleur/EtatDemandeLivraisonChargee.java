@@ -53,7 +53,7 @@ public class  EtatDemandeLivraisonChargee implements Etat
     @Override
     public Object runCalculTournee(Controlleur c)
     {
-        CalculTournee t= new CalculTournee(this.carte,this.demLivraison,15.0);
+        CalculTournee t= new CalculTournee(this.carte,this.demLivraison,15.0, this.demLivraison.getEntrepot().getHoraireDepart());
         try {
             Tournee tournee= t.calculerTournee();
             c.setCurrentState(new EtatTourneeCalcule(this.carte, this.demLivraison));

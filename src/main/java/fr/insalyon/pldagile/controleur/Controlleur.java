@@ -78,13 +78,15 @@ public class Controlleur {
         etatActuelle.deleteLivraison(this);
     }*/
 
+
+    @PostMapping({"/tournee/calcuer"}) 
     public ResponseEntity<?> runCalculTournee(){
         Object tournee= etatActuelle.runCalculTournee(this);
 
         if(tournee instanceof Tournee){
 
             Map<String, Object> response = Map.of(
-                    "message", "",
+                    "message", "Tournée Calculé",
                     "etatCourant", this.getCurrentState(),
                     "demande", (Tournee)tournee
             );
@@ -96,7 +98,7 @@ public class Controlleur {
             return ResponseEntity.badRequest().body("Erreur : "+errorMes);
 
         } else{
-            return ResponseEntity.badRequest().body("Erreur  ");
+            return ResponseEntity.badRequest().body("Erreur ");
         }
     }
     /*public void saveTournee(){
