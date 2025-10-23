@@ -2,6 +2,7 @@ package fr.insalyon.pldagile.controleur;
 
 import fr.insalyon.pldagile.modele.Carte;
 import fr.insalyon.pldagile.modele.DemandeDeLivraison;
+import fr.insalyon.pldagile.modele.Tournee;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -45,8 +46,8 @@ public class Controlleur {
     @PostMapping({"/upload-demande"})
     public ResponseEntity<?> loadDemandeLivraison(@RequestParam("file") MultipartFile file, Carte carte){
             Object demande=etatActuelle.loadDemandeLivraison(this,file,carte);
-            System.out.println("Bipboup je suis un controleur");
-            System.out.println(demande);
+
+
             if(demande instanceof  DemandeDeLivraison){
 
                 Map<String, Object> response = Map.of(
@@ -75,12 +76,30 @@ public class Controlleur {
 
     public void deleteLivraison(Carte carte){
         etatActuelle.deleteLivraison(this);
-    }
+    }*/
 
-    public void runCalculTournee(){
-        etatActuelle.runCalculTournee(this);
+    public ResponseEntity<?> runCalculTournee(){
+        Object tournee= etatActuelle.runCalculTournee(this);
+
+        if(tournee instanceof Tournee){
+
+            Map<String, Object> response = Map.of(
+                    "message", "",
+                    "etatCourant", this.getCurrentState(),
+                    "demande", (Tournee)tournee
+            );
+
+            return ResponseEntity.ok(response);
+        }
+        else if (tournee instanceof Exception) {
+            String errorMes=((Exception) tournee).getMessage();
+            return ResponseEntity.badRequest().body("Erreur : "+errorMes);
+
+        } else{
+            return ResponseEntity.badRequest().body("Erreur  ");
+        }
     }
-    public void saveTournee(){
+    /*public void saveTournee(){
         etatActuelle.saveTournee(this);
     }*/
     /*public void leftClick(){

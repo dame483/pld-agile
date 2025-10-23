@@ -41,8 +41,8 @@ public class  EtatInitial implements Etat {
     }*/
 
     @Override
-    public void runCalculTournee(Controlleur c) {
-
+    public Object runCalculTournee(Controlleur c) {
+        return null;
     }
 /*
     @Override

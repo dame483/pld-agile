@@ -1,8 +1,6 @@
 package fr.insalyon.pldagile.controleur;
-import fr.insalyon.pldagile.modele.Carte;
-import fr.insalyon.pldagile.modele.CarteParseurXML;
-import fr.insalyon.pldagile.modele.DemandeDeLivraison;
-import fr.insalyon.pldagile.modele.DemandeDeLivraisonParseurXML;
+import fr.insalyon.pldagile.algorithme.CalculTournee;
+import fr.insalyon.pldagile.modele.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
@@ -53,8 +51,16 @@ public class  EtatDemandeLivraisonChargee implements Etat
     }*/
 
     @Override
-    public void runCalculTournee(Controlleur c)
+    public Object runCalculTournee(Controlleur c)
     {
+        CalculTournee t= new CalculTournee(this.carte,this.demLivraison,15.0,this.demLivraison.getEntrepot().getHoraireDepart());
+        try {
+            Tournee tournee= t.calculerTournee();
+            c.setCurrentState(new EtatTourneeCalcule(this.carte, this.demLivraison));
+            return tournee;
+        } catch (Exception e) {
+            return e;
+        }
 
     }
 
