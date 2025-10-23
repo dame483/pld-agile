@@ -56,6 +56,7 @@ public class  EtatDemandeLivraisonChargee implements Etat
         CalculTournee t= new CalculTournee(this.carte,this.demLivraison,4.167, this.demLivraison.getEntrepot().getHoraireDepart());
         try {
             Tournee tournee= t.calculerTournee();
+            System.out.println( tournee );
             c.setCurrentState(new EtatTourneeCalcule(this.carte, this.demLivraison));
             return tournee;
         } catch (Exception e) {
@@ -95,7 +96,7 @@ public class  EtatDemandeLivraisonChargee implements Etat
                 result = parsedCarte;
             } else {
 
-                DemandeDeLivraison parsedDemande = DemandeDeLivraisonParseurXML.loadFromFile(tempFile, carte);
+                DemandeDeLivraison parsedDemande = DemandeDeLivraisonParseurXML.loadFromFile(tempFile, this.carte);
                 System.out.println(parsedDemande);
                 result = parsedDemande;
             }

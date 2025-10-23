@@ -12,7 +12,7 @@ public interface Etat{
     public Object loadDemandeLivraison(Controlleur c, @RequestParam("file") MultipartFile file, Carte carte);
     /*public void addLivraison(Controlleur c, @RequestParam("file") MultipartFile file, Carte carte);
     public void deleteLivraison(Controlleur c);*/
-    public Object runCalculTournee(Controlleur c);
+    //public Object runCalculTournee(Controlleur c);
     /*public void saveTournee(Controlleur c);*/
     public Object uploadXML(String type, @RequestParam("file") MultipartFile file, Carte carte);
     public String getName();
