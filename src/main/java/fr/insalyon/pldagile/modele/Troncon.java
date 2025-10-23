@@ -21,11 +21,11 @@ public class Troncon {
         return this.idDestination;
     }
 
-    public String getnomRue() {
+    public String getNomRue() {
         return this.nomRue;
     }
 
-    public double longueur() {
+    public double getLongueur() {
         return this.longueur;
     }
 
