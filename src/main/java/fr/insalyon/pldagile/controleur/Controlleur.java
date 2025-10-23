@@ -55,8 +55,7 @@ public class Controlleur {
                         "etatCourant", this.getCurrentState(),
                         "demande", (DemandeDeLivraison)demande
                 );
-                System.out.println("Bipboup je suis une Demande de Livraison");
-                System.out.println((DemandeDeLivraison) demande);
+
                 return ResponseEntity.ok(response);
             }
             else if (demande instanceof Exception) {
@@ -78,15 +77,17 @@ public class Controlleur {
         etatActuelle.deleteLivraison(this);
     }*/
 
+
+    /*@PostMapping({"/tournee/calculer"})
     public ResponseEntity<?> runCalculTournee(){
         Object tournee= etatActuelle.runCalculTournee(this);
 
         if(tournee instanceof Tournee){
 
             Map<String, Object> response = Map.of(
-                    "message", "",
+                    "message", "Tournée Calculé",
                     "etatCourant", this.getCurrentState(),
-                    "demande", (Tournee)tournee
+                    "tournee", (Tournee)tournee
             );
 
             return ResponseEntity.ok(response);
@@ -96,9 +97,9 @@ public class Controlleur {
             return ResponseEntity.badRequest().body("Erreur : "+errorMes);
 
         } else{
-            return ResponseEntity.badRequest().body("Erreur  ");
+            return ResponseEntity.badRequest().body("Erreur ");
         }
-    }
+    }*/
     /*public void saveTournee(){
         etatActuelle.saveTournee(this);
     }*/
