@@ -79,9 +79,13 @@
         formData.append("file",file);
         try{
             const response=await fetch("http://localhost:8080/api/upload-carte",{method:"POST",body:formData});
-            if(!response.ok){alert(await response.text());return;}
-            carteData=await response.json();
-            drawCarte(carteData);
+            if(!response.ok){
+                alert(await response.text());
+                return;
+            }
+            res=await response.json();
+            drawCarte(res.carte);
+
             const colisButton = document.querySelector('.navbar-item img[alt="Ajouter une demande de livraison"]');
             const mapButton = document.querySelector('.navbar-item img[alt="Ajouter une carte"]');
 
@@ -97,8 +101,8 @@
             document.getElementById('welcome-message').style.display = "none";
             document.getElementById('carte-chargee-message').style.display = "flex";
 
-        }
-        catch(err){
+            carteData = res.carte;
+        }catch(err){
             alert(err.message);
         }
     }
@@ -110,7 +114,7 @@
         try{
             const response=await fetch("http://localhost:8080/api/upload-demande",{method:"POST",body:formData});
             if(!response.ok){alert(await response.text());return;}
-            const demande=await response.json();
+            const res=await response.json();
 
             const colisButton = document.querySelector('.navbar-item img[alt="Ajouter une demande de livraison"]');
             colisButton.style.filter = "";
@@ -121,9 +125,8 @@
             fileNameDemande.style.display = "inline";
             document.getElementById('carte-chargee-message').style.display = "none";
             document.getElementById('calcul-tournee').style.display = "flex";
-            drawLivraisons(demande);
-        }
-        catch(err){
+            drawLivraisons(res.demande);
+        }catch(err){
             alert(err.message);
         }
     }
