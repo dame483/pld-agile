@@ -69,15 +69,7 @@ public class Controlleur {
 
     }
 
-    /*@PostMapping({"/upload-demande"})
-    public void addLivraison(@RequestParam("file") MultipartFile file, Carte carte){
-        etatActuelle.addLivraison(this, file,carte);
-    }
-
-    public void deleteLivraison(Carte carte){
-        etatActuelle.deleteLivraison(this);
-    }*/
-
+    @PostMapping({"/tournee/calculer"})
     public ResponseEntity<?> runCalculTournee(){
         Object tournee= etatActuelle.runCalculTournee(this);
 

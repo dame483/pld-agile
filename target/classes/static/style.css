@@ -159,7 +159,54 @@ body, h1 {
     height: 40px;
 }
 
-#map { width: 100%; max-width: 1000px; height: 500px; margin: 20px auto; border: 1px solid #ccc; display: none; }
-.file-label { display: inline-block; background-color: #b2d1d2; margin-right: 10px; font-size: 16px; padding: 8px 15px; border-radius: 5px; cursor: pointer; color: white; border: none; }
-.file-label:hover { background-color: #a0bcbd; }
-.file-container { display: inline-block; position: relative; margin-bottom: 10px; }
+#map {
+    width: 100%;
+    max-width: 1000px;
+    height: 500px;
+    margin: 20px auto;
+    border: 1px solid #ccc;
+    display: none;
+}
+.file-label {
+    display: inline-block;
+    background-color: #b2d1d2;
+    margin-right: 10px;
+    font-size: 16px;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    color: white;
+    border: none;
+}
+
+.file-label:hover {
+    background-color: #a0bcbd;
+}
+.file-container {
+    display: inline-block;
+    position: relative;
+    margin-bottom: 10px;
+}
+
+.legend {
+    background: rgba(255,255,255,0.85);
+    border-radius: 6px;
+    box-shadow: 0 0 5px rgba(0,0,0,0.3);
+    padding: 6px;
+    line-height: 1.2;
+    font-size: 11px;
+    width: 150px;
+}
+.legend div {
+    display: flex;
+    align-items: center;
+    margin-bottom: 4px;
+    color: black;
+}
+
+.legend-symbol {
+    width: 16px;
+    height: 16px;
+    margin-right: 4px;
+    display: inline-block;
+}

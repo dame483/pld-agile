@@ -31,7 +31,7 @@ public class  EtatDemandeLivraisonChargee implements Etat
 
     @Override
     public Object loadDemandeLivraison(Controlleur c, @RequestParam("file")  MultipartFile file, Carte carte) {
-        Object dem=uploadXML("demande", file, this.carte);
+        Object dem=uploadXML("demande", file, carte);
         if(dem instanceof DemandeDeLivraison){
             c.setCurrentState(new EtatDemandeLivraisonChargee(carte,(DemandeDeLivraison) dem));
             return dem;
@@ -53,7 +53,7 @@ public class  EtatDemandeLivraisonChargee implements Etat
     @Override
     public Object runCalculTournee(Controlleur c)
     {
-        CalculTournee t= new CalculTournee(this.carte,this.demLivraison,15.0, this.demLivraison.getEntrepot().getHoraireDepart());
+        CalculTournee t= new CalculTournee(this.carte,this.demLivraison,4.167, this.demLivraison.getEntrepot().getHoraireDepart());
         try {
             Tournee tournee= t.calculerTournee();
             c.setCurrentState(new EtatTourneeCalcule(this.carte, this.demLivraison));
@@ -95,7 +95,7 @@ public class  EtatDemandeLivraisonChargee implements Etat
                 result = parsedCarte;
             } else {
 
-                DemandeDeLivraison parsedDemande = DemandeDeLivraisonParseurXML.loadFromFile(tempFile, this.carte);
+                DemandeDeLivraison parsedDemande = DemandeDeLivraisonParseurXML.loadFromFile(tempFile, carte);
                 System.out.println(parsedDemande);
                 result = parsedDemande;
             }
