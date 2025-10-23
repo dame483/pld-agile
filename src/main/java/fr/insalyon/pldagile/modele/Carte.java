@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+
 public class Carte {
     private HashMap<Long, Noeud> noeuds = new HashMap();
     private List<Troncon> troncons = new ArrayList();
