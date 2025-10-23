@@ -53,7 +53,7 @@ public class  EtatTourneeCalcule implements Etat
     @Override
     public void deleteLivraison(Controlleur c) {
 
-    }*/
+    }
 
     @Override
     public Object runCalculTournee(Controlleur c) {
@@ -64,7 +64,7 @@ public class  EtatTourneeCalcule implements Etat
         } catch (Exception e) {
             return e;
         }
-    }
+    }*/
 
     /*@Override
     public void saveTournee(Controlleur c) {

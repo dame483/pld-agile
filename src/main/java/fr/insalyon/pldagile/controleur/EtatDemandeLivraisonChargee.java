@@ -50,19 +50,20 @@ public class  EtatDemandeLivraisonChargee implements Etat
 
     }*/
 
-    @Override
+    /*@Override
     public Object runCalculTournee(Controlleur c)
     {
-        CalculTournee t= new CalculTournee(this.carte,this.demLivraison,15.0, this.demLivraison.getEntrepot().getHoraireDepart());
+        CalculTournee t= new CalculTournee(this.carte,this.demLivraison,4.1, this.demLivraison.getEntrepot().getHoraireDepart());
         try {
             Tournee tournee= t.calculerTournee();
+            System.out.println( tournee );
             c.setCurrentState(new EtatTourneeCalcule(this.carte, this.demLivraison));
             return tournee;
         } catch (Exception e) {
             return e;
         }
 
-    }
+    }*/
 
     /*@Override
     public void saveTournee(Controlleur c) {
@@ -96,7 +97,6 @@ public class  EtatDemandeLivraisonChargee implements Etat
             } else {
 
                 DemandeDeLivraison parsedDemande = DemandeDeLivraisonParseurXML.loadFromFile(tempFile, this.carte);
-                System.out.println(parsedDemande);
                 result = parsedDemande;
             }
 

@@ -53,12 +53,10 @@ public class EtatSuppresionLivraison implements Etat{
     @Override
     public void deleteLivraison(Controlleur c) {
 
-    }*/
-
     @Override
     public Object runCalculTournee(Controlleur c) {
         return null;
-    }
+    }*/
 
     /*@Override
     public void saveTournee(Controlleur c) {

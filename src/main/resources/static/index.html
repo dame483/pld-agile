@@ -64,8 +64,8 @@
             const response=await fetch("http://localhost:8080/api/upload-carte",{method:"POST",body:formData});
             if(!response.ok){alert(await response.text());return;}
             res=await response.json();
-            var carteData=res.carte
-            drawCarte(cartaData);
+            carteData=res.carte
+            drawCarte(carteData);
             document.getElementById('xmlDemande').disabled=false;
             document.getElementById('labelDemande').style.backgroundColor="#b2d1d2";
             document.getElementById('labelDemande').style.cursor="pointer";
@@ -81,7 +81,7 @@
             const response=await fetch("http://localhost:8080/api/upload-demande",{method:"POST",body:formData});
             if(!response.ok){alert(await response.text());return;}
             const res=await response.json();
-            var demandeData=res.demande;
+             demandeData=res.demande;
             drawLivraisons(demandeData);
             drawEntrepot(demandeData.entrepot);
             if(carteData) btnCalculTournee.disabled=false;
@@ -149,7 +149,8 @@
       if(!carteData||!demandeData){ alert("Charger la carte et la demande d'abord."); return; }
       const r=await fetch("http://localhost:8080/api/tournee/calculer",{method:"POST"});
       if(!r.ok){ alert(await r.text()); return; }
-      const t=await r.json();
+      const res=await r.json();
+      t=res.tournee
       drawTournee(t);
     }
 
