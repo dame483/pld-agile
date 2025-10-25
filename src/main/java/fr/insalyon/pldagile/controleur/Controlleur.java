@@ -14,89 +14,66 @@ import java.util.Map;
 @CrossOrigin(origins = "*")
 public class Controlleur {
 
-
-    // 🧩 Etat courant de l'application (machine à états)
     private Etat etatActuelle;
-
-    // 🔹 Données principales conservées en mémoire
     private Carte carte;
     private DemandeDeLivraison demande;
 
-    // 🏁 Constructeur : état initial au démarrage
     public Controlleur() {
         this.etatActuelle = new EtatInitial();
     }
 
     @PostMapping("/upload-carte")
     public ResponseEntity<?> loadCarte(@RequestParam("file") MultipartFile file) {
-        // ⚠️ Réinitialisation complète
-        this.carte = null;
-        this.demande = null;
+        try {
+            Carte newCarte = etatActuelle.loadCarte(this, file);
 
-        // 🔹 Remettre l'état à initial
-        this.setCurrentState(new EtatInitial());
+            if (newCarte != null) {
+                this.carte = newCarte;
+                this.demande = null;
 
-        Carte newCarte = etatActuelle.loadCarte(this, file);
-        if (newCarte != null) {
-            this.carte = newCarte;
-            return ResponseEntity.ok(Map.of(
-                    "message", "Carte chargée",
-                    "etatCourant", getCurrentState(),
-                    "carte", newCarte
-            ));
-        } else {
-            return ResponseEntity.badRequest().body("Erreur : carte non chargée");
+                return ResponseEntity.ok(Map.of(
+                        "message", " Carte chargée avec succès",
+                        "etatCourant", getCurrentState(),
+                        "carte", newCarte
+                ));
+            } else {
+                return ResponseEntity.badRequest().body("Erreur : carte non chargée");
+            }
+
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Exception : " + e.getMessage());
         }
+
     }
 
 
-
-    // 🚚 Étape 2 : Charger la demande de livraison
     @PostMapping("/upload-demande")
     public ResponseEntity<?> loadDemandeLivraison(@RequestParam("file") MultipartFile file) {
         try {
-            // ⚠️ sécurité : il faut une carte avant de charger la demande
             if (this.carte == null) {
-                return ResponseEntity.badRequest().body("❌ Veuillez d'abord charger une carte avant la demande !");
+                return ResponseEntity.badRequest().body("Veuillez d'abord charger une carte avant la demande !");
             }
 
             Object result = etatActuelle.loadDemandeLivraison(this, file, this.carte);
 
             if (result instanceof DemandeDeLivraison demande) {
-                this.demande = demande; // ✅ garder la demande en mémoire
+                this.demande = demande; //
                 return ResponseEntity.ok(Map.of(
-                        "message", "✅ Demande chargée avec succès",
+                        "message", "Demande chargée avec succès",
                         "etatCourant", getCurrentState(),
                         "demande", demande
                 ));
             } else if (result instanceof Exception e) {
-                return ResponseEntity.badRequest().body("❌ Erreur : " + e.getMessage());
+                return ResponseEntity.badRequest().body("Erreur : " + e.getMessage());
             } else {
-                return ResponseEntity.badRequest().body("❌ Erreur inconnue lors du chargement de la demande");
+                return ResponseEntity.badRequest().body("Erreur inconnue lors du chargement de la demande");
             }
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("❌ Exception : " + e.getMessage());
+            return ResponseEntity.badRequest().body("Exception : " + e.getMessage());
         }
     }
 
-    // 🔄 Setter pour changer d'état (utilisé par les classes d'état)
-    public void setCurrentState(Etat etat) {
-        this.etatActuelle = etat;
-    }
 
-    // 🔍 Pour connaître le nom de l'état actuel (affiché dans les réponses)
-    public String getCurrentState() {
-        return etatActuelle.getName();
-    }
-
-    // 🧠 (Optionnel) : Getter si tu veux exposer la carte ou la demande ailleurs
-    public Carte getCarte() {
-        return carte;
-    }
-
-    public DemandeDeLivraison getDemande() {
-        return demande;
-    }
 
     @PostMapping("/tournee/calculer")
     public ResponseEntity<?> calculerTournee() {
@@ -116,6 +93,22 @@ public class Controlleur {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Exception : " + e.getMessage());
         }
+    }
+
+    public void setCurrentState(Etat etat) {
+        this.etatActuelle = etat;
+    }
+
+    public String getCurrentState() {
+        return etatActuelle.getName();
+    }
+
+    public Carte getCarte() {
+        return carte;
+    }
+
+    public DemandeDeLivraison getDemande() {
+        return demande;
     }
 
 

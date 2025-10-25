@@ -34,7 +34,7 @@ public class DemandeDeLivraisonParseurXML {
                         Element eEntrepot = (Element)entrepots.item(0);
                         long idEntrepot = Long.parseLong(eEntrepot.getAttribute("adresse"));
                         LocalTime heureDepart = parseHeure(eEntrepot.getAttribute("heureDepart"));
-                        NoeudDePassage entrepot = new NoeudDePassage(idEntrepot, ((Noeud)carte.getNoeuds().get(idEntrepot)).getLatitude(), ((Noeud)carte.getNoeuds().get(idEntrepot)).getLongitude(), TypeNoeud.ENTREPOT, (double)0.0F, heureDepart);
+                        NoeudDePassage entrepot = new NoeudDePassage(idEntrepot, ((Noeud)carte.getNoeuds().get(idEntrepot)).getLatitude(), ((Noeud)carte.getNoeuds().get(idEntrepot)).getLongitude(), TypeNoeud.ENTREPOT, 0.0, null, heureDepart);
                         NodeList livraisonsXML = root.getElementsByTagName("livraison");
                         List<Livraison> livraisons = new ArrayList();
 
