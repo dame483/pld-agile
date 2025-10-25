@@ -13,7 +13,16 @@ public class NoeudDePassage extends Noeud {
         this.type = type;
         this.duree = duree;
         this.horaireArrivee = horaireArrivee;
-        this.horaireDepart = null; // initialement null, sera calculé plus tard
+        this.horaireDepart = null;
+    }
+
+    // Constructeur pour l'entrepôt
+    public NoeudDePassage(long id, double latitude, double longitude, TypeNoeud type, double duree, LocalTime horaireArrivee, LocalTime horaireDepart) {
+        super(id, latitude, longitude);
+        this.type = type;
+        this.duree = duree;
+        this.horaireArrivee = horaireArrivee;
+        this.horaireDepart = horaireDepart;
     }
 
     public TypeNoeud getType() {
@@ -63,7 +72,13 @@ public class NoeudDePassage extends Noeud {
 
     @Override
     public String toString() {
-        return "NoeudDePassage {id=" + getId() + ", latitude=" + getLatitude() + ", longitude=" + getLongitude() + ", type=" + type + ", duree=" + duree + ", horaireArrivee=" + horaireArrivee + ", horaireDepart=" + horaireDepart + "}";
+        return "NoeudDePassage {id=" + getId()
+                + ", latitude=" + getLatitude()
+                + ", longitude=" + getLongitude()
+                + ", type=" + type
+                + ", duree=" + duree
+                + ", horaireArrivee=" + horaireArrivee
+                + ", horaireDepart=" + horaireDepart + "}";
     }
 
     public static enum TypeNoeud {

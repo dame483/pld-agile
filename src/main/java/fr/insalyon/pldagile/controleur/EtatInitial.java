@@ -20,21 +20,21 @@ public class EtatInitial implements Etat {
             c.setCurrentState(new EtatCarteChargee(carte));
             return carte;
         } else {
-            System.err.println("❌ Erreur : carte non chargée");
+            System.err.println("Erreur : carte non chargée");
             return null;
         }
     }
 
     @Override
     public Object loadDemandeLivraison(Controlleur c, MultipartFile file, Carte carte) {
-        System.out.println("⚠️ Impossible de charger une demande sans carte !");
+        System.out.println("Impossible de charger une demande sans carte !");
         return null;
     }
 
     @Override
     public Object uploadXML(String type, MultipartFile file, Carte carte) {
         if (file == null || file.isEmpty()) {
-            System.err.println("❌ Fichier vide !");
+            System.err.println("Fichier vide !");
             return null;
         }
 
@@ -53,7 +53,7 @@ public class EtatInitial implements Etat {
             if (tempFile != null && tempFile.exists()) {
                 boolean deleted = tempFile.delete();
                 if (!deleted) {
-                    System.err.println("⚠️ Impossible de supprimer le fichier temporaire");
+                    System.err.println("⚠Impossible de supprimer le fichier temporaire");
                 }
             }
         }
