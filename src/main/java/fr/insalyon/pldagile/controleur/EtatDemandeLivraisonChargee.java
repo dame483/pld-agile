@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.time.LocalTime;
 
 
 @Component
@@ -31,7 +32,7 @@ public class  EtatDemandeLivraisonChargee implements Etat
 
     @Override
     public Object loadDemandeLivraison(Controlleur c, @RequestParam("file")  MultipartFile file, Carte carte) {
-        Object dem=uploadXML("demande", file, carte);
+        Object dem=uploadXML("demande", file, this.carte);
         if(dem instanceof DemandeDeLivraison){
             c.setCurrentState(new EtatDemandeLivraisonChargee(carte,(DemandeDeLivraison) dem));
             return dem;
@@ -51,19 +52,23 @@ public class  EtatDemandeLivraisonChargee implements Etat
     }*/
 
     @Override
-    public Object runCalculTournee(Controlleur c)
-    {
-        CalculTournee t= new CalculTournee(this.carte,this.demLivraison,4.167, this.demLivraison.getEntrepot().getHoraireDepart());
+    public Object runCalculTournee(Controlleur c) {
         try {
-            Tournee tournee= t.calculerTournee();
-            System.out.println( tournee );
-            c.setCurrentState(new EtatTourneeCalcule(this.carte, this.demLivraison));
+            LocalTime heureDepart = demLivraison.getEntrepot().getHoraireDepart();
+            if (heureDepart == null) {
+                heureDepart = LocalTime.of(8, 0); // 8h par défaut
+            }
+
+            CalculTournee t = new CalculTournee(carte, demLivraison, 4.1, heureDepart);
+            Tournee tournee = t.calculerTournee();
+            c.setCurrentState(new EtatTourneeCalcule(carte, demLivraison));
             return tournee;
+
         } catch (Exception e) {
             return e;
         }
-
     }
+
 
     /*@Override
     public void saveTournee(Controlleur c) {
@@ -97,7 +102,6 @@ public class  EtatDemandeLivraisonChargee implements Etat
             } else {
 
                 DemandeDeLivraison parsedDemande = DemandeDeLivraisonParseurXML.loadFromFile(tempFile, this.carte);
-                System.out.println(parsedDemande);
                 result = parsedDemande;
             }
 

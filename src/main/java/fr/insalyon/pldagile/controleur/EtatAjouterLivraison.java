@@ -115,4 +115,9 @@ public class EtatAjouterLivraison implements Etat {
     public String getName() {
         return "Etat Ajout de Livraison";
     }
+
+    @Override
+    public Object runCalculTournee(Controlleur c) {
+        return null;
+    }
 }
