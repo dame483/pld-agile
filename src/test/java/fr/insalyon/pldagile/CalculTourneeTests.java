@@ -11,12 +11,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class CalculTourneeTests {
 
-    // prévoir le cas du non bidirecionnelle
-    // faire une petites carte avec quelques troncons écris moi-même et vérifier les matrices
-    // prendre la version de malak et créer une branche : optimiser son warshall et renommer
-    // vérifier que les tests passent
-    // tester le calcul de tournée et TSP1
-    // vérifier les cas d'erreurs mardi
+
     @Test
     void testCalculerMatrice_surPetiteCarte() {
 
