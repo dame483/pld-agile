@@ -58,19 +58,61 @@
     const STEP_M=10;
 
     async function uploadCarte(file){
-        const formData=new FormData();
-        formData.append("file",file);
-        try{
-            const response=await fetch("http://localhost:8080/api/upload-carte",{method:"POST",body:formData});
-            if(!response.ok){alert(await response.text());return;}
-            res=await response.json();
-            carteData=res.carte
-            drawCarte(carteData);
-            document.getElementById('xmlDemande').disabled=false;
-            document.getElementById('labelDemande').style.backgroundColor="#b2d1d2";
-            document.getElementById('labelDemande').style.cursor="pointer";
-        }catch(err){alert(err.message);}
+    const formData = new FormData();
+    formData.append("file", file);
+    try {
+        const response = await fetch("http://localhost:8080/api/upload-carte", { method: "POST", body: formData });
+        if (!response.ok) {
+            alert(await response.text());
+            return;
+        }
+        const res = await response.json();
+
+        // 1) données carte reçues
+        carteData = res.carte;
+
+        // 2) dessiner la carte (remplace proprement les tronçons)
+        drawCarte(carteData);
+
+        // 3) RESET UI / données liées à l'ancienne demande et à la tournée
+        // vider les données JS
+        demandeData = null;
+
+        // vider l'affichage des fichiers côté UI
+        document.getElementById('xmlDemande').value = "";         // vide l'input file
+        document.getElementById('fileNameDemande').textContent = "";
+
+        // désactiver le bouton calcul (il sera activé seulement après chargement d'une nouvelle demande)
+        btnCalculTournee.disabled = true;
+
+        // vider les layers de livraisons / entrepôt / tournée / numéros
+        if (livraisonsLayer) livraisonsLayer.clearLayers();
+        if (entrepotLayer) entrepotLayer.clearLayers();
+        if (window.tourneeLayer) window.tourneeLayer.clearLayers();
+        if (window.directionNumbersLayer) window.directionNumbersLayer.clearLayers();
+
+        // arrêter et enlever l'animation si présente
+        stopAnimation();
+        if (animControl) { map.removeControl(animControl); animControl = null; }
+        animPath = []; isAnimating = false; isPaused = false;
+
+        // 4) activer/désactiver l'input demande selon le nouvel état renvoyé (optionnel)
+        // si le backend renvoie "Etat Carte Chargee", on garde le champ demande activé
+        if (res.etatCourant && res.etatCourant.toLowerCase().includes("carte")) {
+            document.getElementById('xmlDemande').disabled = false;
+            document.getElementById('labelDemande').style.backgroundColor = "#b2d1d2";
+            document.getElementById('labelDemande').style.cursor = "pointer";
+        } else {
+            document.getElementById('xmlDemande').disabled = true;
+            document.getElementById('labelDemande').style.backgroundColor = "#999";
+            document.getElementById('labelDemande').style.cursor = "not-allowed";
+        }
+
+    } catch (err) {
+        alert(err.message);
     }
+}
+
 
     async function uploadDemande(file){
         resetTournee();
@@ -96,23 +138,39 @@
       animPath=[]; isAnimating=false; isPaused=false;
     }
 
-    function drawCarte(c){
-      const n=c.noeuds||{}, t=c.troncons||[];
-      const m=document.getElementById('map'); m.style.display="block";
-      if(!map){
-        map=L.map('map');
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap'}).addTo(map);
-        livraisonsLayer=L.layerGroup().addTo(map);
-        entrepotLayer=L.layerGroup().addTo(map);
-        addLegend();
-      }
-      t.forEach(tc=>{
-        const o=n[tc.idOrigine], d=n[tc.idDestination];
-        if(o&&d) L.polyline([[o.latitude,o.longitude],[d.latitude,d.longitude]],{color:'#1a74bb',weight:2}).addTo(map);
-      });
-      const all=Object.values(n).map(x=>[x.latitude,x.longitude]);
-      if(all.length>0) map.fitBounds(L.latLngBounds(all).pad(0.1));
+    function drawCarte(c) {
+  const n = c.noeuds || {}, t = c.troncons || [];
+  const m = document.getElementById('map');
+  m.style.display = "block";
+
+  if (!map) {
+    map = L.map('map');
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap'
+    }).addTo(map);
+
+    // créer les layers **une seule fois**
+    livraisonsLayer = L.layerGroup().addTo(map);
+    entrepotLayer = L.layerGroup().addTo(map);
+    addLegend();
+  }
+
+  // Supprimer uniquement les tronçons de la carte précédente
+  if (window.tronconsLayer) window.tronconsLayer.clearLayers();
+  else window.tronconsLayer = L.layerGroup().addTo(map);
+
+  t.forEach(tc => {
+    const o = n[tc.idOrigine], d = n[tc.idDestination];
+    if (o && d) {
+      L.polyline([[o.latitude, o.longitude], [d.latitude, d.longitude]], { color: '#1a74bb', weight: 2 })
+       .addTo(window.tronconsLayer);
     }
+  });
+
+  const all = Object.values(n).map(x => [x.latitude, x.longitude]);
+  if (all.length > 0) map.fitBounds(L.latLngBounds(all).pad(0.1));
+}
+
 
     function drawLivraisons(d){
       if(!map||!carteData) return;

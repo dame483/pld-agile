@@ -121,4 +121,9 @@ public class  EtatTourneeCalcule implements Etat
     public String getName() {
         return "Etat Tournée Calculé";
     }
+
+    @Override
+    public Object runCalculTournee(Controlleur c) {
+        return null;
+    }
 }

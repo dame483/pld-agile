@@ -9,115 +9,114 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Map;
 
-
 @RestController
-@RequestMapping({"/api"})
-@CrossOrigin(
-        origins = {"*"}
-)
+@RequestMapping("/api")
+@CrossOrigin(origins = "*")
 public class Controlleur {
-    protected Etat etatActuelle;
 
 
+    // 🧩 Etat courant de l'application (machine à états)
+    private Etat etatActuelle;
+
+    // 🔹 Données principales conservées en mémoire
+    private Carte carte;
+    private DemandeDeLivraison demande;
+
+    // 🏁 Constructeur : état initial au démarrage
     public Controlleur() {
-         etatActuelle= new EtatInitial();
+        this.etatActuelle = new EtatInitial();
     }
 
-
-    @PostMapping({"/upload-carte"})
+    @PostMapping("/upload-carte")
     public ResponseEntity<?> loadCarte(@RequestParam("file") MultipartFile file) {
+        // ⚠️ Réinitialisation complète
+        this.carte = null;
+        this.demande = null;
 
-        Carte carte = etatActuelle.loadCarte(this,file);
+        // 🔹 Remettre l'état à initial
+        this.setCurrentState(new EtatInitial());
 
-        if (carte != null) {
-            Map<String, Object> response = Map.of(
-                    "message", "La carte est bien chargé ",
-                    "etatCourant", this.getCurrentState(),
-                    "carte", carte
-            );
-            return ResponseEntity.ok(response);
+        Carte newCarte = etatActuelle.loadCarte(this, file);
+        if (newCarte != null) {
+            this.carte = newCarte;
+            return ResponseEntity.ok(Map.of(
+                    "message", "Carte chargée",
+                    "etatCourant", getCurrentState(),
+                    "carte", newCarte
+            ));
+        } else {
+            return ResponseEntity.badRequest().body("Erreur : carte non chargée");
         }
-        else{
-            return ResponseEntity.badRequest().body("Erreur ");
-        }
-
     }
 
-    @PostMapping({"/upload-demande"})
-    public ResponseEntity<?> loadDemandeLivraison(@RequestParam("file") MultipartFile file, Carte carte){
-            Object demande=etatActuelle.loadDemandeLivraison(this,file,carte);
 
 
-            if(demande instanceof  DemandeDeLivraison){
-
-                Map<String, Object> response = Map.of(
-                        "message", "La demande est bien chargé ",
-                        "etatCourant", this.getCurrentState(),
-                        "demande", (DemandeDeLivraison)demande
-                );
-
-                return ResponseEntity.ok(response);
-            }
-            else if (demande instanceof Exception) {
-                String errorMes=((Exception) demande).getMessage();
-                return ResponseEntity.badRequest().body("Erreur : "+errorMes);
-
-        } else{
-                return ResponseEntity.badRequest().body("Erreur  ");
+    // 🚚 Étape 2 : Charger la demande de livraison
+    @PostMapping("/upload-demande")
+    public ResponseEntity<?> loadDemandeLivraison(@RequestParam("file") MultipartFile file) {
+        try {
+            // ⚠️ sécurité : il faut une carte avant de charger la demande
+            if (this.carte == null) {
+                return ResponseEntity.badRequest().body("❌ Veuillez d'abord charger une carte avant la demande !");
             }
 
-    }
+            Object result = etatActuelle.loadDemandeLivraison(this, file, this.carte);
 
-    /*@PostMapping({"/upload-demande"})
-    public void addLivraison(@RequestParam("file") MultipartFile file, Carte carte){
-        etatActuelle.addLivraison(this, file,carte);
-    }
-
-    public void deleteLivraison(Carte carte){
-        etatActuelle.deleteLivraison(this);
-    }*/
-
-
-    /*@PostMapping({"/tournee/calculer"})
-    public ResponseEntity<?> runCalculTournee(){
-        Object tournee= etatActuelle.runCalculTournee(this);
-
-        if(tournee instanceof Tournee){
-
-            Map<String, Object> response = Map.of(
-                    "message", "Tournée Calculé",
-                    "etatCourant", this.getCurrentState(),
-                    "tournee", (Tournee)tournee
-            );
-
-            return ResponseEntity.ok(response);
+            if (result instanceof DemandeDeLivraison demande) {
+                this.demande = demande; // ✅ garder la demande en mémoire
+                return ResponseEntity.ok(Map.of(
+                        "message", "✅ Demande chargée avec succès",
+                        "etatCourant", getCurrentState(),
+                        "demande", demande
+                ));
+            } else if (result instanceof Exception e) {
+                return ResponseEntity.badRequest().body("❌ Erreur : " + e.getMessage());
+            } else {
+                return ResponseEntity.badRequest().body("❌ Erreur inconnue lors du chargement de la demande");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("❌ Exception : " + e.getMessage());
         }
-        else if (tournee instanceof Exception) {
-            String errorMes=((Exception) tournee).getMessage();
-            return ResponseEntity.badRequest().body("Erreur : "+errorMes);
-
-        } else{
-            return ResponseEntity.badRequest().body("Erreur ");
-        }
-    }*/
-    /*public void saveTournee(){
-        etatActuelle.saveTournee(this);
-    }*/
-    /*public void leftClick(){
-
     }
-    public void rightClick(){
 
-    }*/
-
-
-
+    // 🔄 Setter pour changer d'état (utilisé par les classes d'état)
     public void setCurrentState(Etat etat) {
         this.etatActuelle = etat;
     }
+
+    // 🔍 Pour connaître le nom de l'état actuel (affiché dans les réponses)
     public String getCurrentState() {
         return etatActuelle.getName();
     }
+
+    // 🧠 (Optionnel) : Getter si tu veux exposer la carte ou la demande ailleurs
+    public Carte getCarte() {
+        return carte;
+    }
+
+    public DemandeDeLivraison getDemande() {
+        return demande;
+    }
+
+    @PostMapping("/tournee/calculer")
+    public ResponseEntity<?> calculerTournee() {
+        try {
+            Object result = etatActuelle.runCalculTournee(this);
+
+            if (result instanceof Tournee) {
+                return ResponseEntity.ok(Map.of(
+                        "message", "Tournée calculée",
+                        "tournee", result
+                ));
+            } else if (result instanceof Exception e) {
+                return ResponseEntity.badRequest().body("Erreur : " + e.getMessage());
+            } else {
+                return ResponseEntity.badRequest().body("Erreur inconnue");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Exception : " + e.getMessage());
+        }
+    }
+
+
 }
-
-
