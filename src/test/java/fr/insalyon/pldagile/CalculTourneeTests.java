@@ -15,11 +15,11 @@ public class CalculTourneeTests {
 
 
     /**
-     * Test CalculChemins sur un graphe très simple (2 nœuds et un tronçon).
+     * Test FloydWarshall sur un graphe très simple (2 nœuds et un tronçon).
      * Vérifie que la distance minimale calculée entre n1 et n2 est correcte.
      */
     @Test
-    void testCalculChemins_simpleGraphe() {
+    void testFloydWarshall_simpleGraphe() {
         Carte carte = new Carte();
         Noeud n1 = new Noeud(1L, 0, 0);
         Noeud n2 = new Noeud(2L, 1, 1);
@@ -27,7 +27,7 @@ public class CalculTourneeTests {
         carte.AjouterNoeud(n2);
         carte.AjouterTroncon(new Troncon(1L, 2L, 10.0, "rue X"));
 
-        CalculChemins fw = new CalculChemins(carte);
+        FloydWarshall fw = new FloydWarshall(carte);
         fw.calculerMatrice(List.of(
                 new NoeudDePassage(n1.getId(), 0, 0, null, 0, null),
                 new NoeudDePassage(n2.getId(), 1, 1, null, 0, null)
@@ -49,8 +49,10 @@ public class CalculTourneeTests {
     }
 
 
+
+
     /**
-     * Test Dijkstra via CalculChemins.calculerMatrice sur un graphe de 6 nœuds.
+     * Test Dijkstra via FloydWarshall.calculerMatrice sur un graphe de 6 nœuds.
      * 3 nœuds de passage et tronçons directionnels.
      * Vérifie que les distances minimales entre tous les nœuds de passage sont correctes.
      */
@@ -80,10 +82,10 @@ public class CalculTourneeTests {
                 new NoeudDePassage(5, 0, 0, null, 0, null)
         );
 
-        CalculChemins chemins = new CalculChemins(carte);
-        chemins.calculerMatrice(noeudsPassage);
+        FloydWarshall fw = new FloydWarshall(carte);
+        fw.calculerMatrice(noeudsPassage);
 
-        double[][] dist = chemins.getDistances();
+        double[][] dist = fw.getDistances();
 
         // Vérification des distances minimales (indices = positions dans la liste)
         assertEquals(0.0, dist[0][0], 1e-6);        // n1->n1
@@ -129,8 +131,8 @@ public class CalculTourneeTests {
 
         List<NoeudDePassage> noeuds = List.of(np1, np2, np3);
 
-        //CalculChemins
-        CalculChemins fw = new CalculChemins(carte);
+        //FloydWarshall
+        FloydWarshall fw = new FloydWarshall(carte);
         fw.calculerMatrice(noeuds);
 
         double[][] distances = fw.getDistances();
