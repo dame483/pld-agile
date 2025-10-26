@@ -1,5 +1,6 @@
 package fr.insalyon.pldagile.algorithme;
 
+import fr.insalyon.pldagile.exception.TourneeNonConnexeException;
 import fr.insalyon.pldagile.modele.*;
 
 import java.time.LocalTime;
@@ -23,16 +24,34 @@ public class CalculTournee {
         this.heureDepart = heureDepart;
     }
 
-    public Tournee calculerTournee() throws Exception {
+    public Tournee calculerTournee() throws TourneeNonConnexeException {
         List<NoeudDePassage> noeuds = demande.getNoeudsDePassage();
-        List<Livraison> livraisons = demande.getLivraisons();
-
-        //  Floyd-Warshall : calcul des plus courts chemins
-        FloydWarshall floyd = new FloydWarshall(ville);
-        floyd.calculerMatrice(noeuds);
+        FloydWarshall floyd = calculerFloydWarshall(noeuds);
         Chemin[][] matriceChemins = floyd.getMatriceChemins();
 
-        //  Graphe pour le TSP
+        verifierConnexiteChemins(matriceChemins);
+
+        GrapheComplet g = construireGrapheComplet(noeuds, matriceChemins);
+        List<Integer> solution = resoudreTSP(noeuds, demande.getLivraisons(), g);
+
+        List<Chemin> cheminsTournee = new ArrayList<>();
+        LocalTime heureFin = calculerCheminsEtHoraires(solution, noeuds, matriceChemins, cheminsTournee);
+        ajouterRetourEntrepot(solution, noeuds, matriceChemins, cheminsTournee, heureFin);
+
+        return new Tournee(cheminsTournee, dureeTotale);
+    }
+
+
+
+    private FloydWarshall calculerFloydWarshall(List<NoeudDePassage> noeuds) {
+        FloydWarshall floyd = new FloydWarshall(ville);
+        floyd.calculerMatrice(noeuds);
+        return floyd;
+    }
+
+
+
+    private GrapheComplet construireGrapheComplet(List<NoeudDePassage> noeuds, Chemin[][] matriceChemins) {
         GrapheComplet g = new GrapheComplet(noeuds.size());
         for (int i = 0; i < noeuds.size(); i++) {
             for (int j = 0; j < noeuds.size(); j++) {
@@ -41,21 +60,30 @@ public class CalculTournee {
                 }
             }
         }
+        return g;
+    }
 
-        //  Résolution TSP avec précédences
+
+
+    private List<Integer> resoudreTSP(List<NoeudDePassage> noeuds, List<Livraison> livraisons, GrapheComplet g) {
         TSPAvecPrecedence tsp = new TSPAvecPrecedence(noeuds, livraisons, g);
         tsp.resoudre(0);
         List<Integer> solution = tsp.getSolution(0);
-
         if (solution == null || solution.isEmpty()) {
             throw new RuntimeException("Le TSP n’a produit aucune solution !");
         }
+        return solution;
+    }
 
-        //  Calcul des chemins et horaires
-        List<Chemin> cheminsTournee = new ArrayList<>();
-        LocalTime heureCourante = heureDepart; // départ exact de l’entrepôt
 
-        // Entrepôt initialisation
+
+    private LocalTime calculerCheminsEtHoraires(
+            List<Integer> solution,
+            List<NoeudDePassage> noeuds,
+            Chemin[][] matriceChemins,
+            List<Chemin> cheminsTournee) {
+
+        LocalTime heureCourante = heureDepart;
         NoeudDePassage entrepot = noeuds.get(solution.get(0));
         entrepot.setHoraireDepart(heureDepart);
 
@@ -71,45 +99,132 @@ public class CalculTournee {
             // Départ = heureCourante
             depart.setHoraireDepart(heureCourante);
 
-            // Calcul de l'heure d'arrivée
+            // Temps de trajet
             double dureeTrajetSec = chemin.getLongueurTotal() / vitesse;
             LocalTime heureArrivee = heureCourante.plusSeconds(Math.round(dureeTrajetSec));
             arrivee.setHoraireArrivee(heureArrivee);
 
-            // Heure de départ du noeud = arrivée + durée de service (sauf pour l’entrepôt)
+            // Pause sur place (livraison/ramassage)
             heureCourante = heureArrivee.plusSeconds(Math.round(arrivee.getDuree()));
             arrivee.setHoraireDepart(heureCourante);
 
             longueurTotale += chemin.getLongueurTotal();
             dureeTotale += dureeTrajetSec + arrivee.getDuree();
-
             cheminsTournee.add(chemin);
         }
 
-        //  Retour à l’entrepôt
+        return heureCourante;
+    }
+
+
+
+
+    private void ajouterRetourEntrepot(
+            List<Integer> solution,
+            List<NoeudDePassage> noeuds,
+            Chemin[][] matriceChemins,
+            List<Chemin> cheminsTournee,
+            LocalTime heureCourante) {
+
         int dernierIdx = solution.get(solution.size() - 1);
         Chemin retour = matriceChemins[dernierIdx][solution.get(0)];
-        if (retour != null) {
-            NoeudDePassage depart = retour.getNoeudDePassageDepart();
-            NoeudDePassage arrivee = retour.getNoeudDePassageArrivee();
+        if (retour == null) return;
 
-            depart.setHoraireDepart(heureCourante);
+        NoeudDePassage depart = retour.getNoeudDePassageDepart();
+        NoeudDePassage arrivee = retour.getNoeudDePassageArrivee();
 
-            double dureeTrajetRetour = retour.getLongueurTotal() / vitesse;
-            LocalTime heureArriveeFinale = heureCourante.plusSeconds(Math.round(dureeTrajetRetour));
-            arrivee.setHoraireArrivee(heureArriveeFinale);
+        depart.setHoraireDepart(heureCourante);
 
-            // Entrepôt : départ = heureDepart initial, arrivée = fin de tournée
-            entrepot.setHoraireArrivee(heureArriveeFinale);
+        double dureeTrajetRetour = retour.getLongueurTotal() / vitesse;
+        LocalTime heureArriveeFinale = heureCourante.plusSeconds(Math.round(dureeTrajetRetour));
 
-            longueurTotale += retour.getLongueurTotal();
-            dureeTotale = ChronoUnit.SECONDS.between(heureDepart, heureArriveeFinale);
+        arrivee.setHoraireArrivee(heureArriveeFinale);
+        noeuds.get(0).setHoraireArrivee(heureArriveeFinale);
 
-            cheminsTournee.add(retour);
+        longueurTotale += retour.getLongueurTotal();
+        dureeTotale = ChronoUnit.SECONDS.between(heureDepart, heureArriveeFinale);
+
+        cheminsTournee.add(retour);
+    }
+
+
+
+
+    private void afficherDebugFloydWarshall(FloydWarshall floyd, List<NoeudDePassage> noeuds) {
+        double[][] distances = floyd.getDistances();
+        Chemin[][] chemins = floyd.getMatriceChemins();
+
+        int cellWidth = 12;
+        System.out.println("=== Matrice des distances (en mètres) ===");
+        System.out.printf("%" + cellWidth + "s", "");
+        for (NoeudDePassage n : noeuds) {
+            System.out.printf("%" + cellWidth + "s", n.getId());
+        }
+        System.out.println();
+
+        for (int i = 0; i < distances.length; i++) {
+            System.out.printf("%" + cellWidth + "s", noeuds.get(i).getId());
+            for (int j = 0; j < distances[i].length; j++) {
+                if (distances[i][j] == Double.POSITIVE_INFINITY) {
+                    System.out.printf("%" + cellWidth + "s", "INF");
+                } else {
+                    System.out.printf("%" + cellWidth + ".1f", distances[i][j]);
+                }
+            }
+            System.out.println();
         }
 
-        return new Tournee(cheminsTournee, dureeTotale);
+        System.out.println("\n=== Matrice des chemins : Ordre des tronçons ===");
+        for (int i = 0; i < chemins.length; i++) {
+            for (int j = 0; j < chemins[i].length; j++) {
+                Chemin c = chemins[i][j];
+                if (c == null || c.getLongueurTotal() == Double.POSITIVE_INFINITY) {
+                    System.out.print("INF\t");
+                } else {
+                    String tronconsStr = c.getTroncons().stream()
+                            .map(Troncon::getnomRue)
+                            .reduce((a, b) -> a + ", " + b)
+                            .orElse("");
+                    System.out.print("[" + tronconsStr + "]\t");
+                }
+            }
+            System.out.println();
+        }
+
+        // Afficher la matrice du graphe complet
+        System.out.println("\n=== Matrice du graphe complet (coûts TSP) ===");
+        GrapheComplet g = new GrapheComplet(noeuds.size());
+        for (int i = 0; i < noeuds.size(); i++) {
+            for (int j = 0; j < noeuds.size(); j++) {
+                if (i != j && chemins[i][j] != null) {
+                    g.setCout(i, j, chemins[i][j].getLongueurTotal());
+                }
+            }
+        }
+
+        System.out.print("    ");
+        for (int j = 0; j < noeuds.size(); j++) {
+            System.out.printf("%6d", j);
+        }
+        System.out.println();
+
+        for (int i = 0; i < noeuds.size(); i++) {
+            System.out.printf("%3d ", i);
+            for (int j = 0; j < noeuds.size(); j++) {
+                double cout = g.getCout(i, j);
+                if (cout == Double.POSITIVE_INFINITY) {
+                    System.out.printf("%6s", "INF");
+                } else {
+                    System.out.printf("%6.1f", cout);
+                }
+            }
+            System.out.println();
+        }
+
+        System.out.println();
     }
+
+
 
     public double getLongueurTotale() {
         return longueurTotale;
@@ -118,4 +233,25 @@ public class CalculTournee {
     public double getDureeTotale() {
         return dureeTotale;
     }
+
+    /**
+     * Vérifie que tous les noeuds de passage sont connectés entre eux.
+     * @param matriceChemins la matrice des chemins calculée par FloydWarshall
+     * @throws Exception si un chemin est manquant ou infini (graphe non connexe)
+     */
+    private void verifierConnexiteChemins(Chemin[][] matriceChemins) throws TourneeNonConnexeException {
+        int n = matriceChemins.length;
+        for (int i = 0; i < n; i++) {
+            for (int j = i+1; j < n; j++) {
+                if (matriceChemins[i][j] == null || matriceChemins[i][j].getLongueurTotal() == Double.POSITIVE_INFINITY) {
+                    throw new TourneeNonConnexeException(
+                            "La tournée ne peut pas être calculée : le graphe des chemins n'est pas connexe entre "
+                                    + i + " et " + j
+                    );
+                }
+            }
+        }
+    }
+
+
 }
