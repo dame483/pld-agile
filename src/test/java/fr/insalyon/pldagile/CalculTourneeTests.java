@@ -1,10 +1,12 @@
 package fr.insalyon.pldagile;
 
+import fr.insalyon.pldagile.exception.TourneeNonConnexeException;
 import fr.insalyon.pldagile.modele.*;
 import fr.insalyon.pldagile.algorithme.*;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.time.LocalTime;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -12,6 +14,98 @@ import static org.junit.jupiter.api.Assertions.*;
 public class CalculTourneeTests {
 
 
+    /**
+     * Test FloydWarshall sur un graphe très simple (2 nœuds et un tronçon).
+     * Vérifie que la distance minimale calculée entre n1 et n2 est correcte.
+     */
+    @Test
+    void testFloydWarshall_simpleGraphe() {
+        Carte carte = new Carte();
+        Noeud n1 = new Noeud(1L, 0, 0);
+        Noeud n2 = new Noeud(2L, 1, 1);
+        carte.AjouterNoeud(n1);
+        carte.AjouterNoeud(n2);
+        carte.AjouterTroncon(new Troncon(1L, 2L, 10.0, "rue X"));
+
+        FloydWarshall fw = new FloydWarshall(carte);
+        fw.calculerMatrice(List.of(
+                new NoeudDePassage(n1.getId(), 0, 0, null, 0, null),
+                new NoeudDePassage(n2.getId(), 1, 1, null, 0, null)
+        ));
+
+        assertEquals(10.0, fw.getDistances()[0][1], 1e-6);
+    }
+
+
+    /**
+     * Test des méthodes setCout/getCout de GrapheComplet.
+     * Vérifie qu’on peut stocker et récupérer correctement un coût entre deux nœuds.
+     */
+    @Test
+    void testGrapheComplet_setEtGetCout() {
+        GrapheComplet g = new GrapheComplet(3);
+        g.setCout(0, 1, 5.0);
+        assertEquals(5.0, g.getCout(0, 1));
+    }
+
+
+
+
+    /**
+     * Test Dijkstra via FloydWarshall.calculerMatrice sur un graphe de 6 nœuds.
+     * 3 nœuds de passage et tronçons directionnels.
+     * Vérifie que les distances minimales entre tous les nœuds de passage sont correctes.
+     */
+    @Test
+    void testDijkstra_surGraphe6Noeuds() {
+        Carte carte = new Carte();
+        // 6 noeuds
+        for (long i = 1; i <= 6; i++) {
+            carte.AjouterNoeud(new Noeud(i, i, i));
+        }
+
+        // Arêtes directionnelles
+        carte.AjouterTroncon(new Troncon(1, 2, 7.0, "A"));
+        carte.AjouterTroncon(new Troncon(1, 3, 9.0, "B"));
+        carte.AjouterTroncon(new Troncon(1, 6, 14.0, "C"));
+        carte.AjouterTroncon(new Troncon(2, 3, 10.0, "D"));
+        carte.AjouterTroncon(new Troncon(2, 4, 15.0, "E"));
+        carte.AjouterTroncon(new Troncon(3, 4, 11.0, "F"));
+        carte.AjouterTroncon(new Troncon(3, 6, 2.0, "G"));
+        carte.AjouterTroncon(new Troncon(6, 5, 9.0, "H"));
+        carte.AjouterTroncon(new Troncon(4, 5, 6.0, "I"));
+
+        // Nœuds de passage : n1, n4, n5
+        List<NoeudDePassage> noeudsPassage = List.of(
+                new NoeudDePassage(1, 0, 0, null, 0, null),
+                new NoeudDePassage(4, 0, 0, null, 0, null),
+                new NoeudDePassage(5, 0, 0, null, 0, null)
+        );
+
+        FloydWarshall fw = new FloydWarshall(carte);
+        fw.calculerMatrice(noeudsPassage);
+
+        double[][] dist = fw.getDistances();
+
+        // Vérification des distances minimales (indices = positions dans la liste)
+        assertEquals(0.0, dist[0][0], 1e-6);        // n1->n1
+        assertEquals(20.0, dist[0][1], 1e-6);       // n1->n4 (1->3->4 = 9+11)
+        assertEquals(20.0, dist[0][2], 1e-6);
+        assertEquals(Double.POSITIVE_INFINITY, dist[1][0], 1e-6); // n4->n1 impossible
+        assertEquals(0.0, dist[1][1], 1e-6);        // n4->n4
+        assertEquals(6.0, dist[1][2], 1e-6);        // n4->n5
+        assertEquals(Double.POSITIVE_INFINITY, dist[2][0], 1e-6); // n5->n1 impossible
+        assertEquals(Double.POSITIVE_INFINITY, dist[2][1], 1e-6); // n5->n4 impossible
+        assertEquals(0.0, dist[2][2], 1e-6);        // n5->n5
+    }
+
+
+
+
+    /**
+     * Test calculerMatrice sur un petit graphe de 3 nœuds avec tronçons multiples.
+     * Vérifie la cohérence des distances et des chemins calculés, y compris les chemins inatteignables.
+     */
     @Test
     void testCalculerMatrice_surPetiteCarte() {
 
@@ -86,7 +180,6 @@ public class CalculTourneeTests {
 
 
         //Vérifier cohérence des chemins
-        // Chemin 1→3 doit contenir 2 tronçons : (1-2) + (2-3)
         Chemin chemin13 = chemins[0][2];
         assertNotNull(chemin13);
         assertEquals(2, chemin13.getTroncons().size());
@@ -94,139 +187,205 @@ public class CalculTourneeTests {
         assertEquals(1L, chemin13.getNoeudDePassageDepart().getId());
         assertEquals(3L, chemin13.getNoeudDePassageArrivee().getId());
 
-        // Chemin 1→2 = 1 tronçon
         Chemin chemin12 = chemins[0][1];
         assertEquals(1, chemin12.getTroncons().size());
         assertEquals(10.0, chemin12.getLongueurTotal(), 1e-6);
 
-        // Chemin 2→3 = 1 tronçon
         Chemin chemin23 = chemins[1][2];
         assertEquals(1, chemin23.getTroncons().size());
         assertEquals(5.0, chemin23.getLongueurTotal(), 1e-6);
 
 
-        // Chemin 3→1 = inexistant
         Chemin chemin31 = chemins[2][0]; // indices 2 et 0 pour 3->1
         assertNull(chemin31); // si votre implémentation crée un Chemin avec INF
 
 
     }
 
-    /*
-        @Test
-        void testTSPAvecPrecedence_surPetitGraphe() {
-
-            NoeudDePassage entrepot = new NoeudDePassage(0L, 0, 0, null, 0, null);
-            NoeudDePassage pickup1 = new NoeudDePassage(3L, 1, 1, NoeudDePassage.TypeNoeud.PICKUP, 0, null);
-            NoeudDePassage delivery1 = new NoeudDePassage(1L, 2, 2, NoeudDePassage.TypeNoeud.DELIVERY, 0, null);
-            NoeudDePassage pickup2 = new NoeudDePassage(4L, 3, 3, NoeudDePassage.TypeNoeud.PICKUP, 0, null);
-            NoeudDePassage delivery2 = new NoeudDePassage(2L, 4, 4, NoeudDePassage.TypeNoeud.DELIVERY, 0, null);
-
-            List<NoeudDePassage> noeuds = Arrays.asList(entrepot, pickup1, delivery1, pickup2, delivery2);
-
-            // Création des livraisons
-            Livraison l1 = new Livraison(pickup1, delivery1);
-            Livraison l2 = new Livraison(pickup2, delivery2);
-            List<Livraison> livraisons = Arrays.asList(l1, l2);
-
-            // Graphe complet avec les coûts
-            int n = noeuds.size();
-            GrapheComplet g = new GrapheComplet(n);
-
-            // Initialisation avec INFINITY (indices 0 à n-1)
-            for (int i = 0; i < n; i++) {
-                for (int j = 0; j < n; j++) {
-                    if (i != j) {
-                        g.setCout(i, j, Double.POSITIVE_INFINITY);
-                    }
-                }
-            }
-
-            // Définition des coûts (indices 0 à n-1)
-            g.setCout(0, 1, 1);    // 1->2
-            g.setCout(0, 2, 5);    // 1->3
-            g.setCout(0, 3, 2);    // 1->4
-            g.setCout(0, 4, 10);   // 1->5
-            g.setCout(1, 0, 20);   // 2->1
-            g.setCout(1, 2, 8);    // 2->3
-            g.setCout(1, 3, 5);    // 2->4
-            g.setCout(1, 4, 11);   // 2->5
-            g.setCout(2, 0, 8);    // 3->1
-            g.setCout(2, 1, 7);    // 3->2
-            g.setCout(2, 3, 6);    // 3->4
-            g.setCout(2, 4, 4);    // 3->5
-            g.setCout(3, 0, 3);    // 4->1
-            g.setCout(3, 1, 15);   // 4->2
-            g.setCout(3, 2, 5);    // 4->3
-            g.setCout(3, 4, 8);    // 4->5
-            g.setCout(4, 0, 15);   // 5->1
-            g.setCout(4, 1, 7);    // 5->2
-            g.setCout(4, 2, 6);    // 5->3
-            g.setCout(4, 3, 9);    // 5->4
-
-            // Affichage de l'entête (labels 1 à n pour l'utilisateur)
-            System.out.print("    ");
-            for (int j = 0; j < n; j++) {
-                System.out.printf("%6d", j);
-            }
-            System.out.println();
-
-            // Affichage de la matrice (accès avec indices 0 à n-1)
-            for (int i = 0; i < n; i++) {
-                System.out.printf("%3d ", i); // label 1 à n pour l'utilisateur
-                for (int j = 0; j < n; j++) {
-                    double cout = g.getCout(i, j);
-                    if (cout == Double.POSITIVE_INFINITY) {
-                        System.out.printf("%6s", "INF");
-                    } else {
-                        System.out.printf("%6.1f", cout);
-                    }
-                }
-                System.out.println();
-            }
 
 
-
-            // TSP avec précédences
-            TSPAvecPrecedence tsp = new TSPAvecPrecedence(noeuds, livraisons, g);
-            tsp.resoudre(0); // départ depuis l'entrepôt
-
-            List<Integer> solution = tsp.getSolution(0);
-            if (solution != null) {
-                System.out.print("Chemin trouvé : ");
-                for (int idx : solution) {
-                    System.out.print(idx + " "); // affiche les indices des nœuds
-                }
-                System.out.println();
-            }
-
-            assertNotNull(solution, "Le TSP doit renvoyer une solution");
-            assertFalse(solution.isEmpty(), "La solution ne doit pas être vide");
-
-            // Vérification que le chemin choisi correspond au plus court valide
-            List<Integer> cheminAttendu = Arrays.asList(0, 1, 2, 3, 4); // correspond à 0→1→2→3→4→0
-            assertEquals(cheminAttendu, solution, "Le TSP doit choisir le chemin le plus court respectant les précédences");
-
-            // Optionnel : calculer la distance totale et vérifier
-            double distanceTotale = 0;
-            for (int i = 0; i < solution.size() - 1; i++) {
-                distanceTotale += g.getCout(solution.get(i), solution.get(i + 1));
-            }
-            distanceTotale += g.getCout(solution.get(solution.size() - 1), 0); // retour à l'entrepôt
-            assertEquals(10 + 5 + 6 + 7 + 2, distanceTotale, 1e-6, "La distance totale doit correspondre au plus court chemin valide");
-        }
-    */
+    /**
+     * Test le calcul des horaires de départ et d’arrivée pour des chemins simples.
+     * Vérifie que l’horaire d’arrivée est après l’horaire de départ et que les horaires sont correctement calculés.
+     */
     @Test
-    void testTSPAvecPrecedence_surPetitGraphe() throws Exception {
-//  Charger la carte
+    void testCalculHorairesChemins_simpleCas() throws Exception {
+        // Mock simple : 2 points et un chemin de 100 m à 5 m/s
+        Carte carte = new Carte();
+        Noeud n1 = new Noeud(1L, 0, 0);
+        Noeud n2 = new Noeud(2L, 1, 1);
+        carte.AjouterNoeud(n1);
+        carte.AjouterNoeud(n2);
+        Troncon t = new Troncon(1L, 2L, 100.0, "Rue");
+        carte.AjouterTroncon(t);
+
+        NoeudDePassage np1 = new NoeudDePassage(1L, 0, 0, null, 0, null);
+        NoeudDePassage np2 = new NoeudDePassage(2L, 1, 1, null, 10, null);
+
+        DemandeDeLivraison demande = new DemandeDeLivraison(np1, List.of(
+                new Livraison(np1, np2)
+        ));
+
+        CalculTournee ct = new CalculTournee(carte, demande, 5.0, LocalTime.of(8, 0));
+        Tournee tournee = ct.calculerTournee();
+
+        assertNotNull(tournee);
+        assertEquals(LocalTime.of(8, 0), np1.getHoraireDepart());
+        assertTrue(np2.getHoraireArrivee().isAfter(np1.getHoraireDepart()));
+    }
+
+
+
+    /**
+     * Test TSPAvecPrecedence sur un petit graphe de 3 nœuds.
+     * Vérifie que l’ordre des livraisons est respecté dans la solution finale.
+     */
+    @Test
+    void testTSPAvecPrecedence_ordreRespecte() {
+        GrapheComplet g = new GrapheComplet(3);
+        g.setCout(0, 1, 10);
+        g.setCout(1, 2, 5);
+        g.setCout(0, 2, 20);
+
+        List<NoeudDePassage> noeuds = new ArrayList<>();
+        noeuds.add(new NoeudDePassage(1L, 0, 0, null, 0, null));
+        noeuds.add(new NoeudDePassage(2L, 1, 1, null, 0, null));
+        noeuds.add(new NoeudDePassage(3L, 2, 2, null, 0, null));
+
+        List<Livraison> livraisons = new ArrayList<>();
+        livraisons.add(new Livraison(noeuds.get(0), noeuds.get(1)));
+
+        TSPAvecPrecedence tsp = new TSPAvecPrecedence(noeuds, livraisons, g);
+        tsp.resoudre(0);
+
+        List<Integer> sol = tsp.getSolution(0);
+        assertNotNull(sol);
+        assertTrue(sol.containsAll(List.of(0, 1, 2)));
+    }
+
+
+
+    /**
+     * Teste le calcul complet d'une tournée à partir de fichiers XML de carte et de demande.
+     * Vérifie que la tournée contient des chemins avec les bonnes distances et horaires.
+     */
+    @Test
+    void testCalculerTournee_surPetitGraphe() throws Exception {
+
         File fichierCarte = new File("src/main/resources/donnees/plans/petitPlan.xml");
         Carte ville = CarteParseurXML.loadFromFile(fichierCarte);
-        System.out.println("Carte chargée.");
+        assertNotNull(ville, "La carte doit être chargée");
 
-        //  Charger la demande de livraison
         File fichierDemande = new File("src/main/resources/donnees/demandes/demandePetit2.xml");
         DemandeDeLivraison demande = DemandeDeLivraisonParseurXML.loadFromFile(fichierDemande, ville);
-        System.out.println("Demande de livraison chargée.");
+        assertNotNull(demande, "La demande doit être chargée");
+
+        LocalTime heureDepart = (demande.getEntrepot() != null && demande.getEntrepot().getHoraireDepart() != null)
+                ? demande.getEntrepot().getHoraireDepart()
+                : LocalTime.of(8, 0);
+
+
+        double vitesse = 4.16; // m/s
+        CalculTournee calculTournee = new CalculTournee(ville, demande, vitesse, heureDepart);
+        Tournee tournee = calculTournee.calculerTournee();
+        assertNotNull(tournee, "La tournée doit être calculée");
+
+        List<Chemin> chemins = tournee.getChemins();
+        assertFalse(chemins.isEmpty(), "La tournée doit contenir des chemins");
+
+
+        long[] ordreAttendu = {2835339774L, 208769120L, 1679901320L, 208769457L, 25336179L, 2835339774L};
+        double[] distancesAttendu = {447, 866, 411, 1540, 1115};
+        String[] horairesDepartAttendu = {"08:00:00", "08:08:47", "08:19:15", "08:30:54", "08:45:04"};
+        String[] horairesArriveeAttendu = {"08:01:47", "08:12:15", "08:20:54", "08:37:04", "08:49:32"};
+
+        for (int i = 0; i < chemins.size(); i++) {
+            Chemin c = chemins.get(i);
+
+            long departId = c.getNoeudDePassageDepart().getId();
+            long arriveeId = c.getNoeudDePassageArrivee().getId();
+
+            assertEquals(ordreAttendu[i], departId, "Noeud de départ chemin " + (i + 1));
+            assertEquals(ordreAttendu[i + 1], arriveeId, "Noeud d'arrivée chemin " + (i + 1));
+
+            assertEquals(distancesAttendu[i], c.getLongueurTotal(), 1.0, "Distance chemin " + (i + 1));
+
+            // Horaire de départ du chemin : horaireDepart du noeud départ, sinon horaireArrivee pour l’entrepôt
+            LocalTime departHoraire = c.getNoeudDePassageDepart().getHoraireDepart();
+            if (departHoraire == null) departHoraire = c.getNoeudDePassageDepart().getHoraireArrivee();
+            assertEquals(LocalTime.parse(horairesDepartAttendu[i]), departHoraire, "Horaire départ chemin " + (i + 1));
+
+            // Horaire d'arrivée du chemin : horaireArrivee du noeud d'arrivée
+            assertEquals(LocalTime.parse(horairesArriveeAttendu[i]), c.getNoeudDePassageArrivee().getHoraireArrivee(), "Horaire arrivée chemin " + (i + 1));
+        }
     }
+
+
+
+    /**
+     * Teste le cas où le graphe des chemins n'est pas connexe.
+     * La tournée ne peut pas être calculée car il n'existe aucun tronçon
+     */
+    @Test
+    void testTourneeGrapheNonConnexe() {
+        Carte carte = new Carte();
+        Noeud n1 = new Noeud(1L, 0, 0);
+        Noeud n2 = new Noeud(2L, 1, 1);
+        carte.AjouterNoeud(n1);
+        carte.AjouterNoeud(n2);
+        // Pas de tronçons => n1 et n2 non connectés
+
+        NoeudDePassage np1 = new NoeudDePassage(1L, 0, 0, null, 0, null);
+        NoeudDePassage np2 = new NoeudDePassage(2L, 1, 1, null, 0, null);
+
+        DemandeDeLivraison demande = new DemandeDeLivraison(np1, List.of(new Livraison(np1, np2)));
+        CalculTournee ct = new CalculTournee(carte, demande, 5.0, LocalTime.of(8, 0));
+
+        assertThrows(TourneeNonConnexeException.class, ct::calculerTournee);
+    }
+
+
+
+
+    /**
+     * Teste un scénario où la matrice des chemins contient exactement deux
+     * valeurs infinies (INF) dans une matrice 3x3.
+   */
+    @Test
+    void testTourneeGrapheAvecDeuxINF() throws Exception {
+        Carte carte = new Carte();
+
+        Noeud n1 = new Noeud(1L, 0, 0);
+        Noeud n2 = new Noeud(2L, 1, 1);
+        Noeud n3 = new Noeud(3L, 2, 2);
+        carte.AjouterNoeud(n1);
+        carte.AjouterNoeud(n2);
+        carte.AjouterNoeud(n3);
+
+        NoeudDePassage np1 = new NoeudDePassage(1L,0,0,null,0,null);
+        NoeudDePassage np2 = new NoeudDePassage(2L,0,0,null,0,null);
+        NoeudDePassage np3 = new NoeudDePassage(3L,0,0,null,0,null);
+
+        DemandeDeLivraison demande = new DemandeDeLivraison(np1, List.of(
+                new Livraison(np1, np2),
+                new Livraison(np2, np3)
+        ));
+
+        CalculTournee ct = new CalculTournee(carte, demande, 5.0, LocalTime.of(8,0));
+
+        TourneeNonConnexeException ex = assertThrows(
+                TourneeNonConnexeException.class,
+                ct::calculerTournee
+        );
+
+        assertTrue(ex.getMessage().contains("connexe"));
+    }
+
+
+
+
+
+    // KMeans
+
 }
 
