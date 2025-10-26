@@ -26,8 +26,8 @@ public class CalculTournee {
 
     public Tournee calculerTournee() throws TourneeNonConnexeException {
         List<NoeudDePassage> noeuds = demande.getNoeudsDePassage();
-        FloydWarshall floyd = calculerFloydWarshall(noeuds);
-        Chemin[][] matriceChemins = floyd.getMatriceChemins();
+        CalculChemins chemins = calculerPlusCourtsChemins(noeuds);
+        Chemin[][] matriceChemins = chemins.getMatriceChemins();
 
         verifierConnexiteChemins(matriceChemins);
 
@@ -43,23 +43,16 @@ public class CalculTournee {
 
 
 
-    private FloydWarshall calculerFloydWarshall(List<NoeudDePassage> noeuds) {
-        FloydWarshall floyd = new FloydWarshall(ville);
-        floyd.calculerMatrice(noeuds);
-        return floyd;
+    private CalculChemins calculerPlusCourtsChemins(List<NoeudDePassage> noeuds) {
+        CalculChemins chemins = new CalculChemins(ville);
+        chemins.calculerMatrice(noeuds);
+        return chemins;
     }
 
 
 
     private GrapheComplet construireGrapheComplet(List<NoeudDePassage> noeuds, Chemin[][] matriceChemins) {
-        GrapheComplet g = new GrapheComplet(noeuds.size());
-        for (int i = 0; i < noeuds.size(); i++) {
-            for (int j = 0; j < noeuds.size(); j++) {
-                if (i != j && matriceChemins[i][j] != null) {
-                    g.setCout(i, j, matriceChemins[i][j].getLongueurTotal());
-                }
-            }
-        }
+        GrapheComplet g = new GrapheComplet(noeuds.size(), matriceChemins);
         return g;
     }
 
@@ -150,7 +143,7 @@ public class CalculTournee {
 
 
 
-    private void afficherDebugFloydWarshall(FloydWarshall floyd, List<NoeudDePassage> noeuds) {
+    private void afficherDebugFloydWarshall(CalculChemins floyd, List<NoeudDePassage> noeuds) {
         double[][] distances = floyd.getDistances();
         Chemin[][] chemins = floyd.getMatriceChemins();
 
@@ -190,38 +183,6 @@ public class CalculTournee {
             }
             System.out.println();
         }
-
-        // Afficher la matrice du graphe complet
-        System.out.println("\n=== Matrice du graphe complet (coûts TSP) ===");
-        GrapheComplet g = new GrapheComplet(noeuds.size());
-        for (int i = 0; i < noeuds.size(); i++) {
-            for (int j = 0; j < noeuds.size(); j++) {
-                if (i != j && chemins[i][j] != null) {
-                    g.setCout(i, j, chemins[i][j].getLongueurTotal());
-                }
-            }
-        }
-
-        System.out.print("    ");
-        for (int j = 0; j < noeuds.size(); j++) {
-            System.out.printf("%6d", j);
-        }
-        System.out.println();
-
-        for (int i = 0; i < noeuds.size(); i++) {
-            System.out.printf("%3d ", i);
-            for (int j = 0; j < noeuds.size(); j++) {
-                double cout = g.getCout(i, j);
-                if (cout == Double.POSITIVE_INFINITY) {
-                    System.out.printf("%6s", "INF");
-                } else {
-                    System.out.printf("%6.1f", cout);
-                }
-            }
-            System.out.println();
-        }
-
-        System.out.println();
     }
 
 
@@ -236,7 +197,7 @@ public class CalculTournee {
 
     /**
      * Vérifie que tous les noeuds de passage sont connectés entre eux.
-     * @param matriceChemins la matrice des chemins calculée par FloydWarshall
+     * @param matriceChemins la matrice des chemins calculée par CalculChemins
      * @throws Exception si un chemin est manquant ou infini (graphe non connexe)
      */
     private void verifierConnexiteChemins(Chemin[][] matriceChemins) throws TourneeNonConnexeException {
