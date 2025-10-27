@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Optimod’Lyon</title>
+    <link rel="icon" type="image/x-icon" href="tools/favicon.png">
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <link rel="stylesheet" href="style.css" />
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
@@ -59,7 +60,8 @@
     <div id="calcul-tournee">
         <div class="bloc-livreurs">
             <label for="nbLivreurs">Nombre de livreurs :</label>
-            <input type="number" id="nbLivreurs" min="1" value="1">
+            <input type="number" id="nbLivreurs" min="1" value="1" max="1">
+            <!-- max 1 for the moment-->
         </div>
 
         <button id="calculerTournee">
@@ -67,8 +69,6 @@
             <p>Calculer les tournées optimales</p>
         </button>
     </div>
-
-
 </div>
 <div id="map"></div>
 <script>
@@ -102,15 +102,12 @@
 
             mapButton.style.filter = "";
             colisButton.style.filter = "drop-shadow(0 0 10px rgba(225,225,0,1))";
-
-            const inputDemande = document.getElementById('xmlDemande');
-            const fileNameCarte = document.getElementById('fileNameCarte');
             colisButton.src = "tools/colis-logo-white.png";
             colisButton.style.cursor = "pointer";
-            inputDemande.disabled = false;
-            fileNameCarte.style.display = "inline";
+
             document.getElementById('welcome-message').style.display = "none";
             document.getElementById('carte-chargee-message').style.display = "flex";
+            document.getElementById('livraisons').style.display = "none";
 
             // vider les layers de livraisons / entrepôt / tournée / numéros
             if (livraisonsLayer) livraisonsLayer.clearLayers();
@@ -127,12 +124,10 @@
             // si le backend renvoie "Etat Carte Chargee", on garde le champ demande activé
             if (res.etatCourant && res.etatCourant.toLowerCase().includes("carte")) {
                 document.getElementById('xmlDemande').disabled = false;
-                document.getElementById('labelDemande').style.backgroundColor = "#b2d1d2";
-                document.getElementById('labelDemande').style.cursor = "pointer";
+                document.getElementById('fileNameCarte').style.display = "inline";
             } else {
                 document.getElementById('xmlDemande').disabled = true;
-                document.getElementById('labelDemande').style.backgroundColor = "#999";
-                document.getElementById('labelDemande').style.cursor = "not-allowed";
+                document.getElementById('fileNameCarte').style.display = "none";
             }
         }catch(err){
             alert(err.message);
@@ -149,6 +144,7 @@
             if(!response.ok){alert(await response.text());return;}
             const res=await response.json();
             demandeData = res.demande;
+            document.getElementById('livraisons').style.display = "inline";
             drawLivraisons(demandeData);
             drawEntrepot(demandeData.entrepot);
 
@@ -429,6 +425,11 @@
                 document.getElementById('calcul-tournee').style.display = "none";
             }
         });
+
+        document.getElementById('calculerTournee').addEventListener('click', () => {
+            calculTournee();
+        });
+
     });
 </script>
 </body>
