@@ -53,12 +53,12 @@ public class EtatAjouterLivraison implements Etat {
     @Override
     public void deleteLivraison(Controlleur c) {
 
-    }*/
+    }
 
     @Override
     public Object runCalculTournee(Controlleur c) {
         return null;
-    }
+    }*/
 
     /*@Override
     public void saveTournee(Controlleur c) {
@@ -114,5 +114,10 @@ public class EtatAjouterLivraison implements Etat {
     @Override
     public String getName() {
         return "Etat Ajout de Livraison";
+    }
+
+    @Override
+    public Object runCalculTournee(Controlleur c) {
+        return null;
     }
 }

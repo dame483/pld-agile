@@ -9,12 +9,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 
-public class EtatSuppresionLivraison implements Etat{
+public class EtatSuppressionLivraison implements Etat{
 
     private Carte carte;
     private DemandeDeLivraison demandeDeLivraison;
 
-    public EtatSuppresionLivraison(DemandeDeLivraison demandeDeLivraison, Carte carte) {
+    public EtatSuppressionLivraison(DemandeDeLivraison demandeDeLivraison, Carte carte) {
         this.demandeDeLivraison = demandeDeLivraison;
         this.carte = carte;
     }
@@ -52,9 +52,7 @@ public class EtatSuppresionLivraison implements Etat{
 
     @Override
     public void deleteLivraison(Controlleur c) {
-
-    }*/
-
+*/
     @Override
     public Object runCalculTournee(Controlleur c) {
         return null;

@@ -28,9 +28,17 @@ public class Tournee {
         this.dureeTotale = dureeTotale;
     }
 
-    public void ajouterChemin(Chemin c) {
+    public void ajouterChemin(Chemin c, double vitesse) {
         this.chemins.add(c);
-        this.dureeTotale += c.getLongueurTotal();
+        double dureeTrajet = c.getLongueurTotal() / vitesse;
+        double dureeService = c.getNoeudDePassageArrivee().getDuree();
+        this.dureeTotale += dureeTrajet + dureeService;
+    }
+
+    public double getDistanceTotale() {
+        return chemins.stream()
+                .mapToDouble(Chemin::getLongueurTotal)
+                .sum();
     }
 
 }
