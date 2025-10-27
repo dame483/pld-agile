@@ -11,6 +11,7 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 public class parseurTourneeJson {
@@ -18,6 +19,7 @@ public class parseurTourneeJson {
     }
 
     public static Tournee parseurTournee(File sauvegardeTournee) throws Exception {
+        Tournee tourneeDuLivreur = null;
         try {
 
             String path = "src/main/java/fr/insalyon/pldagile/sortie/sauvegardeTournee.json";
@@ -27,7 +29,7 @@ public class parseurTourneeJson {
             JSONArray cheminsArray = tournee.getJSONArray("tournee");
             List<Troncon> listTroncons = null;
             List<Chemin> listChemins = null;
-            Tournee tourneeDuLivreur = null;
+            double dureeTotale = 0.0;
             for (int i = 0; i < cheminsArray.length(); i++) {
                 JSONObject cheminObject = cheminsArray.getJSONObject(i);
                 JSONArray tronconArray = cheminObject.getJSONArray("troncons");
@@ -50,19 +52,22 @@ public class parseurTourneeJson {
 
                 NoeudDePassage noeudDePassageDepart = new NoeudDePassage(idDepart, latitudeDepart, longitudeDepart, typeNoeudDepart, 0.0, horaireArriveeDepart);
 
-                long idArrivee = (long) noeudDePassageDepartJson.getInt("id");
-                double latitudeArrivee = (double) noeudDePassageDepartJson.getInt("latitude");
-                double longitudeArrivee = (double) noeudDePassageDepartJson.getInt("longitude");
-                NoeudDePassage.TypeNoeud typeNoeudArrivee = NoeudDePassage.TypeNoeud.valueOf(noeudDePassageDepartJson.getString("TypeNoeud"));
-                LocalTime horaireArriveeArrivee = LocalTime.parse(noeudDePassageDepartJson.getString("horaireArrivee"));
+                long idArrivee = (long) noeudDePassageArriveeJson.getInt("id");
+                double latitudeArrivee = (double) noeudDePassageArriveeJson.getInt("latitude");
+                double longitudeArrivee = (double) noeudDePassageArriveeJson.getInt("longitude");
+                NoeudDePassage.TypeNoeud typeNoeudArrivee = NoeudDePassage.TypeNoeud.valueOf(noeudDePassageArriveeJson.getString("TypeNoeud"));
+                LocalTime horaireArriveeArrivee = LocalTime.parse(noeudDePassageArriveeJson.getString("horaireArrivee"));
 
                 NoeudDePassage noeudDePassageArrivee = new NoeudDePassage(idArrivee, latitudeArrivee, longitudeArrivee, typeNoeudArrivee, 0.0, horaireArriveeArrivee);
 
                 Chemin chemin = new Chemin(listTroncons, longueurTotale, noeudDePassageDepart, noeudDePassageArrivee);
                 listChemins.add(chemin);
+                LocalTime heureDepart = noeudDePassageDepart.getHoraireDepart();
+                LocalTime heureArrivee = noeudDePassageArrivee.getHoraireArrivee();
+                dureeTotale = ChronoUnit.SECONDS.between(heureDepart, heureArrivee);
             }
 
-            tourneeDuLivreur = new Tournee(listChemins, 0.0);
+            tourneeDuLivreur = new Tournee(listChemins, dureeTotale);
 
         } catch (Exception e) {
             e.printStackTrace();
