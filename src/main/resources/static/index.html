@@ -70,6 +70,7 @@
         </button>
     </div>
 </div>
+<button id="btnCalculTournee" disabled>Calculer la tournée</button>
 <div id="map"></div>
 <script>
     let map=null, carteData=null, demandeData=null;
@@ -133,6 +134,8 @@
             alert(err.message);
         }
     }
+}
+
 
     async function uploadDemande(file){
         resetTournee();
@@ -162,6 +165,7 @@
             alert(err.message);
         }
     }
+  });
 
     function resetTournee(){
       if(window.tourneeLayer) window.tourneeLayer.clearLayers();
