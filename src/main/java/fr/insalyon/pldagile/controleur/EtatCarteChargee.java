@@ -10,63 +10,37 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 
-
 @Component
-public class  EtatCarteChargee implements Etat
-{
+public class EtatCarteChargee implements Etat {
+
     private final Carte carte;
-    public EtatCarteChargee(Carte c)
-    {
-        this.carte=c;
 
+    public EtatCarteChargee(Carte c) {
+        this.carte = c;
     }
 
     @Override
-    public Carte loadCarte(Controlleur c,@RequestParam("file") MultipartFile file )
-    {
-        Carte carte=(Carte)uploadXML("carte", file,this.carte);
-        if(carte==null )
-        {
+    public Carte loadCarte(Controlleur c, @RequestParam("file") MultipartFile file) {
+        Carte nouvelleCarte = (Carte) uploadXML("carte", file, this.carte);
+
+        if (nouvelleCarte == null) {
             c.setCurrentState(new EtatInitial());
-            return carte;
+            return null;
         }
 
-        return carte;
+        c.setCurrentState(new EtatCarteChargee(nouvelleCarte));
+        return nouvelleCarte;
     }
 
     @Override
-    public Object loadDemandeLivraison(Controlleur c, @RequestParam("file")  MultipartFile file, Carte carte) {
-        Object dem=uploadXML("demande", file, this.carte);
-        if(dem instanceof DemandeDeLivraison){
-            c.setCurrentState(new EtatDemandeLivraisonChargee(carte,(DemandeDeLivraison) dem));
-            return dem;
+    public Object loadDemandeLivraison(Controlleur c, @RequestParam("file") MultipartFile file, Carte carte) {
+        Object dem = uploadXML("demande", file, this.carte);
+        if (dem instanceof DemandeDeLivraison demande) {
+            c.setCurrentState(new EtatDemandeLivraisonChargee(this.carte, demande));
+            return demande;
         }
-
         return dem;
     }
-
-
-
-    /*@Override
-    public void addLivraison(Controlleur c,@RequestParam("file")  MultipartFile file, Carte carte) {
-
-    }
-
-    @Override
-    public void deleteLivraison(Controlleur c) {
-
-    }
-
-    @Override
-    public Object runCalculTournee(Controlleur c) {
-        return null;
-    }*/
-
-    /*@Override
-    public void saveTournee(Controlleur c) {
-
-    }*/
-
 
     @Override
     public Object uploadXML(String type, MultipartFile file, Carte carte) {
@@ -77,23 +51,16 @@ public class  EtatCarteChargee implements Etat
 
         File tempFile = null;
         try {
-
             tempFile = File.createTempFile(type + "-", ".xml");
             file.transferTo(tempFile);
 
             System.out.println("Fichier temporaire créé : " + tempFile.getAbsolutePath());
-
             Object result;
 
             if ("carte".equalsIgnoreCase(type)) {
-
-                Carte parsedCarte = CarteParseurXML.loadFromFile(tempFile);
-                result = parsedCarte;
+                result = CarteParseurXML.loadFromFile(tempFile);
             } else {
-
-                DemandeDeLivraison parsedDemande = DemandeDeLivraisonParseurXML.loadFromFile(tempFile, this.carte);
-                System.out.println(parsedDemande);
-                result = parsedDemande;
+                result = DemandeDeLivraisonParseurXML.loadFromFile(tempFile, this.carte);
             }
 
             return result;
@@ -101,18 +68,19 @@ public class  EtatCarteChargee implements Etat
         } catch (Exception e) {
             System.err.println("Erreur lors du chargement XML : " + e.getMessage());
             e.printStackTrace();
-            return e;
+            return null;
         } finally {
-
-            if (tempFile != null && tempFile.exists()) {
-                boolean deleted = tempFile.delete();
-                if (!deleted) {
-                    System.err.println("Impossible de supprimer le fichier temporaire : " + tempFile.getAbsolutePath());
-                }
+            if (tempFile != null && tempFile.exists() && !tempFile.delete()) {
+                System.err.println("Impossible de supprimer le fichier temporaire : " + tempFile.getAbsolutePath());
             }
         }
     }
 
+    @Override
+    public Object runCalculTournee(Controlleur c) {
+        System.err.println("Erreur : impossible de calculer une tournée sans demande de livraison.");
+        return null;
+    }
 
     @Override
     public String getName() {
