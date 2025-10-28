@@ -65,7 +65,7 @@ public class EtatCarteChargee implements Etat {
                     break;
 
                 case "tournee":
-                    result = ParseurTourneeJson.parseurTournee(tempFile.getAbsolutePath());
+                    result = parseurTourneeJson.parseurTournee(tempFile.getAbsolutePath());
                     break;
 
                 default:

@@ -542,8 +542,44 @@ document.addEventListener('DOMContentLoaded',()=>{
         sauvegarderTournee();
     });
 
-    document.getElementById("btnChargerTournee").addEventListener("click", () => {
+    document.querySelector('.navbar-item img[alt="Charger une tournée"]').addEventListener("click", () => {
         document.getElementById("inputTournee").click();
     });
 
+
+    document.getElementById("inputTournee").addEventListener("change", (event) => {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const formData = new FormData();
+        formData.append("file", file);
+
+        fetch("http://localhost:8080/api/upload-tournee", {
+            method: "POST",
+            body: formData
+        })
+            .then(async (response) => {
+                const data = await response.json().catch(() => ({}));
+
+                if (response.ok) {
+                    tournee = data.tournee;
+                    console.log("Tournée chargée :", data);
+                    drawTournee(tournee);
+                    document.getElementById('welcome-message').style.display = "none";
+                    document.getElementById('tableauDemandes').style.display = "none";
+                    document.getElementById('livraisons').style.display = "none";
+                    document.getElementById('calcul-tournee').style.display = "none";
+                    document.getElementById('fileNameCarte').style.display = "none";
+                    document.getElementById('carte-chargee-message').style.display = "none";
+                    document.getElementById('tournee-chargee').style.display = "inline";
+                } else {
+                    console.error("Erreur serveur :", data);
+                    alert(data.message || "Erreur lors du chargement de la tournée");
+                }
+            })
+            .catch((err) => {
+                console.error("Erreur fetch :", err);
+                alert("Erreur réseau lors du chargement de la tournée");
+            });
+    });
 });
