@@ -1,0 +1,53 @@
+package fr.insalyon.pldagile;
+
+import fr.insalyon.pldagile.algorithme.CalculTournee;
+import fr.insalyon.pldagile.modele.*;
+import fr.insalyon.pldagile.sortie.parseurTourneeJson;
+import org.junit.jupiter.api.Test;
+
+import java.io.File;
+import java.time.LocalTime;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+public class ParsingTourneeJsonTest {
+
+    @Test
+    void testTourneeParseeEgaleInitiale() throws Exception {
+        File fichierCarte = new File("src/main/resources/donnees/plans/grandPlan.xml");
+        Carte ville = CarteParseurXML.loadFromFile(fichierCarte);
+        System.out.println("Carte chargée.");
+
+        //  Charger la demande de livraison
+        File fichierDemande = new File("src/main/resources/donnees/demandes/demandeMoyen3.xml");
+        DemandeDeLivraison demande = DemandeDeLivraisonParseurXML.loadFromFile(fichierDemande, ville);
+        System.out.println("Demande de livraison chargée.");
+
+        //  Paramètres de la tournée : heure de départ depuis le parseur ou défaut 08:00
+        LocalTime heureDepart;
+        if (demande.getEntrepot() != null && demande.getEntrepot().getHoraireDepart() != null) {
+            heureDepart = demande.getEntrepot().getHoraireDepart();
+        } else {
+            heureDepart = LocalTime.of(8, 0);
+        }
+
+        double vitesse = 4.16; // m/s
+
+        //  Calcul de la tournée
+        CalculTournee calculTournee = new CalculTournee(ville, demande, vitesse, heureDepart);
+        System.out.println("\nCalcul de la tournée initiale");
+        Tournee tournee = calculTournee.calculerTournee();
+        //Parsing de la tournée
+        System.out.println("appel du parsing Json");
+        parseurTourneeJson parseurJson = new parseurTourneeJson();
+        Tournee tourneeParseur = parseurJson.parseurTournee("src/main/java/fr/insalyon/pldagile/sortie/sauvegardeTourne.json");
+
+        if (!tournee.equals(tourneeParseur)) {
+            System.out.println("Les tournées sont différentes !");
+            System.out.println("Tournee initiale : " + tournee);
+            System.out.println("Tournee parsée   : " + tourneeParseur);
+        }
+        assertEquals(tournee, tourneeParseur, "La tournée parsée doit etre identique que la tournée initiale");
+    }
+
+}

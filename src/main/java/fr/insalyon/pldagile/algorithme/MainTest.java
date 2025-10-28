@@ -2,6 +2,7 @@ package fr.insalyon.pldagile.algorithme;
 
 import fr.insalyon.pldagile.modele.*;
 import fr.insalyon.pldagile.sortie.FeuilleDeRoute;
+import fr.insalyon.pldagile.sortie.parseurTourneeJson;
 
 import java.io.File;
 import java.time.LocalTime;
@@ -64,8 +65,8 @@ public class MainTest {
                 double distanceChemin = 0;
                 for (Troncon t : troncons) {
                     System.out.printf("    Tronçon : Rue %s, longueur = %.0f m\n",
-                            t.getnomRue(), t.longueur());
-                    distanceChemin += t.longueur();
+                            t.getNomRue(), t.getLongueur());
+                    distanceChemin += t.getLongueur();
                 }
 
                 System.out.printf("  Arrivée : %d (%s) à %s\n",
