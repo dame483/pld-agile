@@ -1,13 +1,9 @@
 package fr.insalyon.pldagile.sortie;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.util.JSONPObject;
-import fr.insalyon.pldagile.algorithme.CalculTournee;
 import fr.insalyon.pldagile.modele.*;
 
 import java.io.File;
 import java.io.FileWriter;
-import java.util.LinkedHashMap;
 import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONObject;

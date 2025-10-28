@@ -1,22 +1,26 @@
 package fr.insalyon.pldagile.controleur;
 
-import fr.insalyon.pldagile.algorithme.CalculTournee;
 import fr.insalyon.pldagile.modele.*;
+import fr.insalyon.pldagile.algorithme.CalculTournees;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.time.LocalTime;
+import java.util.List;
 
 @Component
 public class EtatTourneeCalcule implements Etat {
 
     private Carte carte;
     private DemandeDeLivraison demande;
+    private int nombreLivreurs;
 
-    public EtatTourneeCalcule(Carte carte, DemandeDeLivraison demande) {
+    public EtatTourneeCalcule(Carte carte, DemandeDeLivraison demande, int nombreLivreurs) {
         this.carte = carte;
         this.demande = demande;
+        this.nombreLivreurs = nombreLivreurs;
     }
 
     @Override
@@ -35,7 +39,7 @@ public class EtatTourneeCalcule implements Etat {
     public Object loadDemandeLivraison(Controlleur c, @RequestParam("file") MultipartFile file, Carte carte) {
         Object dem = uploadXML("demande", file, this.carte);
         if (dem instanceof DemandeDeLivraison) {
-            c.setCurrentState(new EtatDemandeLivraisonChargee(carte, (DemandeDeLivraison) dem));
+            c.setCurrentState(new EtatDemandeLivraisonChargee(carte, (DemandeDeLivraison) dem, nombreLivreurs));
             return dem;
         }
         return dem;
@@ -44,10 +48,23 @@ public class EtatTourneeCalcule implements Etat {
     @Override
     public Object runCalculTournee(Controlleur c) {
         try {
-            CalculTournee t = new CalculTournee(this.carte, this.demande, 15.0,
-                    this.demande.getEntrepot().getHoraireDepart());
-            return t.calculerTournee();
+            LocalTime heureDepart = this.demande.getEntrepot().getHoraireDepart() != null
+                    ? this.demande.getEntrepot().getHoraireDepart()
+                    : LocalTime.of(8, 0); // valeur par défaut
+
+            CalculTournees t = new CalculTournees(
+                    this.carte,
+                    this.demande,
+                    15.0, // vitesse m/s
+                    heureDepart,
+                    this.nombreLivreurs
+            );
+
+            List<Tournee> tournees = t.calculerTournees();
+            return tournees;
+
         } catch (Exception e) {
+            e.printStackTrace();
             return e;
         }
     }
@@ -73,12 +90,13 @@ public class EtatTourneeCalcule implements Etat {
             e.printStackTrace();
             return e;
         } finally {
-            if (tempFile != null && tempFile.exists()) tempFile.delete();
+            if (tempFile != null && tempFile.exists())
+                tempFile.delete();
         }
     }
 
     @Override
     public String getName() {
-        return "Etat Tournée Calculé";
+        return "Etat Tournée Calculée";
     }
 }

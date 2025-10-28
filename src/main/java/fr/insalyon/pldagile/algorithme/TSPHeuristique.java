@@ -10,10 +10,23 @@ public class TSPHeuristique {
     private final Graphe g;
     private final Map<Integer, Integer> precedences; // delivery -> pickup
 
-    public TSPHeuristique(List<NoeudDePassage> noeuds,Graphe g, Map<Integer, Integer> precedences) {
+    public TSPHeuristique(List<NoeudDePassage> noeuds,List<Livraison> livraisons,Graphe g) {
         this.noeuds = noeuds;
         this.g = g;
-        this.precedences = precedences;
+        this.precedences = new HashMap<>();
+        // Pour chaque livraison, le delivery dépend du pickup
+        for (Livraison l : livraisons) {
+            int pickupIdx = noeuds.indexOf(l.getAdresseEnlevement());
+            int deliveryIdx = noeuds.indexOf(l.getAdresseLivraison());
+
+            if (pickupIdx == -1 || deliveryIdx == -1) {
+                throw new IllegalArgumentException(
+                        "Pickup ou delivery introuvable dans la liste des noeuds de passage !"
+                );
+            }
+
+            precedences.put(deliveryIdx, pickupIdx);
+        }
     }
 
     public List<Integer> calculerTourneeHeuristique(int departIndex) {

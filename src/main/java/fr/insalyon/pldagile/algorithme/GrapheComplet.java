@@ -11,15 +11,12 @@ public class GrapheComplet implements Graphe {
      * Crée un graphe complet dont les arcs ont un coût initialisé à 0
      * @param nbSommets nombre de sommets
      */
-    public GrapheComplet(int nbSommets, Chemin[][] matriceChemins) {
-        this.nbSommets=nbSommets;
-        cout=new double [nbSommets][nbSommets];
+    public GrapheComplet(int nbSommets) {
+        this.nbSommets = nbSommets;
+        cout = new double[nbSommets][nbSommets];
         for (int i = 0; i < nbSommets; i++) {
             for (int j = 0; j < nbSommets; j++) {
-                if (i != j && matriceChemins[i][j] != null) {
-                    cout[i][j]= matriceChemins[i][j].getLongueurTotal();
-
-                }
+                cout[i][j] = (i == j) ? -1.0 : 0.0;
             }
         }
     }
@@ -60,4 +57,11 @@ public class GrapheComplet implements Graphe {
         }
     }
 
+
+
+    @Override
+    public boolean estArc(int i, int j) {
+        if (i < 0 || i >= nbSommets || j < 0 || j >= nbSommets) return false;
+        return i != j;
+    }
 }

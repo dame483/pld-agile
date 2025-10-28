@@ -224,7 +224,7 @@ public class CalculTourneeTests {
                 new Livraison(np1, np2)
         ));
 
-        CalculTournee ct = new CalculTournee(carte, demande, 5.0, LocalTime.of(8, 0));
+        CalculTournees ct = new CalculTournees(carte, demande, 5.0, LocalTime.of(8, 0));
         Tournee tournee = ct.calculerTournee();
 
         assertNotNull(tournee);
@@ -284,7 +284,7 @@ public class CalculTourneeTests {
 
 
         double vitesse = 4.16; // m/s
-        CalculTournee calculTournee = new CalculTournee(ville, demande, vitesse, heureDepart);
+        CalculTournees calculTournee = new CalculTournees(ville, demande, vitesse, heureDepart);
         Tournee tournee = calculTournee.calculerTournee();
         assertNotNull(tournee, "La tournée doit être calculée");
 
@@ -337,7 +337,7 @@ public class CalculTourneeTests {
         NoeudDePassage np2 = new NoeudDePassage(2L, 1, 1, null, 0, null);
 
         DemandeDeLivraison demande = new DemandeDeLivraison(np1, List.of(new Livraison(np1, np2)));
-        CalculTournee ct = new CalculTournee(carte, demande, 5.0, LocalTime.of(8, 0));
+        CalculTournees ct = new CalculTournees(carte, demande, 5.0, LocalTime.of(8, 0));
 
         assertThrows(TourneeNonConnexeException.class, ct::calculerTournee);
     }
@@ -369,7 +369,7 @@ public class CalculTourneeTests {
                 new Livraison(np2, np3)
         ));
 
-        CalculTournee ct = new CalculTournee(carte, demande, 5.0, LocalTime.of(8,0));
+        CalculTournees ct = new CalculTournees(carte, demande, 5.0, LocalTime.of(8,0));
 
         TourneeNonConnexeException ex = assertThrows(
                 TourneeNonConnexeException.class,

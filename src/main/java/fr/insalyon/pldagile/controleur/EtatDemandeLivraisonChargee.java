@@ -1,7 +1,9 @@
 package fr.insalyon.pldagile.controleur;
 
-import fr.insalyon.pldagile.algorithme.CalculTournee;
+import fr.insalyon.pldagile.algorithme.CalculTournees;
 import fr.insalyon.pldagile.modele.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
@@ -14,10 +16,20 @@ public class EtatDemandeLivraisonChargee implements Etat {
 
     private final Carte carte;
     private final DemandeDeLivraison demLivraison;
+    @Autowired(required = false)
+    private final Integer nombreLivreurs;
 
-    public EtatDemandeLivraisonChargee(Carte carte, DemandeDeLivraison demande) {
+    public EtatDemandeLivraisonChargee(Carte carte, DemandeDeLivraison demande, Integer nombreLivreurs) {
         this.carte = carte;
         this.demLivraison = demande;
+        this.nombreLivreurs=nombreLivreurs;
+    }
+
+    public EtatDemandeLivraisonChargee(Carte carte, DemandeDeLivraison demande)
+    {
+        this.carte = carte;
+        this.demLivraison = demande;
+
     }
 
     @Override
@@ -37,7 +49,7 @@ public class EtatDemandeLivraisonChargee implements Etat {
     public Object loadDemandeLivraison(Controlleur c, @RequestParam("file") MultipartFile file, Carte carte) {
         Object dem = uploadXML("demande", file, this.carte);
         if (dem instanceof DemandeDeLivraison demande) {
-            c.setCurrentState(new EtatDemandeLivraisonChargee(this.carte, demande));
+            c.setCurrentState(new EtatDemandeLivraisonChargee(this.carte, demande,nombreLivreurs));
             return demande;
         }
         return dem;
@@ -48,10 +60,10 @@ public class EtatDemandeLivraisonChargee implements Etat {
         try {
             LocalTime heureDepart = demLivraison.getEntrepot().getHoraireDepart();
 
-            CalculTournee t = new CalculTournee(carte, demLivraison, 4.1, heureDepart);
-            Tournee tournee = t.calculerTournee();
+            CalculTournees t = new CalculTournees(carte, demLivraison, 4.1, heureDepart, nombreLivreurs);
+            Tournee tournee = (Tournee) t.calculerTournees();
 
-            c.setCurrentState(new EtatTourneeCalcule(carte, demLivraison));
+            c.setCurrentState(new EtatTourneeCalcule(carte, demLivraison, nombreLivreurs));
             return tournee;
 
         } catch (Exception e) {

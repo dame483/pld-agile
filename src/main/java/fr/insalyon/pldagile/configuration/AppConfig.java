@@ -16,5 +16,6 @@ public class AppConfig {
     @Bean
     public DemandeDeLivraison demandeDeLivraison() { return new DemandeDeLivraison(null, null);
     }
+
 }
 

@@ -6,10 +6,12 @@ import java.util.List;
 public class Tournee {
     private List<Chemin> chemins = new ArrayList();
     private double dureeTotale;
+    private double longueuerTotale;
+    // longueur totale + liste livraisons +getters
 
     public Tournee(List<Chemin> chemins, double dureeTotale) {
         this.chemins = chemins;
-        this.dureeTotale = dureeTotale;
+        this.dureeTotale=dureeTotale;
     }
 
     public List<Chemin> getChemins() {
@@ -20,6 +22,8 @@ public class Tournee {
         return this.dureeTotale;
     }
 
+    public double getLongueuerTotale() {return this.longueuerTotale;}
+
     public void setChemins(List<Chemin> chemins) {
         this.chemins = chemins;
     }
@@ -28,17 +32,17 @@ public class Tournee {
         this.dureeTotale = dureeTotale;
     }
 
+    public void setLongueurTotale(double longueurTotale) {
+        this.longueuerTotale = longueurTotale;
+    }
+
     public void ajouterChemin(Chemin c, double vitesse) {
         this.chemins.add(c);
         double dureeTrajet = c.getLongueurTotal() / vitesse;
         double dureeService = c.getNoeudDePassageArrivee().getDuree();
         this.dureeTotale += dureeTrajet + dureeService;
+        this.longueuerTotale= c.getLongueurTotal();
     }
 
-    public double getDistanceTotale() {
-        return chemins.stream()
-                .mapToDouble(Chemin::getLongueurTotal)
-                .sum();
-    }
 
 }
