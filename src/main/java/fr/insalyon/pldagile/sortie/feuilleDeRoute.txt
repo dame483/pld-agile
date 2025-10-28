@@ -1,271 +1,108 @@
 L'heure de départ de l'entrepôt : 08:00
 
 Chemin 0
-Tu pars de (4150019167,ENTREPOT)
-Continuez 126.80616 m  sur Route de Genas
-Continuez 115.18777 m  sur Route de Genas
-Continuez 62.660088 m  sur Boulevard Pinel
-Continuez 91.766914 m  sur Cours Docteur Long
-Continuez 81.12767 m  sur Cours Docteur Long
-Continuez 6.254207 m  sur Cours Docteur Long
-Continuez 2.0872772 m  sur Cours Docteur Long
-Continuez 73.11533 m  sur Cours Docteur Long
-Continuez 51.39518 m  sur Cours Docteur Long
-Continuez 47.484478 m  sur Cours Docteur Long
-Continuez 45.51251 m  sur Cours Docteur Long
-Continuez 63.785366 m  sur Cours Docteur Long
-Continuez 65.708916 m  sur Cours Docteur Long
-Continuez 123.8789 m  sur Cours Docteur Long
-Continuez 92.53872 m  sur Cours Docteur Long
-Continuez 72.582924 m  sur Cours Docteur Long
-Continuez 76.63646 m  sur Rue Louise
-Tu arrives au point de livraison à 08:04:52
-L'adresse de livraison N° 0 est 26155372)
+Tu pars de (1349383079,ENTREPOT)
+Continuez 71.41139 m  sur Avenue des Colonnes
+Continuez 211.03992 m  sur Avenue Pasteur
+Continuez 77.516174 m  sur Rue Villard
+Continuez 94.03229 m  sur Rue Villard
+Continuez 152.82278 m  sur Avenue du Bois
+Continuez 65.48641 m  sur Rue du Square
+Continuez 48.51341 m  sur Rue du Square
+Continuez 125.08781 m  sur Rue des Roses
+Continuez 70.26581 m  sur Rue Jean Jaurès
+Continuez 64.90494 m  sur Rue Jean Jaurès
+Continuez 182.80875 m  sur Rue Jean Jaurès
+Continuez 143.89633 m  sur Rue de la Paix
+Continuez 36.52154 m  sur Rue de la Paix
+Continuez 41.994125 m  sur Rue de la Paix
+Continuez 46.31201 m  sur Rue de la Paix
+Continuez 63.36775 m  sur Rue de la Paix
+Continuez 10.420416 m  sur Rue de la Paix
+Continuez 78.73703 m  sur Rue de la Paix
+Continuez 95.17963 m  sur Rue de la Paix
+Continuez 115.95791 m  sur Rue de la Paix
+Continuez 53.73686 m  sur Rue de la Paix
+Continuez 67.53967 m  sur Rue des Essarts
+Continuez 60.116817 m  sur Rue des Essarts
+Continuez 9.241578 m  sur Rue Laennec
+Continuez 31.705185 m  sur Rue Laennec
+Continuez 322.69272 m  sur Rue Laennec
+Continuez 53.975243 m  sur Rue Laennec
+Continuez 21.996416 m  sur Rue Laennec
+Continuez 41.57947 m  sur Rue Laennec
+Continuez 84.67725 m  sur Rue Thomas Blanchet
+Continuez 62.809677 m  sur Boulevard Ambroise Paré
+Continuez 72.0598 m  sur Boulevard Ambroise Paré
+Continuez 26.576775 m  sur Boulevard Ambroise Paré
+Continuez 19.179264 m  sur Boulevard Ambroise Paré
+Continuez 76.54216 m  sur Boulevard Ambroise Paré
+Continuez 41.212082 m  sur Boulevard Ambroise Paré
+Continuez 304.35153 m  sur Boulevard Ambroise Paré
+Continuez 10.411665 m  sur Boulevard Ambroise Paré
+Continuez 35.351364 m  sur Avenue Jean Mermoz
+Tu arrives au point de livraison à 08:12:59
+L'adresse de livraison N° 0 est 27362899)
 
 Chemin 1
-Tu pars de (26155372,PICKUP)
-Continuez 68.19679 m  sur Rue Louise
-Continuez 28.787182 m  sur Rue Julie
-Continuez 111.934784 m  sur Rue du Général Brulard
-Continuez 351.61423 m  sur Avenue des Acacias
-Tu arrives au point de livraison à 08:15:09
-L'adresse de livraison N° 1 est 26317393)
-
-Chemin 2
-Tu pars de (26317393,PICKUP)
-Continuez 351.61423 m  sur Avenue des Acacias
-Continuez 111.934784 m  sur Rue du Général Brulard
-Continuez 77.67057 m  sur Rue Bonnand
-Continuez 90.45478 m  sur Rue Bonnand
-Continuez 2.5734012 m  sur Rue Bonnand
-Continuez 21.431295 m  sur Rue Bonnand
-Continuez 88.70358 m  sur Rue Bonnand
-Continuez 80.1679 m  sur Rue Bonnand
-Continuez 53.426987 m  sur Rue Ferdinand Buisson
-Continuez 160.52829 m  sur Rue Jean-Marc Bernard
-Continuez 68.1403 m  sur Avenue Lacassagne
-Continuez 87.94591 m  sur Avenue Lacassagne
-Continuez 73.98266 m  sur Avenue Lacassagne
-Continuez 92.09046 m  sur Avenue Lacassagne
-Continuez 30.700241 m  sur Avenue Lacassagne
-Continuez 125.646904 m  sur Avenue Lacassagne
-Continuez 51.055664 m  sur Avenue Lacassagne
-Continuez 96.53003 m  sur Avenue Lacassagne
-Continuez 13.61647 m  sur Avenue Lacassagne
-Continuez 83.41324 m  sur Avenue Lacassagne
-Continuez 35.136753 m  sur Avenue Lacassagne
-Continuez 18.365248 m  sur Avenue Lacassagne
-Continuez 34.147205 m  sur Avenue Lacassagne
-Continuez 25.763437 m  sur Avenue Lacassagne
-Continuez 11.316352 m  sur Boulevard Pinel
-Continuez 33.104446 m  sur Boulevard Pinel
-Continuez 91.04423 m  sur Boulevard Pinel
-Continuez 15.771056 m  sur Boulevard Pinel
-Continuez 22.654398 m  sur Boulevard Pinel
-Tu arrives au point de livraison à 08:25:29
-L'adresse de livraison N° 2 est 25610684)
-
-Chemin 3
-Tu pars de (25610684,PICKUP)
-Continuez 22.654398 m  sur Boulevard Pinel
-Continuez 97.84345 m  sur Avenue Esquirol
-Continuez 77.646965 m  sur Avenue Esquirol
-Continuez 78.70763 m  sur Avenue Esquirol
-Continuez 82.86288 m  sur Avenue Esquirol
-Continuez 81.220024 m  sur Avenue Esquirol
-Continuez 70.70675 m  sur Cours Eugénie
-Continuez 92.293686 m  sur Cours Eugénie
-Continuez 133.25873 m  sur Avenue Rockefeller
-Continuez 9.786228 m  sur Rue Victor de Laprade
-Continuez 200.07085 m  sur Rue Victor de Laprade
-Tu arrives au point de livraison à 08:32:20
-L'adresse de livraison N° 3 est 21717915)
-
-Chemin 4
-Tu pars de (21717915,DELIVERY)
-Continuez 197.03235 m  sur Rue Volney Rue Victor de Laprade
-Continuez 65.603874 m  sur Boulevard Ambroise Paré
-Continuez 86.87499 m  sur Boulevard Ambroise Paré
-Continuez 41.154457 m  sur Rue Thomas Blanchet
-Continuez 117.360016 m  sur Rue Thomas Blanchet
-Continuez 147.43497 m  sur Rue Thomas Blanchet
-Continuez 29.340376 m  sur Rue Thomas Blanchet
-Continuez 17.646217 m  sur Rue Bataille
-Continuez 163.45201 m  sur Rue Bataille
-Continuez 9.953976 m  sur Rue Bataille
-Continuez 54.97757 m  sur Rue Bataille
-Continuez 54.121277 m  sur Rue Bataille
-Continuez 27.954714 m  sur Rue Bataille
-Continuez 63.958065 m  sur Rue Bataille
-Continuez 112.03445 m  sur Rue Bataille
-Continuez 197.70412 m  sur Rue Bataille
-Continuez 12.784036 m  sur Rue Bataille
-Continuez 338.89694 m  sur Rue Bataille
-Continuez 22.184088 m  sur Rue Bataille
+Tu pars de (27362899,PICKUP)
+Continuez 73.15029 m  sur Avenue Jean Mermoz
+Continuez 80.95538 m  sur Avenue Jean Mermoz
+Continuez 8.570351 m  sur Rue du Professeur Joseph Nicolas
+Continuez 185.30594 m  sur Avenue Jean Mermoz
+Continuez 140.30666 m  sur Avenue Jean Mermoz
+Continuez 102.46916 m  sur Avenue Jean Mermoz
+Continuez 93.240364 m  sur Avenue Jean Mermoz
+Continuez 110.37043 m  sur Avenue Jean Mermoz
+Continuez 356.9862 m  sur Avenue Jean Mermoz
+Continuez 35.666096 m  sur Avenue Jean Mermoz
+Continuez 19.478073 m  sur Rue Marius Berliet
+Continuez 290.75473 m  sur Rue Marius Berliet
 Continuez 57.092308 m  sur Rue Marius Berliet
 Continuez 86.09836 m  sur Rue Marius Berliet
 Continuez 100.70395 m  sur Rue Marius Berliet
 Continuez 81.69053 m  sur Rue Marius Berliet
 Continuez 76.228615 m  sur Rue Marius Berliet
 Continuez 97.55205 m  sur Rue Marius Berliet
-Continuez 59.294033 m  sur Rue Saint-Gervais
-Continuez 47.378006 m  sur Rue Saint-Gervais
-Continuez 5.386798 m  sur Impasse Saint-Gervais
-Tu arrives au point de livraison à 08:50:59
-L'adresse de livraison N° 4 est 1400900990)
-
-Chemin 5
-Tu pars de (1400900990,PICKUP)
-Continuez 5.386798 m  sur Impasse Saint-Gervais
-Continuez 90.66148 m  sur Rue Saint-Gervais
-Continuez 119.63905 m  sur Rue Saint-Gervais
-Continuez 97.02868 m  sur Rue Saint-Gervais
-Continuez 113.31147 m  sur Rue Saint-Gervais
-Continuez 98.343346 m  sur Rue des Tuiliers
-Continuez 186.07007 m  sur Rue Saint-Hippolyte
-Continuez 86.49793 m  sur Petite Rue de Monplaisir
-Continuez 75.947624 m  sur Petite Rue de Monplaisir
-Continuez 130.47949 m  sur Cours Albert Thomas
-Continuez 73.04839 m  sur Cours Albert Thomas
-Continuez 74.09365 m  sur Boulevard Vivier-Merle Cours Albert Thomas
-Tu arrives au point de livraison à 08:58:40
-L'adresse de livraison N° 5 est 1036842078)
-
-Chemin 6
-Tu pars de (1036842078,DELIVERY)
-Continuez 123.36402 m  sur Boulevard Vivier-Merle
-Continuez 304.3873 m  sur Boulevard Vivier-Merle
-Continuez 62.200565 m  sur Avenue Félix Faure
-Continuez 112.49038 m  sur Avenue Félix Faure
-Continuez 127.18727 m  sur Avenue Félix Faure
-Continuez 48.468773 m  sur Avenue Félix Faure
-Continuez 214.0224 m  sur Avenue Félix Faure
-Continuez 26.020561 m  sur Avenue Félix Faure
-Continuez 240.98518 m  sur Rue Baraban
-Continuez 153.978 m  sur Rue Baraban
-Continuez 66.22617 m  sur Rue Baraban
-Continuez 47.348785 m  sur Rue Baraban
-Continuez 29.557299 m  sur Rue Baraban
-Continuez 106.253914 m  sur Avenue Georges Pompidou
-Continuez 39.416725 m  sur Rue Nazareth
-Continuez 10.284923 m  sur Rue Nazareth
-Continuez 83.729836 m  sur Rue Nazareth
-Tu arrives au point de livraison à 09:05:58
-L'adresse de livraison N° 6 est 208769083)
-
-Chemin 7
-Tu pars de (208769083,DELIVERY)
-Continuez 94.49828 m  sur Rue Claudius Pionchon
-Continuez 43.43769 m  sur Rue Sainte-Anne de Baraban
-Continuez 67.38149 m  sur Rue Sainte-Anne de Baraban
-Continuez 138.84 m  sur Rue Sainte-Anne de Baraban
-Continuez 47.348785 m  sur Rue Baraban
-Continuez 66.22617 m  sur Rue Baraban
-Continuez 79.02355 m  sur Rue Antoine Charial
-Continuez 145.00984 m  sur Rue Turbil
-Continuez 232.252 m  sur Rue Turbil
-Continuez 61.443684 m  sur Place Rouget de l'Isle
-Continuez 58.81714 m  sur Avenue Lacassagne
-Continuez 175.30086 m  sur Avenue Lacassagne
-Continuez 73.50747 m  sur Rue du Dauphiné
-Continuez 157.39076 m  sur Rue du Professeur Paul Sisley
-Continuez 75.26833 m  sur Rue du Professeur Paul Sisley
-Continuez 72.58715 m  sur Rue du Professeur Paul Sisley
-Continuez 29.069725 m  sur Rue du Professeur Paul Sisley
-Continuez 83.59344 m  sur Rue du Professeur Paul Sisley
-Continuez 115.403114 m  sur Rue Villon
-Continuez 112.01783 m  sur Rue Villon
-Continuez 16.661806 m  sur Rue Villon
-Continuez 68.33527 m  sur Rue Villon
-Continuez 43.62228 m  sur Rue Villon
-Continuez 90.10593 m  sur Rue Villon
-Continuez 88.25528 m  sur Rue Villon
-Continuez 21.3945 m  sur Rue Villon
-Continuez 91.36231 m  sur Rue Villon
-Continuez 120.9714 m  sur Rue Villon
-Continuez 140.03229 m  sur Rue Villon
-Continuez 77.211784 m  sur Rue Villon
-Continuez 76.228615 m  sur Rue Marius Berliet
-Continuez 97.55205 m  sur Rue Marius Berliet
 Continuez 109.829926 m  sur Rue Marius Berliet
-Continuez 112.29348 m  sur Rue de l'Épargne
-Continuez 112.88493 m  sur Rue de l'Éternité
-Continuez 10.267049 m  sur Rue de l'Éternité
-Continuez 162.6578 m  sur Avenue de l'Europe
-Tu arrives au point de livraison à 09:23:39
-L'adresse de livraison N° 7 est 21992645)
+Continuez 56.340656 m  sur Rue Marius Berliet
+Continuez 182.2734 m  sur Rue Marius Berliet
+Continuez 166.30196 m  sur Rue Santos Dumont
+Continuez 143.45154 m  sur Rue Louis Jouvet
+Continuez 113.63658 m  sur Rue Louis Jouvet
+Continuez 120.04825 m  sur Avenue des Frères Lumière
+Continuez 34.76711 m  sur Grande Rue de la Guillotière
+Continuez 26.16321 m  sur Grande Rue de la Guillotière
+Continuez 115.87691 m  sur Boulevard des Tchécoslovaques
+Tu arrives au point de livraison à 08:28:27
+L'adresse de livraison N° 1 est 26121686)
 
-Chemin 8
-Tu pars de (21992645,PICKUP)
-Continuez 44.685192 m  sur Rue Audibert et Lavirotte
-Continuez 186.6627 m  sur Rue des Hérideaux
-Continuez 92.84373 m  sur Rue des Hérideaux
-Continuez 104.90395 m  sur Rue Villon
-Continuez 165.04675 m  sur Rue Villon
-Continuez 19.765337 m  sur Rue Villon
-Continuez 76.59745 m  sur Rue Villon
-Continuez 151.7849 m  sur Rue Villon
-Continuez 216.35162 m  sur Rue Villon
-Continuez 18.736483 m  sur Rue Pierre Delore
-Continuez 19.149618 m  sur Rue Pierre Delore
-Continuez 105.25669 m  sur Rue Pierre Delore
-Continuez 27.630648 m  sur Rue Pierre Delore
-Continuez 56.082497 m  sur Rue Pierre Delore
-Continuez 70.53315 m  sur Rue Pierre Delore
-Continuez 33.08308 m  sur Rue Pierre Delore
-Continuez 10.959218 m  sur Rue Pierre Delore
-Continuez 52.69905 m  sur Avenue Francis de Pressensé
-Continuez 178.23439 m  sur Avenue Francis de Pressensé
-Continuez 21.66321 m  sur Avenue Francis de Pressensé
-Continuez 149.27708 m  sur Rue Louise Michel
-Continuez 18.740826 m  sur 
-Continuez 13.350509 m  sur 
-Continuez 52.846222 m  sur Rue Louise Michel
-Continuez 54.309757 m  sur Rue Louise Michel
-Continuez 12.09084 m  sur 
-Continuez 23.058268 m  sur Rue du Professeur Roux
-Continuez 55.361126 m  sur Rue du Professeur Roux
-Tu arrives au point de livraison à 09:37:55
-L'adresse de livraison N° 8 est 60755991)
-
-Chemin 9
-Tu pars de (60755991,DELIVERY)
-Continuez 71.26703 m  sur Rue du Professeur Roux
-Continuez 88.76887 m  sur Rue du Professeur Roux
-Continuez 98.11162 m  sur Rue du Moulin à Vent
-Continuez 138.05408 m  sur Rue du Moulin à Vent
-Continuez 55.75696 m  sur Avenue Francis de Pressensé
-Continuez 102.86875 m  sur Rue Paul Cazeneuve
-Continuez 19.913363 m  sur Rue Paul Cazeneuve
-Continuez 194.76688 m  sur Rue Paul Cazeneuve
-Continuez 85.4694 m  sur Rue Ludovic Arrachart
-Continuez 66.13907 m  sur Rue Joseph Chapelle
-Continuez 74.033134 m  sur Rue Joseph Chapelle
-Continuez 18.490034 m  sur Rue Joseph Chapelle
-Continuez 75.95317 m  sur Rue Joseph Chapelle
-Continuez 91.81562 m  sur Rue Joseph Chapelle
-Continuez 70.772934 m  sur Rue Joseph Chapelle
-Continuez 112.64196 m  sur Rue Joseph Chapelle
-Continuez 127.97538 m  sur Rue Joseph Chapelle
-Continuez 68.69944 m  sur Avenue Berthelot
-Continuez 26.447824 m  sur Boulevard Jean XXIII
-Continuez 222.43428 m  sur Boulevard Jean XXIII
-Continuez 287.9207 m  sur Boulevard Jean XXIII
-Continuez 24.351454 m  sur Rue Maryse Bastié
-Continuez 136.85303 m  sur Rue Maryse Bastié
-Continuez 226.20677 m  sur Rue Maryse Bastié
-Continuez 120.29001 m  sur Rue Maryse Bastié
-Continuez 163.53062 m  sur Rue Feuillat
-Continuez 136.54433 m  sur Rue Feuillat
-Continuez 58.375137 m  sur Rue Feuillat
-Continuez 92.586105 m  sur Rue Feuillat
-Continuez 90.44906 m  sur Rue Feuillat
-Continuez 64.89446 m  sur Rue Feuillat
-Continuez 153.72511 m  sur Rue Feuillat
-Continuez 83.108986 m  sur Rue Feuillat
-Continuez 111.942184 m  sur Rue Feuillat
-Continuez 238.35002 m  sur Rue Feuillat
-Continuez 104.732445 m  sur Rue Meunier
+Chemin 2
+Tu pars de (26121686,PICKUP)
+Continuez 84.053215 m  sur Boulevard des Tchécoslovaques
+Continuez 45.08708 m  sur Boulevard des Tchécoslovaques
+Continuez 53.609547 m  sur Rue du Général Mouton-Duvernet Cours Albert Thomas
+Continuez 7.7847524 m  sur Rue du Général Mouton-Duvernet
+Continuez 53.857296 m  sur Rue du Général Mouton-Duvernet
+Continuez 256.8284 m  sur Rue du Dauphiné
+Continuez 54.717278 m  sur Rue du Dauphiné
+Continuez 96.7444 m  sur Rue du Dauphiné
+Continuez 95.865654 m  sur Rue du Dauphiné
+Continuez 117.45386 m  sur Rue du Dauphiné
+Continuez 222.6015 m  sur Rue du Dauphiné
+Continuez 73.50747 m  sur Rue du Dauphiné
+Continuez 69.514244 m  sur Rue du Dauphiné
+Continuez 71.13966 m  sur Rue du Dauphiné
+Continuez 32.646736 m  sur Rue du Dauphiné
+Continuez 38.124634 m  sur Rue du Dauphiné
+Continuez 110.82931 m  sur Rue du Dauphiné
+Continuez 139.95462 m  sur Rue du Dauphiné
+Continuez 63.594482 m  sur Rue du Dauphiné
+Continuez 36.126144 m  sur Route de Genas
+Continuez 33.922108 m  sur Place des Maisons Neuves
+Continuez 49.524254 m  sur Place des Maisons Neuves
+Continuez 30.600428 m  sur Place des Maisons Neuves
+Continuez 32.672306 m  sur Place des Maisons Neuves
 Continuez 77.77078 m  sur Place des Maisons Neuves
 Continuez 99.45865 m  sur Rue Jean Jaurès
 Continuez 6.4504447 m  sur Rue Jean Jaurès
@@ -284,22 +121,82 @@ Continuez 23.662397 m  sur Rue Léon Blum
 Continuez 64.29078 m  sur Rue Léon Blum
 Continuez 98.5397 m  sur Rue Léon Blum
 Continuez 179.7698 m  sur Rue Léon Blum
-Continuez 116.74729 m  sur Rue Léon Blum
-Continuez 307.35544 m  sur Rue Léon Blum
-Tu arrives au point de livraison à 10:08:38
-L'adresse de livraison N° 9 est 55444215)
+Tu arrives au point de livraison à 08:47:11
+L'adresse de livraison N° 2 est 55444018)
 
-Chemin 10
-Tu pars de (55444215,DELIVERY)
-Continuez 217.2399 m  sur Rue Émile Decorps
-Continuez 27.34875 m  sur Rue Émile Decorps
+Chemin 3
+Tu pars de (55444018,PICKUP)
+Continuez 181.73573 m  sur Rue Louis Ducroize
+Continuez 119.70782 m  sur Rue Antoine Primat
+Continuez 229.41527 m  sur Rue Antoine Primat
 Continuez 126.782524 m  sur Rue Émile Decorps
+Tu arrives au point de livraison à 08:50:51
+L'adresse de livraison N° 3 est 505061101)
+
+Chemin 4
+Tu pars de (505061101,DELIVERY)
 Continuez 24.685703 m  sur Rue Émile Decorps
 Continuez 195.15364 m  sur Rue Émile Decorps
-Continuez 65.13197 m  sur Rue Émile Decorps
-Continuez 117.10929 m  sur Rue Émile Decorps
-Continuez 60.12354 m  sur Rue Émile Decorps
-Continuez 17.99415 m  sur Rue Émile Decorps
-Tu arrives au point de livraison à 10:20:06
-L'adresse de livraison N° 10 est 4150019167)
+Continuez 227.28114 m  sur Avenue Paul Krüger
+Tu arrives au point de livraison à 08:58:40
+L'adresse de livraison N° 4 est 191134392)
+
+Chemin 5
+Tu pars de (191134392,DELIVERY)
+Continuez 90.601555 m  sur Rue Cyprian
+Continuez 203.79407 m  sur Rue Cyprian
+Continuez 39.202938 m  sur Route de Genas
+Continuez 83.29809 m  sur Route de Genas
+Continuez 107.79249 m  sur Rue des Paquerettes
+Continuez 96.39112 m  sur Rue des Paquerettes
+Continuez 82.1013 m  sur Rue des Paquerettes
+Continuez 128.6978 m  sur Rue des Bruyères
+Continuez 206.53967 m  sur Avenue Doyen Jean Lépine
+Continuez 25.209368 m  sur Boulevard Pinel
+Continuez 92.098854 m  sur Rue Gelas
+Continuez 50.25045 m  sur Rue Gelas
+Continuez 103.86472 m  sur Place Charles Dufraine
+Continuez 88.22331 m  sur Place Charles Dufraine
+Tu arrives au point de livraison à 09:13:21
+L'adresse de livraison N° 5 est 26470086)
+
+Chemin 6
+Tu pars de (26470086,DELIVERY)
+Continuez 26.563345 m  sur Rue Jules Massenet
+Continuez 265.46426 m  sur Rue Chambovet
+Continuez 122.48935 m  sur Boulevard Pinel
+Continuez 178.05112 m  sur Boulevard Pinel
+Continuez 142.73347 m  sur Boulevard Pinel
+Continuez 30.305285 m  sur Boulevard Pinel
+Continuez 10.298906 m  sur Boulevard Pinel
+Continuez 21.57322 m  sur Boulevard Pinel
+Continuez 11.316352 m  sur Boulevard Pinel
+Continuez 33.104446 m  sur Boulevard Pinel
+Continuez 91.04423 m  sur Boulevard Pinel
+Continuez 15.771056 m  sur Boulevard Pinel
+Continuez 22.654398 m  sur Boulevard Pinel
+Continuez 178.51085 m  sur Boulevard Pinel
+Continuez 160.61214 m  sur Boulevard Pinel
+Continuez 11.252497 m  sur Boulevard Pinel
+Continuez 10.438765 m  sur Avenue Rockefeller
+Continuez 47.93603 m  sur Avenue Franklin Roosevelt
+Continuez 46.391113 m  sur Avenue Franklin Roosevelt
+Continuez 31.737026 m  sur Avenue Franklin Roosevelt
+Continuez 85.61649 m  sur Avenue Franklin Roosevelt
+Continuez 142.58736 m  sur Avenue Franklin Roosevelt
+Continuez 141.66014 m  sur Rue Pierre Bourdan
+Continuez 167.81659 m  sur Rue Pierre Bourdan
+Continuez 63.36775 m  sur Rue de la Paix
+Continuez 46.31201 m  sur Rue de la Paix
+Continuez 41.994125 m  sur Rue de la Paix
+Continuez 36.52154 m  sur Rue de la Paix
+Continuez 143.89633 m  sur Rue de la Paix
+Continuez 182.80875 m  sur Rue Jean Jaurès
+Continuez 64.90494 m  sur Rue Jean Jaurès
+Continuez 70.26581 m  sur Rue Jean Jaurès
+Continuez 120.2091 m  sur Rue Jean Jaurès
+Continuez 52.302273 m  sur Avenue du Bois
+Continuez 99.56359 m  sur Avenue des Colonnes
+Tu arrives au point de livraison à 09:32:13
+L'adresse de livraison N° 6 est 1349383079)
 
