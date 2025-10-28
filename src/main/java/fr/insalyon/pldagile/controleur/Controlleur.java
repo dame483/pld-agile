@@ -3,10 +3,17 @@ package fr.insalyon.pldagile.controleur;
 import fr.insalyon.pldagile.modele.Carte;
 import fr.insalyon.pldagile.modele.DemandeDeLivraison;
 import fr.insalyon.pldagile.modele.Tournee;
+
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.net.URI;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Map;
 
 @RestController
@@ -83,6 +90,7 @@ public class Controlleur {
             if (result instanceof Tournee) {
                 return ResponseEntity.ok(Map.of(
                         "message", "Tournée calculée",
+                        "etatCourant", getCurrentState(),
                         "tournee", result
                 ));
             } else if (result instanceof Exception e) {
@@ -94,6 +102,27 @@ public class Controlleur {
             return ResponseEntity.badRequest().body("Exception : " + e.getMessage());
         }
     }
+
+    public ResponseEntity<?> saveTournee()
+    {
+        Object result = etatActuelle.saveTournee(this);
+
+        if (result instanceof Boolean) {
+            if ((Boolean) result){
+               return ResponseEntity.ok(Map.of("etatCourant", getCurrentState()));
+
+            }
+
+        }
+        else {
+            return ResponseEntity.badRequest().body("Erreur : " + ((Exception) result).getMessage());
+        }
+
+    }
+
+
+
+
 
     public void setCurrentState(Etat etat) {
         this.etatActuelle = etat;

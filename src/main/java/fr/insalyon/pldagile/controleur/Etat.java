@@ -10,9 +10,8 @@ public interface Etat {
     Object uploadXML(String type, MultipartFile file, Carte carte);
     String getName();
     Object runCalculTournee(Controlleur c);
-
-// void addLivraison(Controlleur c, MultipartFile file, Carte carte);
-// void deleteLivraison(Controlleur c);
-// void saveTournee(Controlleur c);
+    //void addLivraison(Controlleur c, MultipartFile file, Carte carte);
+    //void deleteLivraison(Controlleur c);
+    Object saveTournee(Controlleur c);
 
 }

@@ -48,22 +48,21 @@ public class EtatAjouterLivraison implements Etat {
     /*@Override
     public void addLivraison(Controlleur c,@RequestParam("file")  MultipartFile file, Carte carte) {
 
-    }
-
-    @Override
-    public void deleteLivraison(Controlleur c) {
-
-    }
-
-    @Override
-    public Object runCalculTournee(Controlleur c) {
-        return null;
     }*/
 
     /*@Override
-    public void saveTournee(Controlleur c) {
+    public void deleteLivraison(Controlleur c) {
 
     }*/
+    @Override
+    public Object runCalculTournee(Controlleur c) {
+        return null;
+    }
+
+    @Override
+    public void saveTournee(Controlleur c) {
+
+    }
 
 
     @Override

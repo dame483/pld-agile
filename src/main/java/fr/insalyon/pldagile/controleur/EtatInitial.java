@@ -10,7 +10,8 @@ import java.io.File;
 @Component
 public class EtatInitial implements Etat {
 
-    public EtatInitial() {}
+    public EtatInitial() {
+    }
 
     @Override
     public Carte loadCarte(Controlleur c, MultipartFile file) {
@@ -66,7 +67,14 @@ public class EtatInitial implements Etat {
 
     @Override
     public Object runCalculTournee(Controlleur c) {
+        System.err.println("Erreur : impossible de calculer une tournée sans carte et demande chargé.");
+
         return null;
     }
 
+    @Override
+    public void saveTournee(Controlleur c) {
+        System.err.println("Erreur : impossible de sauvegarder une tournée sans tournée calculé et carte et demande chargé.");
+
+    }
 }

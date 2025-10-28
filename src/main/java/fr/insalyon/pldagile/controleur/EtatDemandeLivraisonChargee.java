@@ -51,7 +51,7 @@ public class EtatDemandeLivraisonChargee implements Etat {
             CalculTournee t = new CalculTournee(carte, demLivraison, 4.1, heureDepart);
             Tournee tournee = t.calculerTournee();
 
-            c.setCurrentState(new EtatTourneeCalcule(carte, demLivraison));
+            c.setCurrentState(new EtatTourneeCalcule(carte, demLivraison,tournee));
             return tournee;
 
         } catch (Exception e) {
@@ -59,6 +59,11 @@ public class EtatDemandeLivraisonChargee implements Etat {
         }
     }
 
+    @Override
+    public void saveTournee(Controlleur c) {
+        System.err.println("Erreur : impossible de sauvegarder une tournée sans tournée calculé.");
+
+    }
     @Override
     public Object uploadXML(String type, MultipartFile file, Carte carte) {
         if (file == null || file.isEmpty()) return null;

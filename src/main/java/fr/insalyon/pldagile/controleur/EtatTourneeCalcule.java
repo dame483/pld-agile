@@ -2,6 +2,7 @@ package fr.insalyon.pldagile.controleur;
 
 import fr.insalyon.pldagile.algorithme.CalculTournee;
 import fr.insalyon.pldagile.modele.*;
+import fr.insalyon.pldagile.sortie.FeuilleDeRoute;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
@@ -13,10 +14,12 @@ public class EtatTourneeCalcule implements Etat {
 
     private Carte carte;
     private DemandeDeLivraison demande;
+    private Tournee tournee;
 
-    public EtatTourneeCalcule(Carte carte, DemandeDeLivraison demande) {
+    public EtatTourneeCalcule(Carte carte, DemandeDeLivraison demande, Tournee tournee) {
         this.carte = carte;
         this.demande = demande;
+        this.tournee = tournee;
     }
 
     @Override
@@ -46,10 +49,34 @@ public class EtatTourneeCalcule implements Etat {
         try {
             CalculTournee t = new CalculTournee(this.carte, this.demande, 15.0,
                     this.demande.getEntrepot().getHoraireDepart());
+
             return t.calculerTournee();
         } catch (Exception e) {
             return e;
         }
+    }
+
+    /*@Override
+    public void addLivraison(Controlleur c, MultipartFile file, Carte carte) {
+        EtatAjouterLivraison etatAjout= new EtatAjouterLivraison(carte,this.demande);
+        c.setCurrentState(etatAjout);
+        etatAjout.addLivraison(c,file,carte);
+    }*/
+
+    @Override
+    public Object saveTournee(Controlleur c) {
+        FeuilleDeRoute feuille = new FeuilleDeRoute(this.tournee);
+        try {
+                feuille.generateFeuilleDeRoute();
+                feuille.sauvegarderTournee();
+                return true;
+
+
+        } catch (Exception e) {
+            return e;
+        }
+
+
     }
 
     @Override

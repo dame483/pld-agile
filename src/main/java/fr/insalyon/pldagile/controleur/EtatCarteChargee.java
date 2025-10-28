@@ -83,6 +83,12 @@ public class EtatCarteChargee implements Etat {
     }
 
     @Override
+    public void saveTournee(Controlleur c) {
+        System.err.println("Erreur : impossible de sauvegarder une tournée sans tournée calculé.");
+
+    }
+
+    @Override
     public String getName() {
         return "Etat Carte Chargee";
     }
