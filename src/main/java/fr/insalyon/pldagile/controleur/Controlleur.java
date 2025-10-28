@@ -150,7 +150,7 @@ public class Controlleur {
                 return ResponseEntity.badRequest().body("Veuillez d'abord charger une carte avant la tournée !");
             }
 
-            Object result = etatActuelle.loadTournee(this, file, this.carte);
+            Object result = etatActuelle.uploadXML("tournee", file, this.carte);
 
             if (result instanceof Tournee tournee) {
                 this.etatActuelle = new EtatTourneeCalcule(this.carte, this.demande, tournee);
