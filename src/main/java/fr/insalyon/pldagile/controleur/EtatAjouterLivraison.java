@@ -116,8 +116,4 @@ public class EtatAjouterLivraison implements Etat {
         return "Etat Ajout de Livraison";
     }
 
-    @Override
-    public Object runCalculTournee(Controlleur c) {
-        return null;
-    }
 }

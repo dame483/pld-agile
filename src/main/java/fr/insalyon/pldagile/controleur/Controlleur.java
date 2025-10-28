@@ -117,6 +117,7 @@ public class Controlleur {
         else {
             return ResponseEntity.badRequest().body("Erreur : " + ((Exception) result).getMessage());
         }
+        return ResponseEntity.badRequest().body("Erreur inconnue" );
 
     }
 
