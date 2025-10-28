@@ -175,7 +175,7 @@ public class CalculTournee {
                     System.out.print("INF\t");
                 } else {
                     String tronconsStr = c.getTroncons().stream()
-                            .map(Troncon::getnomRue)
+                            .map(Troncon::getNomRue)
                             .reduce((a, b) -> a + ", " + b)
                             .orElse("");
                     System.out.print("[" + tronconsStr + "]\t");
