@@ -60,8 +60,9 @@ public class EtatAjouterLivraison implements Etat {
     }
 
     @Override
-    public void saveTournee(Controlleur c) {
-
+    public Object saveTournee(Controlleur c) {
+        System.err.println("Erreur : impossible de sauvegarder une tournée sans avoir la nouvelle tournée calculé.");
+        return null;
     }
 
 
