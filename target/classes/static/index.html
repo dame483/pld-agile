@@ -467,11 +467,16 @@
 
             if (confirmReset) {
                 carteData = null;
-                map = null;
-
-                const mapDiv = document.getElementById('map');
-                mapDiv.style.display = "none";
-                mapDiv.innerHTML = "";
+                demandeData = null;
+                livraisonsLayer = null;
+                entrepotLayer = null;
+                window.tronconsLayer = null;
+                window.tourneeLayer = null;
+                window.directionNumbersLayer = null;
+                if (map) {
+                    map.remove();
+                    map = null;
+                }
 
                 document.getElementById('xmlCarte').value = "";
                 document.getElementById('xmlDemande').value = "";
