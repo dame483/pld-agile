@@ -19,7 +19,7 @@ Continuez 123.8789 m  sur Cours Docteur Long
 Continuez 92.53872 m  sur Cours Docteur Long
 Continuez 72.582924 m  sur Cours Docteur Long
 Continuez 76.63646 m  sur Rue Louise
-Tu arrives au point de livraison à 08:04:48
+Tu arrives au point de livraison à 08:04:52
 L'adresse de livraison N° 0 est 26155372)
 
 Chemin 1
@@ -28,7 +28,7 @@ Continuez 68.19679 m  sur Rue Louise
 Continuez 28.787182 m  sur Rue Julie
 Continuez 111.934784 m  sur Rue du Général Brulard
 Continuez 351.61423 m  sur Avenue des Acacias
-Tu arrives au point de livraison à 08:15:03
+Tu arrives au point de livraison à 08:15:09
 L'adresse de livraison N° 1 est 26317393)
 
 Chemin 2
@@ -62,7 +62,7 @@ Continuez 33.104446 m  sur Boulevard Pinel
 Continuez 91.04423 m  sur Boulevard Pinel
 Continuez 15.771056 m  sur Boulevard Pinel
 Continuez 22.654398 m  sur Boulevard Pinel
-Tu arrives au point de livraison à 08:25:16
+Tu arrives au point de livraison à 08:25:29
 L'adresse de livraison N° 2 est 25610684)
 
 Chemin 3
@@ -78,7 +78,7 @@ Continuez 92.293686 m  sur Cours Eugénie
 Continuez 133.25873 m  sur Avenue Rockefeller
 Continuez 9.786228 m  sur Rue Victor de Laprade
 Continuez 200.07085 m  sur Rue Victor de Laprade
-Tu arrives au point de livraison à 08:32:04
+Tu arrives au point de livraison à 08:32:20
 L'adresse de livraison N° 3 est 21717915)
 
 Chemin 4
@@ -111,7 +111,7 @@ Continuez 97.55205 m  sur Rue Marius Berliet
 Continuez 59.294033 m  sur Rue Saint-Gervais
 Continuez 47.378006 m  sur Rue Saint-Gervais
 Continuez 5.386798 m  sur Impasse Saint-Gervais
-Tu arrives au point de livraison à 08:50:34
+Tu arrives au point de livraison à 08:50:59
 L'adresse de livraison N° 4 est 1400900990)
 
 Chemin 5
@@ -128,7 +128,7 @@ Continuez 75.947624 m  sur Petite Rue de Monplaisir
 Continuez 130.47949 m  sur Cours Albert Thomas
 Continuez 73.04839 m  sur Cours Albert Thomas
 Continuez 74.09365 m  sur Boulevard Vivier-Merle Cours Albert Thomas
-Tu arrives au point de livraison à 08:58:11
+Tu arrives au point de livraison à 08:58:40
 L'adresse de livraison N° 5 est 1036842078)
 
 Chemin 6
@@ -150,7 +150,7 @@ Continuez 106.253914 m  sur Avenue Georges Pompidou
 Continuez 39.416725 m  sur Rue Nazareth
 Continuez 10.284923 m  sur Rue Nazareth
 Continuez 83.729836 m  sur Rue Nazareth
-Tu arrives au point de livraison à 09:05:23
+Tu arrives au point de livraison à 09:05:58
 L'adresse de livraison N° 6 est 208769083)
 
 Chemin 7
@@ -192,7 +192,7 @@ Continuez 112.29348 m  sur Rue de l'Épargne
 Continuez 112.88493 m  sur Rue de l'Éternité
 Continuez 10.267049 m  sur Rue de l'Éternité
 Continuez 162.6578 m  sur Avenue de l'Europe
-Tu arrives au point de livraison à 09:22:53
+Tu arrives au point de livraison à 09:23:39
 L'adresse de livraison N° 7 est 21992645)
 
 Chemin 8
@@ -225,7 +225,7 @@ Continuez 54.309757 m  sur Rue Louise Michel
 Continuez 12.09084 m  sur 
 Continuez 23.058268 m  sur Rue du Professeur Roux
 Continuez 55.361126 m  sur Rue du Professeur Roux
-Tu arrives au point de livraison à 09:37:01
+Tu arrives au point de livraison à 09:37:55
 L'adresse de livraison N° 8 est 60755991)
 
 Chemin 9
@@ -286,7 +286,7 @@ Continuez 98.5397 m  sur Rue Léon Blum
 Continuez 179.7698 m  sur Rue Léon Blum
 Continuez 116.74729 m  sur Rue Léon Blum
 Continuez 307.35544 m  sur Rue Léon Blum
-Tu arrives au point de livraison à 10:07:24
+Tu arrives au point de livraison à 10:08:38
 L'adresse de livraison N° 9 est 55444215)
 
 Chemin 10
@@ -300,6 +300,6 @@ Continuez 65.13197 m  sur Rue Émile Decorps
 Continuez 117.10929 m  sur Rue Émile Decorps
 Continuez 60.12354 m  sur Rue Émile Decorps
 Continuez 17.99415 m  sur Rue Émile Decorps
-Tu arrives au point de livraison à 10:18:49
+Tu arrives au point de livraison à 10:20:06
 L'adresse de livraison N° 10 est 4150019167)
 
