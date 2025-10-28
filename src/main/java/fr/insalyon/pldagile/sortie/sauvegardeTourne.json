@@ -5,6 +5,7 @@
             "typeNoeud": "ENTREPOT",
             "horaireArrivee": "09:31:18",
             "id": 1349383079,
+            "horaireDepart": "08:00",
             "longitude": 4.9053183
         },
         "longueurTotale": 3192.031951,
@@ -13,6 +14,7 @@
             "typeNoeud": "PICKUP",
             "horaireArrivee": "08:12:47",
             "id": 27362899,
+            "horaireDepart": "08:15:47",
             "longitude": 4.8794765
         },
         "troncons": [
@@ -258,6 +260,7 @@
             "typeNoeud": "PICKUP",
             "horaireArrivee": "08:12:47",
             "id": 27362899,
+            "horaireDepart": "08:15:47",
             "longitude": 4.8794765
         },
         "longueurTotale": 3065.309029,
@@ -266,6 +269,7 @@
             "typeNoeud": "PICKUP",
             "horaireArrivee": "08:28:04",
             "id": 26121686,
+            "horaireDepart": "08:33:04",
             "longitude": 4.859172
         },
         "troncons": [
@@ -445,6 +449,7 @@
             "typeNoeud": "PICKUP",
             "horaireArrivee": "08:28:04",
             "id": 26121686,
+            "horaireDepart": "08:33:04",
             "longitude": 4.859172
         },
         "longueurTotale": 3378.1519951,
@@ -453,6 +458,7 @@
             "typeNoeud": "PICKUP",
             "horaireArrivee": "08:46:36",
             "id": 55444018,
+            "horaireDepart": "08:47:36",
             "longitude": 4.8953767
         },
         "troncons": [
@@ -716,6 +722,7 @@
             "typeNoeud": "PICKUP",
             "horaireArrivee": "08:46:36",
             "id": 55444018,
+            "horaireDepart": "08:47:36",
             "longitude": 4.8953767
         },
         "longueurTotale": 657.641344,
@@ -724,6 +731,7 @@
             "typeNoeud": "DELIVERY",
             "horaireArrivee": "08:50:14",
             "id": 505061101,
+            "horaireDepart": "08:56:14",
             "longitude": 4.8998
         },
         "troncons": [
@@ -759,6 +767,7 @@
             "typeNoeud": "DELIVERY",
             "horaireArrivee": "08:50:14",
             "id": 505061101,
+            "horaireDepart": "08:56:14",
             "longitude": 4.8998
         },
         "longueurTotale": 447.120483,
@@ -767,6 +776,7 @@
             "typeNoeud": "DELIVERY",
             "horaireArrivee": "08:58:01",
             "id": 191134392,
+            "horaireDepart": "09:07:01",
             "longitude": 4.9022007
         },
         "troncons": [
@@ -796,6 +806,7 @@
             "typeNoeud": "DELIVERY",
             "horaireArrivee": "08:58:01",
             "id": 191134392,
+            "horaireDepart": "09:07:01",
             "longitude": 4.9022007
         },
         "longueurTotale": 1398.0657350000001,
@@ -804,6 +815,7 @@
             "typeNoeud": "DELIVERY",
             "horaireArrivee": "09:12:37",
             "id": 26470086,
+            "horaireDepart": "09:19:37",
             "longitude": 4.895372
         },
         "troncons": [
@@ -899,6 +911,7 @@
             "typeNoeud": "DELIVERY",
             "horaireArrivee": "09:12:37",
             "id": 26470086,
+            "horaireDepart": "09:19:37",
             "longitude": 4.895372
         },
         "longueurTotale": 2918.074657,
@@ -907,6 +920,7 @@
             "typeNoeud": "ENTREPOT",
             "horaireArrivee": "09:31:18",
             "id": 1349383079,
+            "horaireDepart": "08:00",
             "longitude": 4.9053183
         },
         "troncons": [

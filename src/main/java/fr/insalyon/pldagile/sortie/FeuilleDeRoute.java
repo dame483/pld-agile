@@ -55,7 +55,7 @@ public class FeuilleDeRoute {
     public void sauvegarderTournee() throws Exception {
         List<Chemin> chemins = tournee.getChemins();
         JSONArray cheminsArray = new JSONArray();
-
+        System.out.println("appel de sauvegarde tournée");
         try {
             for (Chemin chemin : chemins) {
                 JSONObject cheminObject = new JSONObject();
@@ -79,6 +79,7 @@ public class FeuilleDeRoute {
                 noeuddePassageDepart.put("longitude", chemin.getNoeudDePassageDepart().getLongitude());
                 noeuddePassageDepart.put("typeNoeud", chemin.getNoeudDePassageDepart().getType());
                 noeuddePassageDepart.put("horaireArrivee", chemin.getNoeudDePassageDepart().getHoraireArrivee().toString());
+                noeuddePassageDepart.put("horaireDepart", chemin.getNoeudDePassageDepart().getHoraireDepart().toString());
                 cheminObject.put("NoeudDePassageDepart", noeuddePassageDepart);
 
                 JSONObject noeudDePassageArrivee = new JSONObject();
@@ -87,6 +88,7 @@ public class FeuilleDeRoute {
                 noeudDePassageArrivee.put("longitude", chemin.getNoeudDePassageArrivee().getLongitude());
                 noeudDePassageArrivee.put("typeNoeud", chemin.getNoeudDePassageArrivee().getType());
                 noeudDePassageArrivee.put("horaireArrivee", chemin.getNoeudDePassageArrivee().getHoraireArrivee().toString());
+                noeudDePassageArrivee.put("horaireDepart", chemin.getNoeudDePassageArrivee().getHoraireDepart().toString());
                 cheminObject.put("NoeudDePassageArrivee", noeudDePassageArrivee);
 
                 cheminsArray.put(cheminObject);

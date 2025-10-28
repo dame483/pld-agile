@@ -2,6 +2,7 @@ package fr.insalyon.pldagile.algorithme;
 
 import fr.insalyon.pldagile.modele.*;
 import fr.insalyon.pldagile.sortie.FeuilleDeRoute;
+import fr.insalyon.pldagile.sortie.parseurTourneeJson;
 
 import java.io.File;
 import java.time.LocalTime;
