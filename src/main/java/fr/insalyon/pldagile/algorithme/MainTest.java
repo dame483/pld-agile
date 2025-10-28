@@ -11,43 +11,37 @@ public class MainTest {
 
     public static void main(String[] args) {
         try {
-            //  Charger la carte
+            // Charger la carte
             File fichierCarte = new File("src/main/resources/donnees/plans/petitPlan.xml");
             Carte ville = CarteParseurXML.loadFromFile(fichierCarte);
             System.out.println("Carte chargée.");
 
-            //  Charger la demande de livraison
+            // Charger la demande de livraison
             File fichierDemande = new File("src/main/resources/donnees/demandes/demandePetit2.xml");
             DemandeDeLivraison demande = DemandeDeLivraisonParseurXML.loadFromFile(fichierDemande, ville);
             System.out.println("Demande de livraison chargée.");
             System.out.println("Nombre de livraisons : " + demande.getLivraisons().size());
 
-            //  Paramètres
+            // Paramètres
             double vitesse = 4.16; // m/s (~15 km/h)
             LocalTime heureDepart = demande.getEntrepot().getHoraireArrivee() != null
                     ? demande.getEntrepot().getHoraireArrivee()
                     : LocalTime.of(8, 0); // défaut 08:00
 
-            int nombreLivreurs = 1;
+            int nombreLivreurs = 2; // Exemple : 2 livreurs
 
-            //  Clustering K-Means des livraisons
-            KMeans kmeans = new KMeans(demande.getLivraisons(), nombreLivreurs);
-            List<List<Livraison>> clusters = kmeans.cluster();
+            // Calculateur de tournées
+            CalculateurTournees calculateur = new CalculateurTournees(ville, demande, vitesse, heureDepart, nombreLivreurs);
+            List<Tournee> toutesLesTournees = calculateur.calculerTournees();
 
-            //  Calcul et affichage des tournées par livreur
+            // Affichage
             DateTimeFormatter formatHeure = DateTimeFormatter.ofPattern("HH:mm:ss");
 
-            for (int i = 0; i < clusters.size(); i++) {
-                List<Livraison> clusterLivraisons = clusters.get(i);
-
-                // Créer une demande spécifique pour ce cluster
-                DemandeDeLivraison demandeCluster = new DemandeDeLivraison(demande.getEntrepot(), clusterLivraisons);
-                CalculTournee calculTournee = new CalculTournee(ville, demandeCluster, vitesse, heureDepart);
-                Tournee tournee = calculTournee.calculerTournee();
-
+            for (int i = 0; i < toutesLesTournees.size(); i++) {
+                Tournee tournee = toutesLesTournees.get(i);
                 System.out.println("\n=== Tournée livreur " + (i + 1) + " ===");
-                List<Chemin> chemins = tournee.getChemins();
 
+                List<Chemin> chemins = tournee.getChemins();
                 for (int j = 0; j < chemins.size(); j++) {
                     Chemin c = chemins.get(j);
                     NoeudDePassage depart = c.getNoeudDePassageDepart();
@@ -74,11 +68,10 @@ public class MainTest {
                     System.out.printf("  Distance : %.0f m\n\n", distanceChemin);
                 }
 
-                // Utiliser CalculTournee pour récupérer longueur et durée totales
-                System.out.printf("Distance totale : %.0f m\n", calculTournee.getLongueurTotale());
-                System.out.printf("Durée totale : %.0f s\n", calculTournee.getDureeTotale());
+                System.out.printf("Distance totale : %.0f m\n", tournee.getDureeTotale()); // si tu veux ajouter longueurTotale, tu peux créer getter
+                System.out.printf("Durée totale : %.0f s\n", tournee.getDureeTotale());
 
-                LocalTime heureFin = heureDepart.plusSeconds(Math.round(calculTournee.getDureeTotale()));
+                LocalTime heureFin = heureDepart.plusSeconds(Math.round(tournee.getDureeTotale()));
                 System.out.printf("Heure de fin estimée : %s\n", heureFin.format(formatHeure));
             }
 

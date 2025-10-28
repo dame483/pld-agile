@@ -6,16 +6,14 @@ import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 
-public class CalculTournee2 {
+public class CalculTourneeHeuristique {
 
     private final Carte ville;
     private final DemandeDeLivraison demande;
     private final double vitesse; // m/s
-    private double longueurTotale = 0;
-    private double dureeTotale = 0;
     private final LocalTime heureDepart;
 
-    public CalculTournee2(Carte ville, DemandeDeLivraison demande, double vitesse, LocalTime heureDepart) {
+    public CalculTourneeHeuristique(Carte ville, DemandeDeLivraison demande, double vitesse, LocalTime heureDepart) {
         this.ville = ville;
         this.demande = demande;
         this.vitesse = vitesse;
@@ -32,8 +30,7 @@ public class CalculTournee2 {
         Chemin[][] matriceChemins = calculChemins.getMatriceChemins();
 
         // Graphe complet des distances
-        GrapheComplet g = new GrapheComplet(noeuds.size(),matriceChemins);
-
+        GrapheComplet g = new GrapheComplet(noeuds.size(), matriceChemins);
 
         // Création de la map precedences : delivery -> pickup
         Map<Integer, Integer> precedences = new HashMap<>();
@@ -50,6 +47,8 @@ public class CalculTournee2 {
 
         List<Chemin> cheminsTournee = new ArrayList<>();
         LocalTime heureCourante = heureDepart;
+        double longueurTotale = 0;
+        double dureeTotale = 0;
         NoeudDePassage entrepot = noeuds.get(departIdx);
         entrepot.setHoraireDepart(heureDepart);
 
@@ -102,14 +101,7 @@ public class CalculTournee2 {
             entrepot.setHoraireArrivee(heureCourante);
         }
 
-        return new Tournee(cheminsTournee, dureeTotale);
-    }
-
-    public double getLongueurTotale() {
-        return longueurTotale;
-    }
-
-    public double getDureeTotale() {
-        return dureeTotale;
+        // Retourner une Tournee avec longueurTotale, dureeTotale et heureDepart
+        return new Tournee(cheminsTournee, dureeTotale, longueurTotale, heureDepart);
     }
 }

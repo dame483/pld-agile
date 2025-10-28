@@ -38,7 +38,7 @@ public class TSPAvecPrecedence extends TemplateTSP {
         double minArc = Double.MAX_VALUE;
         for (int i = 0; i < g.getNbSommets(); i++) {
             for (int j = 0; j < g.getNbSommets(); j++) {
-                if (i != j && g.estArc(i, j)) {
+                if (i != j ) {
                     minArc = Math.min(minArc, g.getCout(i, j));
                 }
             }
