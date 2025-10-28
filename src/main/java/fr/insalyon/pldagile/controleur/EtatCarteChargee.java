@@ -1,9 +1,7 @@
 package fr.insalyon.pldagile.controleur;
 
-import fr.insalyon.pldagile.modele.Carte;
-import fr.insalyon.pldagile.modele.CarteParseurXML;
-import fr.insalyon.pldagile.modele.DemandeDeLivraison;
-import fr.insalyon.pldagile.modele.DemandeDeLivraisonParseurXML;
+import fr.insalyon.pldagile.modele.*;
+import fr.insalyon.pldagile.sortie.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
@@ -57,18 +55,29 @@ public class EtatCarteChargee implements Etat {
             System.out.println("Fichier temporaire créé : " + tempFile.getAbsolutePath());
             Object result;
 
-            if ("carte".equalsIgnoreCase(type)) {
-                result = CarteParseurXML.loadFromFile(tempFile);
-            } else {
-                result = DemandeDeLivraisonParseurXML.loadFromFile(tempFile, this.carte);
+            switch (type.toLowerCase()) {
+                case "carte":
+                    result = CarteParseurXML.loadFromFile(tempFile);
+                    break;
+
+                case "demande":
+                    result = DemandeDeLivraisonParseurXML.loadFromFile(tempFile, this.carte);
+                    break;
+
+                case "tournee":
+                    result = ParseurTourneeJson.parseurTournee(tempFile.getAbsolutePath());
+                    break;
+
+                default:
+                    throw new IllegalArgumentException("Type de fichier non reconnu : " + type);
             }
 
             return result;
 
         } catch (Exception e) {
-            System.err.println("Erreur lors du chargement XML : " + e.getMessage());
+            System.err.println("Erreur lors du chargement du fichier XML/JSON : " + e.getMessage());
             e.printStackTrace();
-            return null;
+            return e;
         } finally {
             if (tempFile != null && tempFile.exists() && !tempFile.delete()) {
                 System.err.println("Impossible de supprimer le fichier temporaire : " + tempFile.getAbsolutePath());
@@ -81,6 +90,30 @@ public class EtatCarteChargee implements Etat {
         System.err.println("Erreur : impossible de calculer une tournée sans demande de livraison.");
         return null;
     }
+
+    @Override
+    public Object creerFeuillesDeRoute(Controlleur c) {
+        System.err.println("Erreur : impossible de créer une feuille de route avant le calcul de la tournée.");
+        return null;
+    }
+
+    @Override
+    public Object saveTournee(Controlleur c) {
+        System.err.println("Erreur : impossible de sauvegarder une tournée avant son calcul.");
+        return null;
+    }
+
+    @Override
+    public Object loadTournee(Controlleur c, MultipartFile file, Carte carte) {
+        Object result = uploadXML("tournee", file, carte);
+
+        if (result instanceof Tournee tournee) {
+            c.setCurrentState(new EtatTourneeCalcule(carte, null, tournee));
+            return tournee;
+        }
+        return result;
+    }
+
 
     @Override
     public String getName() {

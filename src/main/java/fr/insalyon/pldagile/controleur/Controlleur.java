@@ -95,6 +95,82 @@ public class Controlleur {
         }
     }
 
+    @PostMapping("/tournee/feuille-de-route")
+    public ResponseEntity<?> creerFeuilleDeRoute() {
+        try {
+            if (!(etatActuelle instanceof EtatTourneeCalcule)) {
+                return ResponseEntity.badRequest().body("La tournée n'est pas encore calculée.");
+            }
+
+            Object result = etatActuelle.creerFeuillesDeRoute(this);
+
+            if (result instanceof String message) {
+                return ResponseEntity.ok(Map.of(
+                        "message", message
+                ));
+            } else if (result instanceof Exception e) {
+                return ResponseEntity.badRequest().body("Erreur : " + e.getMessage());
+            } else {
+                return ResponseEntity.badRequest().body("Erreur inconnue lors de la génération de la feuille de route.");
+            }
+
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Exception : " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/tournee/sauvegarde")
+    public ResponseEntity<?> saveTournee() {
+        try {
+            if (!(etatActuelle instanceof EtatTourneeCalcule)) {
+                return ResponseEntity.badRequest().body("La tournée n'est pas encore calculée.");
+            }
+
+            Object result = etatActuelle.saveTournee(this);
+
+            if (result instanceof String message) {
+                return ResponseEntity.ok(Map.of(
+                        "message", message
+                ));
+            } else if (result instanceof Exception e) {
+                return ResponseEntity.badRequest().body("Erreur : " + e.getMessage());
+            } else {
+                return ResponseEntity.badRequest().body("Erreur inconnue lors de la sauvegarde de la tournée.");
+            }
+
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Exception : " + e.getMessage());
+        }
+    }
+
+    @PostMapping("/upload-tournee")
+    public ResponseEntity<?> loadTournee(@RequestParam("file") MultipartFile file) {
+        try {
+            if (this.carte == null) {
+                return ResponseEntity.badRequest().body("Veuillez d'abord charger une carte avant la tournée !");
+            }
+
+            Object result = etatActuelle.uploadXML("tournee", file, this.carte);
+
+            if (result instanceof Tournee tournee) {
+                this.etatActuelle = new EtatTourneeCalcule(this.carte, this.demande, tournee);
+                return ResponseEntity.ok(Map.of(
+                        "message", "Tournée chargée avec succès",
+                        "etatCourant", getCurrentState(),
+                        "tournee", tournee
+                ));
+            } else if (result instanceof Exception e) {
+                return ResponseEntity.badRequest().body("Erreur : " + e.getMessage());
+            } else {
+                return ResponseEntity.badRequest().body("Erreur inconnue lors du chargement de la tournée");
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body("Exception : " + e.getMessage());
+        }
+    }
+
     public void setCurrentState(Etat etat) {
         this.etatActuelle = etat;
     }

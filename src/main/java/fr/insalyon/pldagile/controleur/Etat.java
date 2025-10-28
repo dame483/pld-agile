@@ -1,6 +1,6 @@
 package fr.insalyon.pldagile.controleur;
 
-import fr.insalyon.pldagile.modele.Carte;
+import fr.insalyon.pldagile.modele.*;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface Etat {
@@ -10,9 +10,13 @@ public interface Etat {
     Object uploadXML(String type, MultipartFile file, Carte carte);
     String getName();
     Object runCalculTournee(Controlleur c);
+    Object creerFeuillesDeRoute(Controlleur c);
+    Object saveTournee(Controlleur c);
+    Object loadTournee(Controlleur c, MultipartFile file, Carte carte);
+
 
 // void addLivraison(Controlleur c, MultipartFile file, Carte carte);
 // void deleteLivraison(Controlleur c);
-// void saveTournee(Controlleur c);
+
 
 }
