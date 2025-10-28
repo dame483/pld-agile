@@ -38,7 +38,7 @@ public class CalculChemins {
                 } else {
                     List<Troncon> troncons = chemins.get(arrivee.getId());
                     if (troncons != null) {
-                        double longueurTotale = troncons.stream().mapToDouble(Troncon::longueur).sum();
+                        double longueurTotale = troncons.stream().mapToDouble(Troncon::getLongueur).sum();
                         distances[i][j] = longueurTotale;
                         matriceChemins[i][j] = new Chemin(troncons, longueurTotale, depart, arrivee);
                     } else {
@@ -88,7 +88,7 @@ public class CalculChemins {
                 if (t.getIdOrigine() != idCourant) continue;
 
                 long idVoisin = t.getIdDestination();
-                double nvDist = dist.get(idCourant) + t.longueur();
+                double nvDist = dist.get(idCourant) + t.getLongueur();
 
                 if (nvDist < dist.get(idVoisin)) {
                     dist.put(idVoisin, nvDist);

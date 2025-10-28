@@ -2,6 +2,7 @@ package fr.insalyon.pldagile.modele;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Tournee {
     private List<Chemin> chemins = new ArrayList();
@@ -39,6 +40,22 @@ public class Tournee {
         return chemins.stream()
                 .mapToDouble(Chemin::getLongueurTotal)
                 .sum();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Tournee tournee)) return false;
+        return Double.compare(dureeTotale, tournee.dureeTotale) == 0 && Objects.equals(chemins, tournee.chemins);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(chemins, dureeTotale);
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Tournee{dureeTotale=%.2f, chemins=%s}", dureeTotale, chemins);
     }
 
 }

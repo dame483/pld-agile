@@ -1,5 +1,7 @@
 package fr.insalyon.pldagile.modele;
 
+import java.util.Objects;
+
 public class Troncon {
     private long idOrigine;
     private long idDestination;
@@ -21,15 +23,29 @@ public class Troncon {
         return this.idDestination;
     }
 
-    public String getnomRue() {
+    public String getNomRue() {
         return this.nomRue;
     }
 
-    public double longueur() {
+    public double getLongueur() {
         return this.longueur;
     }
 
+    @Override
     public String toString() {
-        return "Tronçon {Rue : " + this.nomRue + ", Origine : " + this.idOrigine + " -> Destination : " + this.idDestination + ", Longueur : " + this.longueur + " m}";
+        return String.format("Troncon{idOrigine=%d, idDestination=%d, longueur=%.2f, nomRue='%s'}",
+                idOrigine, idDestination, longueur, nomRue);
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Troncon troncon)) return false;
+        return idOrigine == troncon.idOrigine && idDestination == troncon.idDestination && Double.compare(longueur, troncon.longueur) == 0 && Objects.equals(nomRue, troncon.nomRue);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(idOrigine, idDestination, longueur, nomRue);
     }
 }

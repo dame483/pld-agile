@@ -2,6 +2,7 @@ package fr.insalyon.pldagile.modele;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class Chemin {
     private List<Troncon> troncons = new ArrayList();
@@ -48,8 +49,20 @@ public class Chemin {
         this.NoeudDePassageArrivee = noeudDePassageArrivee;
     }
 
+    @Override
     public String toString() {
-        String var10000 = String.valueOf(this.troncons);
-        return "Chemin{troncons=" + var10000 + ", longueurTotal=" + this.longueurTotal + ", NoeudDePassageDepart=" + String.valueOf(this.NoeudDePassageDepart) + ", NoeudDePassageArrivee=" + String.valueOf(this.NoeudDePassageArrivee) + "}";
+        return String.format("Chemin{longueurTotale=%.2f, troncons=%s}", longueurTotal, troncons);
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Chemin chemin)) return false;
+        return Double.compare(longueurTotal, chemin.longueurTotal) == 0 && Objects.equals(troncons, chemin.troncons) && Objects.equals(NoeudDePassageDepart, chemin.NoeudDePassageDepart) && Objects.equals(NoeudDePassageArrivee, chemin.NoeudDePassageArrivee);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(troncons, longueurTotal, NoeudDePassageDepart, NoeudDePassageArrivee);
     }
 }

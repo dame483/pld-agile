@@ -14,6 +14,7 @@ import org.json.JSONObject;
 
 public class FeuilleDeRoute {
     private Tournee tournee;
+
     public FeuilleDeRoute(Tournee tournee) {
         this.tournee = tournee;
     }
@@ -21,18 +22,17 @@ public class FeuilleDeRoute {
     public void generateFeuilleDeRoute() throws Exception {
         File feuilleDeRoute = new File("src/main/java/fr/insalyon/pldagile/sortie/feuilleDeRoute.txt");
         try {
-        if (feuilleDeRoute.createNewFile()) {
-            System.out.println("Feuille de route créée pour le livreur" );
+            if (feuilleDeRoute.createNewFile()) {
+                System.out.println("Feuille de route créée pour le livreur");
 
-        }
-        else {
-            System.out.println("Ce fichier existe déjà");
-        }
+            } else {
+                System.out.println("Ce fichier existe déjà");
+            }
             try (FileWriter writer = new FileWriter("src/main/java/fr/insalyon/pldagile/sortie/feuilleDeRoute.txt")) {
                 writer.write("L'heure de départ de l'entrepôt : 08:00\n\n");
 
-                List <Chemin> chemins = tournee.getChemins();
-                for(int i = 0; i < chemins.size() ; i++) {
+                List<Chemin> chemins = tournee.getChemins();
+                for (int i = 0; i < chemins.size(); i++) {
                     Chemin chemin = chemins.get(i);
                     writer.write("Chemin " + i + "\n");
                     NoeudDePassage depart = chemin.getNoeudDePassageDepart();
@@ -40,62 +40,77 @@ public class FeuilleDeRoute {
                     writer.write("Tu pars de " + "(" + depart.getId() + "," + depart.getType() + ")\n");
                     for (int j = 0; j < chemin.getTroncons().size(); j++) {
                         Troncon troncon = chemin.getTroncons().get(j);
-                        writer.write("Continuez " + troncon.longueur() + " m " + " sur " + troncon.getnomRue() + "\n");
+                        writer.write("Continuez " + troncon.getLongueur() + " m " + " sur " + troncon.getNomRue() + "\n");
                     }
-                    writer.write("Tu arrives au point de livraison " +  "à " +  arrivee.getHoraireArrivee() + "\n");
-                    writer.write("L'adresse de livraison " + "N° " + i + " est " + arrivee.getId()+ ")\n"); //pas le nom de rue je ne l'ai pas encore
+                    writer.write("Tu arrives au point de livraison " + "à " + arrivee.getHoraireArrivee() + "\n");
+                    writer.write("L'adresse de livraison " + "N° " + i + " est " + arrivee.getId() + ")\n"); //pas le nom de rue je ne l'ai pas encore
                     writer.write("\n");
                 }
             }
-    }
-    catch (Exception e) {
-        e.printStackTrace();
-    }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void sauvegarderTournee() throws Exception {
-        List <Chemin> chemins = tournee.getChemins();
+        List<Chemin> chemins = tournee.getChemins();
         JSONArray cheminsArray = new JSONArray();
-
+        System.out.println("appel de sauvegarde tournée");
         try {
-
-            for (int i = 0; i < chemins.size(); i++) {
+            for (Chemin chemin : chemins) {
                 JSONObject cheminObject = new JSONObject();
-                Chemin chemin = chemins.get(i);
-                int id = i + 1;
-                String depart = "( " + chemin.getNoeudDePassageDepart().getId() + ","
-                        + chemin.getNoeudDePassageDepart().getType() + " )";
-                String arrivee = "( " + chemin.getNoeudDePassageArrivee().getId() + ","
-                        + chemin.getNoeudDePassageArrivee().getType() + " )";
-                String heureArrivee = chemin.getNoeudDePassageArrivee().getHoraireArrivee().toString();
 
-                JSONArray rues = new JSONArray();
-
-                for (int j = 0; j < chemin.getTroncons().size(); j++) {
-                    Troncon troncon = chemin.getTroncons().get(j);
-                    rues.put("Continuez " + troncon.longueur() + " m " + " sur " + troncon.getnomRue() + "\n");
+                JSONArray tronconsArray = new JSONArray();
+                for (Troncon troncon : chemin.getTroncons()) {
+                    JSONObject tronconObject = new JSONObject();
+                    tronconObject.put("idOrigine", troncon.getIdOrigine());
+                    tronconObject.put("idDestination", troncon.getIdDestination());
+                    tronconObject.put("longueur", troncon.getLongueur());
+                    tronconObject.put("nomRue", troncon.getNomRue());
+                    tronconsArray.put(tronconObject);
                 }
 
-                cheminObject.put("id", id);
-                cheminObject.put("depart", depart);
-                cheminObject.put("arrivee", arrivee);
-                cheminObject.put("heureArrivee", heureArrivee);
-                cheminObject.put("rues" , rues);
+                cheminObject.put("troncons", tronconsArray);
+                cheminObject.put("longueurTotale", chemin.getLongueurTotal());
+
+                JSONObject noeuddePassageDepart = new JSONObject();
+                noeuddePassageDepart.put("id", chemin.getNoeudDePassageDepart().getId());
+                noeuddePassageDepart.put("latitude", chemin.getNoeudDePassageDepart().getLatitude());
+                noeuddePassageDepart.put("longitude", chemin.getNoeudDePassageDepart().getLongitude());
+                noeuddePassageDepart.put("typeNoeud", chemin.getNoeudDePassageDepart().getType());
+                noeuddePassageDepart.put("horaireArrivee", chemin.getNoeudDePassageDepart().getHoraireArrivee().toString());
+                noeuddePassageDepart.put("horaireDepart", chemin.getNoeudDePassageDepart().getHoraireDepart().toString());
+                cheminObject.put("NoeudDePassageDepart", noeuddePassageDepart);
+
+                JSONObject noeudDePassageArrivee = new JSONObject();
+                noeudDePassageArrivee.put("id", chemin.getNoeudDePassageArrivee().getId());
+                noeudDePassageArrivee.put("latitude", chemin.getNoeudDePassageArrivee().getLatitude());
+                noeudDePassageArrivee.put("longitude", chemin.getNoeudDePassageArrivee().getLongitude());
+                noeudDePassageArrivee.put("typeNoeud", chemin.getNoeudDePassageArrivee().getType());
+                noeudDePassageArrivee.put("horaireArrivee", chemin.getNoeudDePassageArrivee().getHoraireArrivee().toString());
+                noeudDePassageArrivee.put("horaireDepart", chemin.getNoeudDePassageArrivee().getHoraireDepart().toString());
+                cheminObject.put("NoeudDePassageArrivee", noeudDePassageArrivee);
 
                 cheminsArray.put(cheminObject);
             }
-            File jsonFile = new File("src/main/java/fr/insalyon/pldagile/sortie/sauvegardeTourne.json");
-            try (FileWriter fileWriter =  new FileWriter(jsonFile)) {
-                JSONObject tourneeObject = new JSONObject();
-                tourneeObject.put("tournee", cheminsArray);
-                fileWriter.write(tourneeObject.toString(4));
+                File jsonFile = new File("src/main/java/fr/insalyon/pldagile/sortie/sauvegardeTourne.json");
+                try (FileWriter fileWriter = new FileWriter(jsonFile)) {
+                    JSONObject tourneeObject = new JSONObject();
+                    tourneeObject.put("tournee", cheminsArray);
+                    fileWriter.write(tourneeObject.toString(4));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    throw new Exception("Erreur lors de la sauvegarde de la tournée", e);
+                }
             }
-
-        }
         catch (Exception e) {
             e.printStackTrace();
-            throw new Exception("Erreur lors de la sauvegarde de la tournée", e);
+        }
         }
     }
 
-}
+
+
+
+
+
