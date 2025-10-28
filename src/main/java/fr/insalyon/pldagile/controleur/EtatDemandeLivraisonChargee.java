@@ -60,7 +60,6 @@ public class EtatDemandeLivraisonChargee implements Etat {
         }
     }
 
-
     @Override
     public Object uploadXML(String type, MultipartFile file, Carte carte) {
         if (file == null || file.isEmpty()) return null;
@@ -84,6 +83,29 @@ public class EtatDemandeLivraisonChargee implements Etat {
                 System.err.println("Impossible de supprimer le fichier temporaire : " + tempFile.getAbsolutePath());
             }
         }
+    }
+
+    @Override
+    public Object creerFeuillesDeRoute(Controlleur c) {
+        System.err.println("Erreur : impossible de créer une feuille de route avant le calcul de la tournée.");
+        return null;
+    }
+
+    @Override
+    public Object saveTournee(Controlleur c) {
+        System.err.println("Erreur : impossible de sauvegarder une tournée avant son calcul.");
+        return null;
+    }
+
+    @Override
+    public Object loadTournee(Controlleur c, MultipartFile file, Carte carte) {
+        Object result = uploadXML("tournee", file, carte);
+
+        if (result instanceof Tournee tournee) {
+            c.setCurrentState(new EtatTourneeCalcule(carte, null, tournee));
+            return tournee;
+        }
+        return result;
     }
 
     @Override

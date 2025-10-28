@@ -5,20 +5,22 @@ import fr.insalyon.pldagile.modele.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import fr.insalyon.pldagile.sortie.FeuilleDeRoute;
 
 import java.io.File;
 import java.time.LocalTime;
 import java.util.List;
 
-@Component
 public class EtatTourneeCalcule implements Etat {
 
     private Carte carte;
     private DemandeDeLivraison demande;
+    private final Tournee tournee;
 
-    public EtatTourneeCalcule(Carte carte, DemandeDeLivraison demande) {
+    public EtatTourneeCalcule(Carte carte, DemandeDeLivraison demande, Tournee tournee) {
         this.carte = carte;
         this.demande = demande;
+        this.tournee = tournee;
     }
 
     @Override
@@ -83,6 +85,48 @@ public class EtatTourneeCalcule implements Etat {
             if (tempFile != null && tempFile.exists()) tempFile.delete();
         }
     }
+
+    @Override
+    public Object creerFeuillesDeRoute(Controlleur c) {
+        try {
+            FeuilleDeRoute feuille = new FeuilleDeRoute(tournee);
+            feuille.generateFeuilleDeRoute();
+
+            System.out.println("Feuille de route créée avec succès !");
+            return "Feuille de route générée avec succès.";
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return e;
+        }
+    }
+
+    @Override
+    public Object saveTournee(Controlleur c) {
+        try {
+            FeuilleDeRoute feuille = new FeuilleDeRoute(tournee);
+            feuille.sauvegarderTournee();
+
+            System.out.println("Tournée sauvegardée avec succès !");
+            return "Tournée sauvegardée avec succès.";
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return e;
+        }
+    }
+
+    @Override
+    public Object loadTournee(Controlleur c, MultipartFile file, Carte carte) {
+        Object result = uploadXML("tournee", file, carte);
+
+        if (result instanceof Tournee tournee) {
+            c.setCurrentState(new EtatTourneeCalcule(carte, null, tournee));
+            return tournee;
+        }
+        return result;
+    }
+
 
     @Override
     public String getName() {

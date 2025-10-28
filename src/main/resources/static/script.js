@@ -45,39 +45,53 @@ function samplePathMeters(path, stepM){
 // CHARGEMENT
 
 async function uploadCarte(file){
-    if(livraisonsLayer) livraisonsLayer.clearLayers();
-    if(entrepotLayer) entrepotLayer.clearLayers();
-
-    demandeData = null;
     const formData=new FormData();
     formData.append("file",file);
     try{
         const response=await fetch("http://localhost:8080/api/upload-carte",{method:"POST",body:formData});
-        if(!response.ok){
-            alert(await response.text());
-            return;
-        }
-        res=await response.json();
-        drawCarte(res.carte);
+        if(!response.ok){alert(await response.text());return;}
+        const res=await response.json();
+        carteData = res.carte;
+        demandeData = null;
+
+        drawCarte(carteData);
 
         const colisButton = document.querySelector('.navbar-item img[alt="Ajouter une demande de livraison"]');
         const mapButton = document.querySelector('.navbar-item img[alt="Ajouter une carte"]');
 
         mapButton.style.filter = "";
         colisButton.style.filter = "drop-shadow(0 0 10px rgba(225,225,0,1))";
-
-        const inputDemande = document.getElementById('xmlDemande');
-        const fileNameCarte = document.getElementById('fileNameCarte');
         colisButton.src = "tools/colis-logo-white.png";
         colisButton.style.cursor = "pointer";
-        inputDemande.disabled = false;
-        fileNameCarte.style.display = "inline";
-        document.getElementById('fileNameDemande').style.display = "none";
-        document.getElementById('calcul-tournee').style.display = "none";
+
         document.getElementById('welcome-message').style.display = "none";
         document.getElementById('carte-chargee-message').style.display = "flex";
+        document.getElementById('livraisons').style.display = "none";
+        tableau = document.getElementById('tableauDemandes');
+        tableau.style.display = "none";
+        tableau.innerHTML = "";
+        document.getElementById('tournee-chargee').style.display = "none";
 
-        carteData = res.carte;
+        // vider les layers de livraisons / entrepôt / tournée / numéros
+        if (livraisonsLayer) livraisonsLayer.clearLayers();
+        if (entrepotLayer) entrepotLayer.clearLayers();
+        if (window.tourneeLayer) window.tourneeLayer.clearLayers();
+        if (window.directionNumbersLayer) window.directionNumbersLayer.clearLayers();
+
+        // arrêter et enlever l'animation si présente
+        stopAnimation();
+        if (animControl) { map.removeControl(animControl); animControl = null; }
+        animPath = []; isAnimating = false; isPaused = false;
+
+        // 4) activer/désactiver l'input demande selon le nouvel état renvoyé (optionnel)
+        // si le backend renvoie "Etat Carte Chargee", on garde le champ demande activé
+        if (res.etatCourant && res.etatCourant.toLowerCase().includes("carte")) {
+            document.getElementById('xmlDemande').disabled = false;
+            document.getElementById('fileNameCarte').style.display = "inline";
+        } else {
+            document.getElementById('xmlDemande').disabled = true;
+            document.getElementById('fileNameCarte').style.display = "none";
+        }
     }catch(err){
         alert(err.message);
     }
@@ -91,6 +105,10 @@ async function uploadDemande(file){
         const response=await fetch("http://localhost:8080/api/upload-demande",{method:"POST",body:formData});
         if(!response.ok){alert(await response.text());return;}
         const res=await response.json();
+        demandeData = res.demande;
+        document.getElementById('livraisons').style.display = "inline";
+        drawLivraisons(demandeData);
+        drawEntrepot(demandeData.entrepot);
 
         const colisButton = document.querySelector('.navbar-item img[alt="Ajouter une demande de livraison"]');
         colisButton.style.filter = "";
@@ -101,10 +119,7 @@ async function uploadDemande(file){
         fileNameDemande.style.display = "inline";
         document.getElementById('carte-chargee-message').style.display = "none";
         document.getElementById('calcul-tournee').style.display = "flex";
-
-        drawLivraisons(res.demande);
-        drawEntrepot(res.demande.entrepot);
-        demandeData = res.demande;
+        document.getElementById('tournee-chargee').style.display = "none";
 
     }catch(err){
         alert(err.message);
@@ -122,59 +137,77 @@ function drawCarte(carte) {
     if (!map) {
         map = L.map('map');
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap contributors'
+            attribution: '© OpenStreetMap'
         }).addTo(map);
+
+        // créer les layers **une seule fois**
+        livraisonsLayer = L.layerGroup().addTo(map);
+        entrepotLayer = L.layerGroup().addTo(map);
         addLegend();
-    } else {
-        map.eachLayer(layer => {
-            if (layer instanceof L.Polyline || layer instanceof L.CircleMarker || layer instanceof L.Marker)
-                map.removeLayer(layer);
-        });
     }
 
-    if (!livraisonsLayer) livraisonsLayer = L.layerGroup().addTo(map);
-    else livraisonsLayer.clearLayers();
+    // Supprimer uniquement les tronçons de la carte précédente
+    if (window.tronconsLayer) window.tronconsLayer.clearLayers();
+    else window.tronconsLayer = L.layerGroup().addTo(map);
 
-    if (!entrepotLayer) entrepotLayer = L.layerGroup().addTo(map);
-    else entrepotLayer.clearLayers();
-
-    troncons.forEach(t => {
-        const origine = nodes[t.idOrigine.toString()];
-        const dest = nodes[t.idDestination.toString()];
-        if (!origine || !dest) return;
-        L.polyline(
-            [[origine.latitude, origine.longitude], [dest.latitude, dest.longitude]],
-            { color: '#1a74bb', weight: 2 }
-        ).addTo(map);
+    t.forEach(tc => {
+        const o = n[tc.idOrigine], d = n[tc.idDestination];
+        if (o && d) {
+            L.polyline([[o.latitude, o.longitude], [d.latitude, d.longitude]], { color: '#1a74bb', weight: 2 })
+                .addTo(window.tronconsLayer);
+        }
     });
-    const allLatLngs = Object.values(nodes).map(n => [n.latitude, n.longitude]);
-    if (allLatLngs.length > 0) map.fitBounds(L.latLngBounds(allLatLngs).pad(0.1));
+
+    const all = Object.values(n).map(x => [x.latitude, x.longitude]);
+    if (all.length > 0) map.fitBounds(L.latLngBounds(all).pad(0.1));
 }
 
 
-function drawLivraisons(demande){
+function drawLivraisons(d){
     if(!map||!carteData) return;
     livraisonsLayer.clearLayers();
-    const nodes=carteData.noeuds;
-    demande.livraisons.forEach((livraison,i)=>{
+    const n=carteData.noeuds;
+
+    const tableau = document.getElementById("tableauDemandes");
+    tableau.style.display = "block";
+    tableau.innerHTML = "";
+    const header = `
+    <table style="border-collapse:collapse;">
+      <thead>
+        <tr>
+          <th style="border-bottom:1px solid #ccc;padding:4px;">Couleur</th>
+          <th style="border-bottom:1px solid #ccc;border-left:1px solid #ccc;padding:4px;">N° d'enlèvement</th>
+          <th style="border-bottom:1px solid #ccc;border-left:1px solid #ccc;padding:4px;">N° de livraison</th>
+        </tr>
+      </thead>
+      <tbody id="livraisonBody"></tbody>
+    </table>
+  `;
+    tableau.innerHTML = header;
+    const tbody = document.getElementById("livraisonBody");
+
+    d.livraisons.forEach((l,i)=>{
         const color=colors[i%colors.length];
-        const enlevNode=nodes[livraison.adresseEnlevement.id];
-        const livrNode=nodes[livraison.adresseLivraison.id];
-        if(!enlevNode||!livrNode) return;
-        L.marker([enlevNode.latitude, enlevNode.longitude], {
-            icon: L.divIcon({
-                className: '',
-                iconSize: [18, 18],
-                html:`<div style="width:18px;height:18px;background:${color};border:2px solid black;border-radius:3px;"></div>`
-            })
+        const en=n[l.adresseEnlevement.id];
+        const lv=n[l.adresseLivraison.id];
+        if(!en||!lv) return;
+        L.marker([en.latitude,en.longitude],{
+            icon:L.divIcon({className:'',iconSize:[18,18],
+                html:`<div style="width:18px;height:18px;background:${color};border:2px solid black;border-radius:3px;"></div>`})
         }).addTo(livraisonsLayer);
-        L.marker([livrNode.latitude, livrNode.longitude], {
-            icon: L.divIcon({
-                className: '',
-                iconSize: [18, 18],
-                html:`<div style="width:18px;height:18px;background:${color};border:2px solid black;border-radius:3px;"></div>`
-            })
+        L.marker([lv.latitude,lv.longitude],{
+            icon:L.divIcon({className:'',iconSize:[18,18],
+                html:`<div style="width:18px;height:18px;background:${color};border:2px solid black;border-radius:50%;"></div>`})
         }).addTo(livraisonsLayer);
+        const row = document.createElement("tr");
+        row.innerHTML = `
+      <td style="padding:4px;text-align:center;">
+        <div style="width:18px;height:18px;background:${color};border:1px solid black;border-radius:3px;margin:auto;"></div>
+      </td>
+      <td style="border-left:1px solid #ccc;padding:4px;text-align:center;">${l.adresseEnlevement.id}</td>
+      <td style="border-left:1px solid #ccc;padding:4px;text-align:center;">${l.adresseLivraison.id}</td>
+    `;
+        tbody.appendChild(row);
     });
 }
 
@@ -222,6 +255,11 @@ async function calculTournee(nombreLivreurs = 1){
         drawTournee(tournee, color, i);
     });
     addAnimationButton();
+    document.getElementById('tableauDemandes').style.display = "none";
+    document.getElementById('livraisons').style.display = "none";
+    document.getElementById('calcul-tournee').style.display = "none";
+
+    document.getElementById('tournee-chargee').style.display = "inline";
 }
 
 function resetTournee(){
@@ -263,6 +301,52 @@ function drawTournee(t, color='#000', index){
     });
     if(all.length>0) map.fitBounds(L.latLngBounds(all).pad(0.1));
     window.animPaths[index] = [...localAnimPath];
+}
+
+async function creerFeuillesDeRoute() {
+    try {
+        const response = await fetch("http://localhost:8080/api/tournee/feuille-de-route", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        });
+
+        if (!response.ok) {
+            const errText = await response.text();
+            alert("Erreur lors de la création de la feuille de route : " + errText);
+            return;
+        }
+
+        const res = await response.json();
+        alert(res.message);
+    } catch (error) {
+        console.error(error);
+        alert("Erreur réseau ou serveur : " + error.message);
+    }
+}
+
+async function sauvegarderTournee() {
+    try {
+        const response = await fetch("http://localhost:8080/api/tournee/sauvegarde", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            }
+        });
+
+        if (!response.ok) {
+            const errText = await response.text();
+            alert("Erreur lors de la sauvegarde de la tournée : " + errText);
+            return;
+        }
+
+        const res = await response.json();
+        alert(res.message);
+    } catch (error) {
+        console.error(error);
+        alert("Erreur réseau ou serveur : " + error.message);
+    }
 }
 
 // ANIMATION
@@ -364,7 +448,6 @@ function addAnimationButton() {
         pause.disabled = true;
         return div;
     };
-
     animControl.addTo(map);
 }
 
@@ -376,7 +459,6 @@ document.addEventListener('DOMContentLoaded',()=>{
 
     const mapButton = document.querySelector('.navbar-item img[alt="Ajouter une carte"]');
     const colisButton = document.querySelector('.navbar-item img[alt="Ajouter une demande de livraison"]');
-    const calculTourneeBouton = document.getElementById('calculerTournee');
 
     mapButton.style.filter = "drop-shadow(0 0 10px rgba(225,225,0,1))";
     mapButton.addEventListener('click', () => {
@@ -411,11 +493,16 @@ document.addEventListener('DOMContentLoaded',()=>{
 
         if (confirmReset) {
             carteData = null;
-            map = null;
-
-            const mapDiv = document.getElementById('map');
-            mapDiv.style.display = "none";
-            mapDiv.innerHTML = "";
+            demandeData = null;
+            livraisonsLayer = null;
+            entrepotLayer = null;
+            window.tronconsLayer = null;
+            window.tourneeLayer = null;
+            window.directionNumbersLayer = null;
+            if (map) {
+                map.remove();
+                map = null;
+            }
 
             document.getElementById('xmlCarte').value = "";
             document.getElementById('xmlDemande').value = "";
@@ -426,6 +513,10 @@ document.addEventListener('DOMContentLoaded',()=>{
             document.getElementById('carte-chargee-message').style.display = "none";
             document.getElementById('welcome-message').style.display = "flex";
 
+            tableau = document.getElementById('tableauDemandes');
+            tableau.style.display = "none";
+            tableau.innerHTML = "";
+
             const mapButton = document.querySelector('.navbar-item img[alt="Ajouter une carte"]');
             const colisButton = document.querySelector('.navbar-item img[alt="Ajouter une demande de livraison"]');
 
@@ -435,6 +526,24 @@ document.addEventListener('DOMContentLoaded',()=>{
             colisButton.style.cursor = "default";
 
             document.getElementById('calcul-tournee').style.display = "none";
+            document.getElementById('tournee-chargee').style.display = "none";
         }
     });
+
+    document.getElementById('calculerTournee').addEventListener('click', () => {
+        calculTournee();
+    });
+
+    document.getElementById('creerFeuillesDeRoute').addEventListener('click', () => {
+        creerFeuillesDeRoute();
+    });
+
+    document.getElementById('sauvegarderTournee').addEventListener('click', () => {
+        sauvegarderTournee();
+    });
+
+    document.getElementById("btnChargerTournee").addEventListener("click", () => {
+        document.getElementById("inputTournee").click();
+    });
+
 });
