@@ -55,6 +55,9 @@
     <div class="bandeau">
         <span id="fileNameDemande" style="display:none;"></span>
     </div>
+
+
+    </div>
     <input type="file" id="xmlDemande" accept=".xml" style="display:none;" disabled/>
 
     <div id="calcul-tournee">
@@ -70,7 +73,31 @@
         </button>
     </div>
 </div>
-<div id="map"></div>
+
+<div id="tournee-chargee">
+    <div class="bandeau">
+        <span>Affichage des tournées</span>
+    </div>
+    <div id="boutons-modifier">
+        <button id="modifierTournee">
+            <img src="tools/edit-logo.png" alt="Icône modifier tournée">
+            <p>Modifier</p>
+        </button>
+        <button id="sauvegarderTournee">
+            <img src="tools/save-logo.png" alt="Icône sauvegarder tournée">
+            <p>Sauvegarder</p>
+        </button>
+        <button id="creerFeuillesDeRoute">
+            <img src="tools/file-logo.png" alt="Icône créer feuilles de route">
+            <p>Feuilles de route</p>
+        </button>
+    </div>
+</div>
+
+<div id="map-container">
+    <div id="map"></div>
+    <div class="tableau" id="tableauDemandes" style="display:none;"></div>
+</div>
 <script>
     let map=null, carteData=null, demandeData=null;
     let livraisonsLayer=null, entrepotLayer=null;
@@ -108,6 +135,10 @@
             document.getElementById('welcome-message').style.display = "none";
             document.getElementById('carte-chargee-message').style.display = "flex";
             document.getElementById('livraisons').style.display = "none";
+            tableau = document.getElementById('tableauDemandes');
+            tableau.style.display = "none";
+            tableau.innerHTML = "";
+            document.getElementById('tournee-chargee').style.display = "none";
 
             // vider les layers de livraisons / entrepôt / tournée / numéros
             if (livraisonsLayer) livraisonsLayer.clearLayers();
@@ -134,6 +165,8 @@
         }
     }
 
+
+
     async function uploadDemande(file){
         resetTournee();
         if(!carteData){alert("Charger le plan XML d'abord."); return;}
@@ -157,6 +190,7 @@
             fileNameDemande.style.display = "inline";
             document.getElementById('carte-chargee-message').style.display = "none";
             document.getElementById('calcul-tournee').style.display = "flex";
+            document.getElementById('tournee-chargee').style.display = "none";
 
         }catch(err){
             alert(err.message);
@@ -209,7 +243,26 @@
       if(!map||!carteData) return;
       livraisonsLayer.clearLayers();
       const n=carteData.noeuds;
-      d.livraisons.forEach((l,i)=>{
+
+      const tableau = document.getElementById("tableauDemandes");
+      tableau.style.display = "block";
+      tableau.innerHTML = "";
+        const header = `
+    <table style="border-collapse:collapse;">
+      <thead>
+        <tr>
+          <th style="border-bottom:1px solid #ccc;padding:4px;">Couleur</th>
+          <th style="border-bottom:1px solid #ccc;border-left:1px solid #ccc;padding:4px;">N° d'enlèvement</th>
+          <th style="border-bottom:1px solid #ccc;border-left:1px solid #ccc;padding:4px;">N° de livraison</th>
+        </tr>
+      </thead>
+      <tbody id="livraisonBody"></tbody>
+    </table>
+  `;
+        tableau.innerHTML = header;
+        const tbody = document.getElementById("livraisonBody");
+
+        d.livraisons.forEach((l,i)=>{
         const color=colors[i%colors.length];
         const en=n[l.adresseEnlevement.id];
         const lv=n[l.adresseLivraison.id];
@@ -222,6 +275,15 @@
           icon:L.divIcon({className:'',iconSize:[18,18],
             html:`<div style="width:18px;height:18px;background:${color};border:2px solid black;border-radius:50%;"></div>`})
         }).addTo(livraisonsLayer);
+            const row = document.createElement("tr");
+            row.innerHTML = `
+      <td style="padding:4px;text-align:center;">
+        <div style="width:18px;height:18px;background:${color};border:1px solid black;border-radius:3px;margin:auto;"></div>
+      </td>
+      <td style="border-left:1px solid #ccc;padding:4px;text-align:center;">${l.adresseEnlevement.id}</td>
+      <td style="border-left:1px solid #ccc;padding:4px;text-align:center;">${l.adresseLivraison.id}</td>
+    `;
+            tbody.appendChild(row);
       });
     }
 
@@ -243,6 +305,12 @@
       const res=await r.json();
       t=res.tournee
       drawTournee(t);
+
+      document.getElementById('tableauDemandes').style.display = "none";
+      document.getElementById('livraisons').style.display = "none";
+      document.getElementById('calcul-tournee').style.display = "none";
+
+      document.getElementById('tournee-chargee').style.display = "inline";
     }
 
 
@@ -399,11 +467,16 @@
 
             if (confirmReset) {
                 carteData = null;
-                map = null;
-
-                const mapDiv = document.getElementById('map');
-                mapDiv.style.display = "none";
-                mapDiv.innerHTML = "";
+                demandeData = null;
+                livraisonsLayer = null;
+                entrepotLayer = null;
+                window.tronconsLayer = null;
+                window.tourneeLayer = null;
+                window.directionNumbersLayer = null;
+                if (map) {
+                    map.remove();
+                    map = null;
+                }
 
                 document.getElementById('xmlCarte').value = "";
                 document.getElementById('xmlDemande').value = "";
@@ -414,6 +487,10 @@
                 document.getElementById('carte-chargee-message').style.display = "none";
                 document.getElementById('welcome-message').style.display = "flex";
 
+                tableau = document.getElementById('tableauDemandes');
+                tableau.style.display = "none";
+                tableau.innerHTML = "";
+
                 const mapButton = document.querySelector('.navbar-item img[alt="Ajouter une carte"]');
                 const colisButton = document.querySelector('.navbar-item img[alt="Ajouter une demande de livraison"]');
 
@@ -423,6 +500,7 @@
                 colisButton.style.cursor = "default";
 
                 document.getElementById('calcul-tournee').style.display = "none";
+                document.getElementById('tournee-chargee').style.display = "none";
             }
         });
 

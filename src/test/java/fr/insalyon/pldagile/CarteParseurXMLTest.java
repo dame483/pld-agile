@@ -272,6 +272,73 @@ class CarteParseurXMLTest {
         });
     }
 
+    @Test
+    void testSansBaliseReseau() throws Exception {
+        String xml = """
+            <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+            <plan>
+                <noeud id="1" latitude="45.75" longitude="4.85"/>
+                <noeud id="2" latitude="45.76" longitude="4.86"/>
+            </plan>
+            """;
+        File fichier = createTempXmlFile(xml);
+
+        assertThrows(XMLFormatException.class, () -> {
+            CarteParseurXML.loadFromFile(fichier);
+        });
+    }
+
+    @Test
+    void testBaliseInconnue() throws Exception {
+        String xml = """
+            <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+            <reseau>
+                <noeud id="1" latitude="45.75" longitude="4.85"/>
+                <tyrolienne id="2"/>
+            </reseau>
+            """;
+        File fichier = createTempXmlFile(xml);
+
+        assertThrows(XMLFormatException.class, () -> {
+            CarteParseurXML.loadFromFile(fichier);
+        });
+    }
+
+    @Test
+    void testXmlVide() throws Exception {
+        String xml = "";
+        File fichier = createTempXmlFile(xml);
+
+        assertThrows(XMLFormatException.class, () -> {
+            CarteParseurXML.loadFromFile(fichier);
+        });
+    }
+
+    @Test
+    void testXmlSansContenu() throws Exception {
+        String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>";
+        File fichier = createTempXmlFile(xml);
+
+        assertThrows(XMLFormatException.class, () -> {
+            CarteParseurXML.loadFromFile(fichier);
+        });
+    }
+
+    //balise non fermée
+    @Test
+    void testXmlMalForme() throws Exception {
+        String xml = """
+            <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+            <reseau>
+                <noeud id="1" latitude="45.75" longitude="4.85">
+            </reseau>
+            """;
+        File fichier = createTempXmlFile(xml);
+
+        assertThrows(XMLFormatException.class, () -> {
+            CarteParseurXML.loadFromFile(fichier);
+        });
+    }
 
 
 
