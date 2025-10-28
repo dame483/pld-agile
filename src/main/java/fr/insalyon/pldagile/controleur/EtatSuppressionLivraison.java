@@ -58,6 +58,11 @@ public class EtatSuppressionLivraison implements Etat{
         return null;
     }
 
+    @Override
+    public Object saveTournee(Controlleur c) {
+        return null;
+    }
+
     /*@Override
     public void saveTournee(Controlleur c) {
 
