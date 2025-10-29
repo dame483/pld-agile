@@ -106,6 +106,7 @@ async function uploadDemande(file){
         if(!response.ok){alert(await response.text());return;}
         const res=await response.json();
         demandeData = res.demande;
+        document.getElementById('nbLivreurs').max = demandeData.livraisons.length || 1;
         document.getElementById('livraisons').style.display = "inline";
         drawLivraisons(demandeData);
         drawEntrepot(demandeData.entrepot);
