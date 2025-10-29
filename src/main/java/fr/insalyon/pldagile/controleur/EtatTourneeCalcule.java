@@ -96,7 +96,7 @@ public class EtatTourneeCalcule implements Etat {
             for (int i = 0; i < toutesLesTournees.size(); i++) {
                 Tournee t = toutesLesTournees.get(i);
                 FeuilleDeRoute feuille = new FeuilleDeRoute(t);
-                feuille.generateFeuilleDeRoute();
+                feuille.generateFeuilleDeRoute(i);
 
                 System.out.println("Feuille de route créée pour la tournée #" + (i + 1));
             }
