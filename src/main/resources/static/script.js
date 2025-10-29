@@ -1,8 +1,10 @@
+// DECLARATIONS
+
 let map=null;
 let carteData=null;
 let demandeData=null;
 let livraisonsLayer=null, entrepotLayer=null;
-let animTimer=null, courierMarker=null, animPath=[];
+let animTimer=null, courierMarker=null, animPath= {};
 let animControl=null, isAnimating=false, isPaused=false;
 let animSpeed=8, animSamples=[], animIndex=0;
 
@@ -13,6 +15,34 @@ const colors=[
 ];
 const STEP_M=10;
 
+// OUTILS
+
+function makeStepNumberIcon(n,color){
+    const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="34" height="18" viewBox="0 0 34 18">
+                    <text x="17" y="14" font-size="12" font-weight="bold" text-anchor="middle"
+                          fill="${color}" stroke="white" stroke-width="3" paint-order="stroke">${n}</text>
+                 </svg>`;
+    return L.divIcon({className:'',html:svg,iconSize:[34,18]});
+}
+
+function midPoint(a,b){ return [(a[0]+b[0])/2,(a[1]+b[1])/2]; }
+
+function samplePathMeters(path, stepM){
+    if(path.length<2) return path.slice();
+    const out=[]; let prev=L.latLng(path[0][0],path[0][1]); out.push([prev.lat,prev.lng]);
+    for(let i=1;i<path.length;i++){
+        const curr=L.latLng(path[i][0],path[i][1]); let segLen=map.distance(prev,curr);
+        if(segLen===0){ prev=curr; continue; }
+        for(let d=stepM; d<=segLen; d+=stepM){
+            const t=d/segLen; const lat=prev.lat+(curr.lat-prev.lat)*t; const lng=prev.lng+(curr.lng-prev.lng)*t;
+            out.push([lat,lng]);
+        }
+        prev=curr; if(Math.abs(out.at(-1)[0]-curr.lat)>1e-12) out.push([curr.lat,curr.lng]);
+    }
+    return out;
+}
+
+// CHARGEMENT
 
 async function uploadCarte(file){
     if(livraisonsLayer) livraisonsLayer.clearLayers();
@@ -81,13 +111,7 @@ async function uploadDemande(file){
     }
 }
 
-function resetTournee(){
-    if(window.tourneeLayer) window.tourneeLayer.clearLayers();
-    if(window.directionNumbersLayer) window.directionNumbersLayer.clearLayers();
-    stopAnimation();
-    if(animControl){ map.removeControl(animControl); animControl=null; }
-    animPath=[]; isAnimating=false; isPaused=false;
-}
+// AFFICHAGE CARTE ET DEMANDES
 
 function drawCarte(carte) {
     const nodes = carte.noeuds || {};
@@ -165,6 +189,25 @@ function drawEntrepot(e){
     }).addTo(entrepotLayer);
 }
 
+function addLegend(){
+    const legend=L.control({position:'bottomleft'});
+    legend.onAdd=function(){
+        const div=L.DomUtil.create('div','legend');
+        div.innerHTML=`
+          <h4 style="margin:0 0 4px 0; text-align:center; font-weight:bold; font-size:12px;">Légende</h4>
+          <div><svg width="16" height="16" style="margin-right:8px;"><polygon points="8,2 14,14 2,14" fill="#000" stroke="black" stroke-width="2"/></svg> Entrepôt</div>
+          <div><div class="legend-symbol" style="background:#777;border:2px solid black;border-radius:3px;"></div> Pickup</div>
+          <div><div class="legend-symbol" style="background:#777;border:2px solid black;border-radius:50%;"></div> Delivery</div>
+          <div style="font-size:10px;color:#333;margin:3px 0;text-align:left;">Chaque couple Pickup / Delivery partage la même couleur</div>
+          <div style="display:flex;align-items:center;"><div class="legend-symbol" style="width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:14px;">🛵</div> Livreur</div>
+          <div style="display:flex;align-items:center;"><svg width="32" height="16" viewBox="0 0 40 20" style="margin-right:4px;"><text x="16" y="13" font-size="12" font-weight="bold" text-anchor="middle" fill="#777" stroke="white" stroke-width="3" paint-order="stroke">1…n</text></svg> Sens de la tournée</div>`;
+        return div;
+    };
+    legend.addTo(map);
+}
+
+// TOURNEES
+
 async function calculTournee(nombreLivreurs = 1){
     if(!carteData || !demandeData){ alert("Charger la carte et la demande d'abord."); return; }
     const r = await fetch(`http://localhost:8080/api/tournee/calculer?nombreLivreurs=${nombreLivreurs}`, { method:"POST" });
@@ -174,33 +217,32 @@ async function calculTournee(nombreLivreurs = 1){
     resetTournee(); // nettoie l'ancienne animation et polylignes
 
     // Dessiner chaque tournée avec une couleur différente
-    toutesLesTournees.forEach((tournee, i) => {
+    toutesLesTournees.tournees.forEach((tournee, i) => {
         const color = colors[i % colors.length];
-        drawTournee(tournee, color);
+        drawTournee(tournee, color, i);
     });
+    addAnimationButton();
 }
 
-
-function makeStepNumberIcon(n,color){
-    const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="34" height="18" viewBox="0 0 34 18">
-                    <text x="17" y="14" font-size="12" font-weight="bold" text-anchor="middle"
-                          fill="${color}" stroke="white" stroke-width="3" paint-order="stroke">${n}</text>
-                 </svg>`;
-    return L.divIcon({className:'',html:svg,iconSize:[34,18]});
+function resetTournee(){
+    if(window.tourneeLayer) window.tourneeLayer.clearLayers();
+    if(window.directionNumbersLayer) window.directionNumbersLayer.clearLayers();
+    stopAnimation();
+    if(animControl){ map.removeControl(animControl); animControl=null; }
+    window.animPaths = {}; isAnimating=false; isPaused=false;
 }
 
-function midPoint(a,b){ return [(a[0]+b[0])/2,(a[1]+b[1])/2]; }
-
-function drawTournee(t, color='#000'){
+function drawTournee(t, color='#000', index){
     if(!map || !carteData) return;
-    if(window.tourneeLayer) window.tourneeLayer.clearLayers(); else window.tourneeLayer=L.layerGroup().addTo(map);
-    if(window.directionNumbersLayer) window.directionNumbersLayer.clearLayers(); else window.directionNumbersLayer=L.layerGroup().addTo(map);
+    if (!window.tourneeLayer) window.tourneeLayer = L.layerGroup().addTo(map);
+    if (!window.directionNumbersLayer) window.directionNumbersLayer = L.layerGroup().addTo(map);
+    if (!window.animPaths) window.animPaths = {};
 
     const n = carteData.noeuds;
     const all = [];
     const K = 6;
     let labelCount = 0;
-    animPath = [];
+    let localAnimPath = [];
 
     t.chemins.forEach(c=>{
         const latlngs=[];
@@ -210,37 +252,37 @@ function drawTournee(t, color='#000'){
             latlngs.push(A); latlngs.push(B); all.push(A); all.push(B);
             if(i % K === 0){ labelCount++; L.marker(midPoint(A,B), {icon: makeStepNumberIcon(labelCount,color)}).addTo(window.directionNumbersLayer); }
         });
-        if(latlngs.length>0){
-            L.polyline(latlngs, {color, weight:3, opacity:0.9}).addTo(window.tourneeLayer);
-            animPath = animPath.concat(animPath.length>0 && animPath.at(-1)[0]===latlngs[0][0] ? latlngs.slice(1) : latlngs);
+        if (latlngs.length > 0) {
+            L.polyline(latlngs, { color, weight: 3, opacity: 0.9 }).addTo(window.tourneeLayer);
+            localAnimPath = localAnimPath.concat(
+                localAnimPath.length > 0 && localAnimPath.at(-1)[0] === latlngs[0][0]
+                    ? latlngs.slice(1)
+                    : latlngs
+            );
         }
     });
     if(all.length>0) map.fitBounds(L.latLngBounds(all).pad(0.1));
-    addAnimationButton();
+    window.animPaths[index] = [...localAnimPath];
 }
 
+// ANIMATION
 
-function samplePathMeters(path, stepM){
-    if(path.length<2) return path.slice();
-    const out=[]; let prev=L.latLng(path[0][0],path[0][1]); out.push([prev.lat,prev.lng]);
-    for(let i=1;i<path.length;i++){
-        const curr=L.latLng(path[i][0],path[i][1]); let segLen=map.distance(prev,curr);
-        if(segLen===0){ prev=curr; continue; }
-        for(let d=stepM; d<=segLen; d+=stepM){
-            const t=d/segLen; const lat=prev.lat+(curr.lat-prev.lat)*t; const lng=prev.lng+(curr.lng-prev.lng)*t;
-            out.push([lat,lng]);
-        }
-        prev=curr; if(Math.abs(out.at(-1)[0]-curr.lat)>1e-12) out.push([curr.lat,curr.lng]);
-    }
-    return out;
-}
-
-function startAnimation(){
+function startAnimation(index = 0) {
     stopAnimation();
-    if(animPath.length<2) return;
-    animSamples=samplePathMeters(animPath,STEP_M); animIndex=0;
-    courierMarker=L.marker(animSamples[0],{icon:L.divIcon({className:'',iconSize:[24,24],
-            html:`<div style="font-size:20px;text-shadow:1px 1px 3px rgba(0,0,0,0.4);">🛵</div>`})}).addTo(map);
+
+    const path = window.animPaths[index];
+    if (!path || path.length < 2) return;
+    animSamples = samplePathMeters(path, STEP_M);
+    animIndex = 0;
+
+    courierMarker = L.marker(animSamples[0], {
+        icon: L.divIcon({
+            className: '',
+            iconSize: [24, 24],
+            html: `<div style="font-size:20px;text-shadow:1px 1px 3px rgba(0,0,0,0.4);">🛵</div>`
+        })
+    }).addTo(map);
+
     runAnimation();
 }
 
@@ -259,53 +301,74 @@ function pauseAnimation(){ if(animTimer){ clearInterval(animTimer); animTimer=nu
 function resumeAnimation(){ if(!animTimer) runAnimation(); }
 function stopAnimation(){ if(animTimer){ clearInterval(animTimer); animTimer=null; } if(courierMarker){ map.removeLayer(courierMarker); courierMarker=null; } }
 
-function addAnimationButton(){
-    if(animControl){ map.removeControl(animControl); animControl=null; }
-    animControl=L.control({position:'topleft'});
-    animControl.onAdd=function(){
-        const div=L.DomUtil.create('div','leaflet-bar leaflet-control leaflet-control-custom');
-        div.innerHTML=`
+function addAnimationButton() {
+    if (animControl) { map.removeControl(animControl); animControl = null; }
+
+    animControl = L.control({ position: 'topleft' });
+    animControl.onAdd = function () {
+        const div = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
+        const tourneeOptions = Object.keys(window.animPaths)
+            .map(i => `<option value="${i}">Tournée ${parseInt(i) + 1}</option>`)
+            .join('');
+
+        div.innerHTML = `
           <div style="background:rgba(255,255,255,0.85);border-radius:10px;
                       box-shadow:0 0 5px rgba(0,0,0,0.3);padding:8px;
                       font-size:13px;text-align:center;width:160px;">
             <h4 style="margin:0 0 8px 0;font-weight:bold;">Livreur</h4>
+            <select id="tourneeSelect" style="width:100%;margin-bottom:6px;">${tourneeOptions}</select>
             <button id="btnStartStop" style="background:#b2d1d2;border:none;padding:5px 8px;
                      border-radius:6px;cursor:pointer;width:100%;margin-bottom:5px;">Lancer l’animation</button>
             <button id="btnPause" style="background:#ddd;border:none;padding:5px 8px;
                      border-radius:6px;cursor:pointer;width:100%;">Pause</button>
           </div>`;
-        const start=div.querySelector('#btnStartStop'), pause=div.querySelector('#btnPause');
-        start.onclick=e=>{
+
+        const start = div.querySelector('#btnStartStop');
+        const pause = div.querySelector('#btnPause');
+        const select = div.querySelector('#tourneeSelect');
+        let selectedIndex = 0;
+
+        select.onchange = e => { selectedIndex = parseInt(e.target.value); };
+
+        start.onclick = e => {
             e.stopPropagation();
-            if(!isAnimating){ start.textContent='Arrêter l’animation'; startAnimation(); isAnimating=true; pause.disabled=false; }
-            else{ start.textContent='Lancer l’animation'; stopAnimation(); isAnimating=false; isPaused=false; pause.textContent='Pause'; pause.disabled=true; }
+            if (!isAnimating) {
+                start.textContent = 'Arrêter l’animation';
+                startAnimation(selectedIndex);
+                isAnimating = true;
+                pause.disabled = false;
+            } else {
+                start.textContent = 'Lancer l’animation';
+                stopAnimation();
+                isAnimating = false;
+                isPaused = false;
+                pause.textContent = 'Pause';
+                pause.disabled = true;
+            }
         };
-        pause.onclick=e=>{
-            e.stopPropagation(); if(!isAnimating) return;
-            if(!isPaused){ pauseAnimation(); isPaused=true; pause.textContent='Reprendre'; }
-            else{ resumeAnimation(); isPaused=false; pause.textContent='Pause'; }
+
+        pause.onclick = e => {
+            e.stopPropagation();
+            if (!isAnimating) return;
+            if (!isPaused) {
+                pauseAnimation();
+                isPaused = true;
+                pause.textContent = 'Reprendre';
+            } else {
+                resumeAnimation();
+                isPaused = false;
+                pause.textContent = 'Pause';
+            }
         };
-        pause.disabled=true; return div;
+
+        pause.disabled = true;
+        return div;
     };
+
     animControl.addTo(map);
 }
 
-function addLegend(){
-    const legend=L.control({position:'bottomleft'});
-    legend.onAdd=function(){
-        const div=L.DomUtil.create('div','legend');
-        div.innerHTML=`
-          <h4 style="margin:0 0 4px 0; text-align:center; font-weight:bold; font-size:12px;">Légende</h4>
-          <div><svg width="16" height="16" style="margin-right:8px;"><polygon points="8,2 14,14 2,14" fill="#000" stroke="black" stroke-width="2"/></svg> Entrepôt</div>
-          <div><div class="legend-symbol" style="background:#777;border:2px solid black;border-radius:3px;"></div> Pickup</div>
-          <div><div class="legend-symbol" style="background:#777;border:2px solid black;border-radius:50%;"></div> Delivery</div>
-          <div style="font-size:10px;color:#333;margin:3px 0;text-align:left;">Chaque couple Pickup / Delivery partage la même couleur</div>
-          <div style="display:flex;align-items:center;"><div class="legend-symbol" style="width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:14px;">🛵</div> Livreur</div>
-          <div style="display:flex;align-items:center;"><svg width="32" height="16" viewBox="0 0 40 20" style="margin-right:4px;"><text x="16" y="13" font-size="12" font-weight="bold" text-anchor="middle" fill="#777" stroke="white" stroke-width="3" paint-order="stroke">1…n</text></svg> Sens de la tournée</div>`;
-        return div;
-    };
-    legend.addTo(map);
-}
+// GESTION DES CLICS
 
 document.addEventListener('DOMContentLoaded',()=>{
     const inputCarte = document.getElementById('xmlCarte');
