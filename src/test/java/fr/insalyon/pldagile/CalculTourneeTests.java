@@ -224,13 +224,16 @@ public class CalculTourneeTests {
                 new Livraison(np1, np2)
         ));
 
-        CalculTournee ct = new CalculTournee(carte, demande, 5.0, LocalTime.of(8, 0));
-        Tournee tournee = ct.calculerTournee();
+        // Calcul de la tournée pour un seul livreur
+        CalculTournees ct = new CalculTournees(carte, demande, 5.0, 1, LocalTime.of(8, 0));
+        List<Tournee> tournees = ct.calculerTournees();
+        Tournee tournee = tournees.get(0);
 
         assertNotNull(tournee);
         assertEquals(LocalTime.of(8, 0), np1.getHoraireDepart());
         assertTrue(np2.getHoraireArrivee().isAfter(np1.getHoraireDepart()));
     }
+
 
 
 
@@ -282,15 +285,18 @@ public class CalculTourneeTests {
                 ? demande.getEntrepot().getHoraireDepart()
                 : LocalTime.of(8, 0);
 
-
         double vitesse = 4.16; // m/s
-        CalculTournee calculTournee = new CalculTournee(ville, demande, vitesse, heureDepart);
-        Tournee tournee = calculTournee.calculerTournee();
+        int nombreLivreurs = 1;  // pour un test simple
+
+        CalculTournees calculTournees = new CalculTournees(ville, demande, vitesse, nombreLivreurs, heureDepart);
+        List<Tournee> toutesLesTournees = calculTournees.calculerTournees();
+        assertFalse(toutesLesTournees.isEmpty(), "Au moins une tournée doit être calculée");
+
+        Tournee tournee = toutesLesTournees.get(0);
         assertNotNull(tournee, "La tournée doit être calculée");
 
         List<Chemin> chemins = tournee.getChemins();
         assertFalse(chemins.isEmpty(), "La tournée doit contenir des chemins");
-
 
         long[] ordreAttendu = {2835339774L, 208769120L, 1679901320L, 208769457L, 25336179L, 2835339774L};
         double[] distancesAttendu = {447, 866, 411, 1540, 1115};
@@ -308,15 +314,14 @@ public class CalculTourneeTests {
 
             assertEquals(distancesAttendu[i], c.getLongueurTotal(), 1.0, "Distance chemin " + (i + 1));
 
-            // Horaire de départ du chemin : horaireDepart du noeud départ, sinon horaireArrivee pour l’entrepôt
             LocalTime departHoraire = c.getNoeudDePassageDepart().getHoraireDepart();
             if (departHoraire == null) departHoraire = c.getNoeudDePassageDepart().getHoraireArrivee();
             assertEquals(LocalTime.parse(horairesDepartAttendu[i]), departHoraire, "Horaire départ chemin " + (i + 1));
 
-            // Horaire d'arrivée du chemin : horaireArrivee du noeud d'arrivée
             assertEquals(LocalTime.parse(horairesArriveeAttendu[i]), c.getNoeudDePassageArrivee().getHoraireArrivee(), "Horaire arrivée chemin " + (i + 1));
         }
     }
+
 
 
 
@@ -337,10 +342,12 @@ public class CalculTourneeTests {
         NoeudDePassage np2 = new NoeudDePassage(2L, 1, 1, null, 0, null);
 
         DemandeDeLivraison demande = new DemandeDeLivraison(np1, List.of(new Livraison(np1, np2)));
-        CalculTournee ct = new CalculTournee(carte, demande, 5.0, LocalTime.of(8, 0));
+        int nombreLivreurs = 1; // test simple
+        CalculTournees ct = new CalculTournees(carte, demande, 5.0, nombreLivreurs, LocalTime.of(8, 0));
 
-        assertThrows(TourneeNonConnexeException.class, ct::calculerTournee);
+        assertThrows(TourneeNonConnexeException.class, () -> ct.calculerTournees());
     }
+
 
 
 
@@ -350,7 +357,7 @@ public class CalculTourneeTests {
      * valeurs infinies (INF) dans une matrice 3x3.
    */
     @Test
-    void testTourneeGrapheAvecDeuxINF() throws Exception {
+    void testTourneeGrapheAvecDeuxINF() {
         Carte carte = new Carte();
 
         Noeud n1 = new Noeud(1L, 0, 0);
@@ -369,18 +376,16 @@ public class CalculTourneeTests {
                 new Livraison(np2, np3)
         ));
 
-        CalculTournee ct = new CalculTournee(carte, demande, 5.0, LocalTime.of(8,0));
+        int nombreLivreurs = 1;
+        CalculTournees ct = new CalculTournees(carte, demande, 5.0, nombreLivreurs, LocalTime.of(8,0));
 
         TourneeNonConnexeException ex = assertThrows(
                 TourneeNonConnexeException.class,
-                ct::calculerTournee
+                () -> ct.calculerTournees()
         );
 
         assertTrue(ex.getMessage().contains("connexe"));
     }
-
-
-
 
 
     // KMeans

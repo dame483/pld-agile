@@ -84,7 +84,9 @@ public class parseurTourneeJson {
                 System.err.println("Heure Départ ou heure Arrivée finale manquante pour l'entrepôt  ");
             }
 
-            tourneeDuLivreur = new Tournee(listChemins, dureeTotale);
+            double longueurTotale = listChemins.stream().mapToDouble(Chemin::getLongueurTotal).sum();
+            tourneeDuLivreur = new Tournee(listChemins, dureeTotale, longueurTotale);
+
 
         } catch (Exception e) {
             e.printStackTrace();
