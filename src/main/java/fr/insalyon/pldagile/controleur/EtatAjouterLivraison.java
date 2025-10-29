@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.util.List;
 
 public class EtatAjouterLivraison implements Etat {
     private  Carte carte;
@@ -56,9 +57,10 @@ public class EtatAjouterLivraison implements Etat {
     public Object loadTournee(Controlleur c, MultipartFile file, Carte carte) {
         Object result = uploadXML("tournee", file, carte);
 
-        if (result instanceof Tournee tournee) {
-            c.setCurrentState(new EtatTourneeCalcule(carte, null, tournee));
-            return tournee;
+        if (result instanceof List<?> liste && !liste.isEmpty() && liste.get(0) instanceof Tournee) {
+            List<Tournee> toutesLesTournees = (List<Tournee>) liste;
+            c.setCurrentState(new EtatTourneeCalcule(carte, null, toutesLesTournees));
+            return toutesLesTournees;
         }
         return result;
     }

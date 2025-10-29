@@ -129,8 +129,8 @@ async function uploadDemande(file){
 // AFFICHAGE CARTE ET DEMANDES
 
 function drawCarte(carte) {
-    const nodes = carte.noeuds || {};
-    const troncons = carte.troncons || [];
+    const n = carte.noeuds || {};
+    const t = carte.troncons || [];
     const mapDiv = document.getElementById('map');
     mapDiv.style.display = "block";
 
@@ -470,7 +470,7 @@ document.addEventListener('DOMContentLoaded',()=>{
         }
     });
 
-    calculTourneeBouton.addEventListener('click', async () => {
+    document.getElementById('calculerTournee').addEventListener('click', async () => {
         const nbLivreurs = parseInt(document.getElementById('nbLivreurs').value) || 1;
         await calculTournee(nbLivreurs);
     });
@@ -530,10 +530,6 @@ document.addEventListener('DOMContentLoaded',()=>{
         }
     });
 
-    document.getElementById('calculerTournee').addEventListener('click', () => {
-        calculTournee();
-    });
-
     document.getElementById('creerFeuillesDeRoute').addEventListener('click', () => {
         creerFeuillesDeRoute();
     });
@@ -562,9 +558,11 @@ document.addEventListener('DOMContentLoaded',()=>{
                 const data = await response.json().catch(() => ({}));
 
                 if (response.ok) {
-                    tournee = data.tournee;
-                    console.log("Tournée chargée :", data);
-                    drawTournee(tournee);
+                    const tournees = data.tournees || [];
+                    tournees.forEach((t, i) => {
+                        const color = colors[i % colors.length];
+                        drawTournee(t, color);
+                    });
                     document.getElementById('welcome-message').style.display = "none";
                     document.getElementById('tableauDemandes').style.display = "none";
                     document.getElementById('livraisons').style.display = "none";

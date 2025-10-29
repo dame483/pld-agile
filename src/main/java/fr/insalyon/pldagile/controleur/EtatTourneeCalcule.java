@@ -15,12 +15,12 @@ public class EtatTourneeCalcule implements Etat {
 
     private Carte carte;
     private DemandeDeLivraison demande;
-    private final Tournee tournee;
+    private final List<Tournee> toutesLesTournees;
 
-    public EtatTourneeCalcule(Carte carte, DemandeDeLivraison demande, Tournee tournee) {
+    public EtatTourneeCalcule(Carte carte, DemandeDeLivraison demande, List<Tournee> toutesLesTournees) {
         this.carte = carte;
         this.demande = demande;
-        this.tournee = tournee;
+        this.toutesLesTournees = toutesLesTournees;
     }
 
     @Override
@@ -53,7 +53,7 @@ public class EtatTourneeCalcule implements Etat {
             CalculTournees t = new CalculTournees(carte, demande, 4.1, nombreLivreurs, heureDepart);
             List<Tournee> toutesLesTournees = t.calculerTournees();
 
-            c.setCurrentState(new EtatTourneeCalcule(carte, demande));
+            c.setCurrentState(new EtatTourneeCalcule(carte, demande, toutesLesTournees));
             return toutesLesTournees;
 
         } catch (Exception e) {
@@ -89,11 +89,19 @@ public class EtatTourneeCalcule implements Etat {
     @Override
     public Object creerFeuillesDeRoute(Controlleur c) {
         try {
-            FeuilleDeRoute feuille = new FeuilleDeRoute(tournee);
-            feuille.generateFeuilleDeRoute();
+            if (toutesLesTournees == null || toutesLesTournees.isEmpty()) {
+                return "Aucune tournée à générer.";
+            }
 
-            System.out.println("Feuille de route créée avec succès !");
-            return "Feuille de route générée avec succès.";
+            for (int i = 0; i < toutesLesTournees.size(); i++) {
+                Tournee t = toutesLesTournees.get(i);
+                FeuilleDeRoute feuille = new FeuilleDeRoute(t);
+                feuille.generateFeuilleDeRoute();
+
+                System.out.println("Feuille de route créée pour la tournée #" + (i + 1));
+            }
+
+            return "Toutes les feuilles de route ont été générées avec succès.";
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -104,11 +112,19 @@ public class EtatTourneeCalcule implements Etat {
     @Override
     public Object saveTournee(Controlleur c) {
         try {
-            FeuilleDeRoute feuille = new FeuilleDeRoute(tournee);
-            feuille.sauvegarderTournee();
+            if (toutesLesTournees == null || toutesLesTournees.isEmpty()) {
+                return "Aucune tournée à sauvegarder.";
+            }
 
-            System.out.println("Tournée sauvegardée avec succès !");
-            return "Tournée sauvegardée avec succès.";
+            for (int i = 0; i < toutesLesTournees.size(); i++) {
+                Tournee t = toutesLesTournees.get(i);
+                FeuilleDeRoute feuille = new FeuilleDeRoute(t);
+                feuille.sauvegarderTournee();
+
+                System.out.println("Tournée #" + (i + 1) + " sauvegardée avec succès !");
+            }
+
+            return "Toutes les tournées ont été sauvegardées avec succès.";
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -121,8 +137,9 @@ public class EtatTourneeCalcule implements Etat {
         Object result = uploadXML("tournee", file, carte);
 
         if (result instanceof Tournee tournee) {
-            c.setCurrentState(new EtatTourneeCalcule(carte, null, tournee));
-            return tournee;
+            List<Tournee> liste = List.of(tournee);
+            c.setCurrentState(new EtatTourneeCalcule(carte, null, liste));
+            return liste;
         }
         return result;
     }

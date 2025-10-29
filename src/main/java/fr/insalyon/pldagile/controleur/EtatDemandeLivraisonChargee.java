@@ -52,7 +52,7 @@ public class EtatDemandeLivraisonChargee implements Etat {
             CalculTournees t = new CalculTournees(carte, demande, 4.1, nombreLivreurs, heureDepart);
             List<Tournee> toutesLesTournees = t.calculerTournees();
 
-            c.setCurrentState(new EtatTourneeCalcule(carte, demande));
+            c.setCurrentState(new EtatTourneeCalcule(carte, demande, toutesLesTournees));
             return toutesLesTournees;
 
         } catch (Exception e) {
@@ -101,9 +101,10 @@ public class EtatDemandeLivraisonChargee implements Etat {
     public Object loadTournee(Controlleur c, MultipartFile file, Carte carte) {
         Object result = uploadXML("tournee", file, carte);
 
-        if (result instanceof Tournee tournee) {
-            c.setCurrentState(new EtatTourneeCalcule(carte, null, tournee));
-            return tournee;
+        if (result instanceof List<?> liste && !liste.isEmpty() && liste.get(0) instanceof Tournee) {
+            List<Tournee> toutesLesTournees = (List<Tournee>) liste;
+            c.setCurrentState(new EtatTourneeCalcule(carte, null, toutesLesTournees));
+            return toutesLesTournees;
         }
         return result;
     }
