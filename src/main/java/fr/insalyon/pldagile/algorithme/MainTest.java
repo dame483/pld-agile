@@ -18,14 +18,14 @@ public class MainTest {
             System.out.println("Carte chargée.");
 
             // Charger la demande de livraison
-            File fichierDemande = new File("src/main/resources/donnees/demandes/demandeGrand9.xml");
+            File fichierDemande = new File("src/main/resources/donnees/demandes/demandeGrand7.xml");
             DemandeDeLivraison demande = DemandeDeLivraisonParseurXML.loadFromFile(fichierDemande, ville);
             System.out.println("Demande de livraison chargée.");
 
             // Paramètres
             LocalTime heureDepart = demande.getEntrepot().getHoraireDepart();
             double vitesse = 4.16; // m/s
-            int nombreLivreurs = 3;
+            int nombreLivreurs = 1;
 
             // Calcul des tournées pour tous les livreurs
             CalculTournees calculTournees = new CalculTournees(ville, demande, vitesse, nombreLivreurs, heureDepart);

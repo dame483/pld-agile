@@ -1,30 +1,346 @@
-L'heure de départ de l'entrepôt : 08:06
+L'heure de départ de l'entrepôt : 11:36:04
 
 Chemin 1
-Tu pars de (25327124,ENTREPOT)
-Continuez environ 71 m  sur Rue Sully
-Continuez environ 50 m  sur Rue Garibaldi
-Continuez environ 42 m  sur Rue Garibaldi
-Continuez environ 40 m  sur Rue Garibaldi
-Continuez environ 36 m  sur Rue Garibaldi
-Continuez environ 54 m  sur Rue Garibaldi
-Continuez environ 86 m  sur Rue Garibaldi
-Continuez environ 78 m  sur Rue Garibaldi
-Continuez environ 54 m  sur Rue Garibaldi
+Tu pars de (25610888,ENTREPOT)
+Continuez environ 28 m  sur Place Jules Hottin
+Continuez environ 84 m  sur Avenue Lacassagne
+Continuez environ 14 m  sur Avenue Lacassagne
+Continuez environ 97 m  sur Avenue Lacassagne
+Continuez environ 52 m  sur Avenue Lacassagne
+Continuez environ 126 m  sur Avenue Lacassagne
+Continuez environ 31 m  sur Avenue Lacassagne
+Continuez environ 111 m  sur Rue Constant
+Continuez environ 56 m  sur Rue Constant
+Continuez environ 80 m  sur Rue Constant
+Continuez environ 51 m  sur Rue Constant
+Continuez environ 108 m  sur Rue Constant
+Continuez environ 57 m  sur Rue Ferdinand Buisson
+Continuez environ 70 m  sur Rue Charles Richard
+Continuez environ 84 m  sur Rue Charles Richard
+Continuez environ 93 m  sur Cours Docteur Long
+Continuez environ 73 m  sur Cours Docteur Long
+Continuez environ 77 m  sur Rue Louise
+Tu arrives au point de livraison à 08:05:08
+L'adresse de livraison N° 0 est 26155372)
+
+Chemin 2
+Tu pars de (26155372,PICKUP)
+Continuez environ 69 m  sur Rue Louise
+Continuez environ 172 m  sur Rue Julie
+Continuez environ 52 m  sur Rue Charles Richard
+Continuez environ 76 m  sur Rue Charles Richard
+Continuez environ 126 m  sur Rue Antoinette
+Continuez environ 141 m  sur Rue Antoinette
+Continuez environ 141 m  sur Cours Richard Vitton
+Continuez environ 12 m  sur Place Ronde André Bourgogne
+Continuez environ 13 m  sur Place Ronde André Bourgogne
+Continuez environ 167 m  sur Rue de l'Église
+Tu arrives au point de livraison à 08:16
+L'adresse de livraison N° 1 est 26149156)
+
+Chemin 3
+Tu pars de (26149156,PICKUP)
+Continuez environ 48 m  sur Cours Docteur Long
+Continuez environ 46 m  sur Cours Docteur Long
+Continuez environ 64 m  sur Cours Docteur Long
+Continuez environ 66 m  sur Cours Docteur Long
+Continuez environ 124 m  sur Cours Docteur Long
+Continuez environ 93 m  sur Cours Docteur Long
+Continuez environ 73 m  sur Cours Eugénie
+Continuez environ 12 m  sur Cours Eugénie
+Continuez environ 73 m  sur Cours Eugénie
+Continuez environ 153 m  sur Cours Eugénie
+Continuez environ 187 m  sur Cours Eugénie
+Continuez environ 93 m  sur Avenue Lacassagne
+Continuez environ 31 m  sur Avenue Lacassagne
+Continuez environ 126 m  sur Avenue Lacassagne
+Tu arrives au point de livraison à 08:28:44
+L'adresse de livraison N° 2 est 26463669)
+
+Chemin 4
+Tu pars de (26463669,DELIVERY)
+Continuez environ 89 m  sur Rue François Villon
+Continuez environ 124 m  sur Rue François Villon
+Continuez environ 132 m  sur Rue François Villon
+Continuez environ 83 m  sur Avenue Esquirol
+Continuez environ 82 m  sur Avenue Esquirol
+Continuez environ 71 m  sur Cours Eugénie
+Continuez environ 93 m  sur Cours Eugénie
+Continuez environ 134 m  sur Avenue Rockefeller
+Continuez environ 10 m  sur Rue Victor de Laprade
+Continuez environ 201 m  sur Rue Victor de Laprade
+Continuez environ 198 m  sur Rue Volney Rue Victor de Laprade
+Continuez environ 66 m  sur Boulevard Ambroise Paré
+Continuez environ 87 m  sur Boulevard Ambroise Paré
+Continuez environ 63 m  sur Boulevard Ambroise Paré
+Continuez environ 73 m  sur Boulevard Ambroise Paré
+Continuez environ 27 m  sur Boulevard Ambroise Paré
+Continuez environ 20 m  sur Boulevard Ambroise Paré
+Continuez environ 77 m  sur Boulevard Ambroise Paré
+Continuez environ 42 m  sur Boulevard Ambroise Paré
+Continuez environ 128 m  sur Rue du Professeur Joseph Nicolas
+Continuez environ 20 m  sur Rue du Professeur Joseph Nicolas
+Continuez environ 162 m  sur Rue du Professeur Joseph Nicolas
+Continuez environ 9 m  sur Rue du Professeur Joseph Nicolas
+Continuez environ 98 m  sur Avenue Jean Mermoz
+Continuez environ 9 m  sur Rue Marc Sangnier
+Tu arrives au point de livraison à 08:43:05
+L'adresse de livraison N° 3 est 1382784520)
+
+Chemin 5
+Tu pars de (1382784520,PICKUP)
+Continuez environ 96 m  sur Avenue Jean Mermoz
+Continuez environ 186 m  sur Avenue Jean Mermoz
+Continuez environ 141 m  sur Avenue Jean Mermoz
+Tu arrives au point de livraison à 08:54:46
+L'adresse de livraison N° 4 est 143403)
+
+Chemin 6
+Tu pars de (143403,PICKUP)
+Continuez environ 103 m  sur Avenue Jean Mermoz
+Continuez environ 94 m  sur Avenue Jean Mermoz
+Continuez environ 111 m  sur Avenue Jean Mermoz
+Continuez environ 286 m  sur Rue Maryse Bastié
+Tu arrives au point de livraison à 08:58:08
+L'adresse de livraison N° 5 est 21702421)
+
+Chemin 7
+Tu pars de (21702421,DELIVERY)
+Continuez environ 198 m  sur Rue Bataille
+Continuez environ 13 m  sur Rue Bataille
+Continuez environ 216 m  sur Boulevard Jean XXIII
+Continuez environ 26 m  sur Boulevard Jean XXIII
+Continuez environ 50 m  sur Avenue Paul Santy
+Continuez environ 82 m  sur Avenue Paul Santy
+Continuez environ 114 m  sur Avenue Paul Santy
+Continuez environ 117 m  sur Avenue Paul Santy
+Continuez environ 10 m  sur Rue Varichon
+Tu arrives au point de livraison à 09:10:26
+L'adresse de livraison N° 6 est 891129815)
+
+Chemin 8
+Tu pars de (891129815,PICKUP)
+Continuez environ 10 m  sur Rue Varichon
+Continuez environ 224 m  sur Rue Varichon
+Continuez environ 157 m  sur Rue Varichon
+Continuez environ 71 m  sur Rue Varichon
+Tu arrives au point de livraison à 09:12:17
+L'adresse de livraison N° 7 est 25624140)
+
+Chemin 9
+Tu pars de (25624140,DELIVERY)
+Continuez environ 71 m  sur Rue Varichon
+Continuez environ 125 m  sur Rue Rochambeau
+Continuez environ 63 m  sur Rue Rochambeau
+Continuez environ 68 m  sur Rue Théodore Lévigne
+Continuez environ 75 m  sur Rue Théodore Lévigne
+Continuez environ 90 m  sur Boulevard des États-Unis
+Continuez environ 92 m  sur Boulevard des États-Unis
+Continuez environ 185 m  sur Boulevard des États-Unis
+Continuez environ 14 m  sur Boulevard des États-Unis
+Continuez environ 48 m  sur Boulevard des États-Unis
+Continuez environ 248 m  sur Boulevard des États-Unis
+Continuez environ 242 m  sur Boulevard des États-Unis
+Continuez environ 33 m  sur Boulevard des États-Unis
+Continuez environ 50 m  sur Rue Audibert et Lavirotte
+Continuez environ 45 m  sur Rue Audibert et Lavirotte
+Continuez environ 50 m  sur Rue Audibert et Lavirotte
+Continuez environ 122 m  sur Rue Audibert et Lavirotte
+Continuez environ 113 m  sur Rue de l'Épargne
+Continuez environ 95 m  sur Rue de l'Épargne
+Continuez environ 23 m  sur Rue de l'Épargne
+Continuez environ 133 m  sur Boulevard des Tchécoslovaques
+Continuez environ 177 m  sur Boulevard des Tchécoslovaques
+Continuez environ 42 m  sur Rue Claude Veyron
+Continuez environ 212 m  sur Rue Claude Veyron
+Continuez environ 107 m  sur Rue Claude Veyron
+Continuez environ 125 m  sur Rue Nicolaï
+Continuez environ 162 m  sur Rue Nicolaï
+Continuez environ 105 m  sur Cours Gambetta
+Continuez environ 28 m  sur Rue Jules Jusserand
+Continuez environ 56 m  sur Rue Jules Jusserand
+Continuez environ 46 m  sur Rue Jules Jusserand
+Continuez environ 61 m  sur Place Bir-Hakeim
+Continuez environ 85 m  sur Place Bir-Hakeim
+Continuez environ 9 m  sur Avenue Félix Faure
+Continuez environ 65 m  sur Avenue Félix Faure
+Continuez environ 93 m  sur Avenue Félix Faure
+Continuez environ 18 m  sur Rue Garibaldi
+Tu arrives au point de livraison à 09:31:45
+L'adresse de livraison N° 8 est 34401989)
+
+Chemin 10
+Tu pars de (34401989,PICKUP)
+Continuez environ 154 m  sur Rue de l'AbondanceRue Garibaldi
+Continuez environ 67 m  sur Rue de l'Abondance
+Continuez environ 76 m  sur Rue du Lac
+Continuez environ 65 m  sur Avenue Félix Faure
+Continuez environ 93 m  sur Avenue Félix Faure
+Continuez environ 16 m  sur Avenue Félix Faure
+Continuez environ 101 m  sur Avenue Félix Faure
+Continuez environ 103 m  sur Avenue Félix Faure
+Continuez environ 32 m  sur Avenue Félix Faure
+Continuez environ 18 m  sur Avenue Félix Faure
+Continuez environ 77 m  sur Avenue Félix Faure
+Continuez environ 153 m  sur Avenue Félix Faure
+Continuez environ 50 m  sur Avenue Félix Faure
+Continuez environ 58 m  sur Avenue Félix Faure
+Continuez environ 48 m  sur Rue d'Anvers
+Continuez environ 61 m  sur Rue d'Anvers
+Continuez environ 84 m  sur Rue d'Anvers
+Continuez environ 92 m  sur Rue d'Anvers
+Continuez environ 79 m  sur Rue d'Anvers
+Continuez environ 75 m  sur Rue d'Anvers
+Continuez environ 54 m  sur Rue d'Anvers
+Continuez environ 89 m  sur Rue d'Anvers
+Continuez environ 92 m  sur Rue d'Anvers
+Continuez environ 115 m  sur Rue d'Anvers
+Continuez environ 94 m  sur Rue Bancel
+Continuez environ 87 m  sur Rue Bancel
+Continuez environ 21 m  sur Rue Raoul Servant
+Continuez environ 85 m  sur Rue Raoul Servant
+Continuez environ 41 m  sur Rue Raoul Servant
+Continuez environ 162 m  sur Boulevard Yves Farge Rue de Marseille
+Continuez environ 35 m  sur Boulevard Yves Farge
+Continuez environ 28 m  sur Boulevard Yves Farge
+Continuez environ 81 m  sur Rue Blanche et Georges Caton
+Continuez environ 91 m  sur Rue Blanche et Georges Caton
+Continuez environ 87 m  sur Rue des Verriers
+Tu arrives au point de livraison à 09:42:22
+L'adresse de livraison N° 9 est 26084604)
+
+Chemin 11
+Tu pars de (26084604,DELIVERY)
+Continuez environ 161 m  sur Rue Victor Lagrange
+Continuez environ 175 m  sur Rue du Professeur Zimmermann
+Continuez environ 37 m  sur Rue du Professeur Zimmermann
+Continuez environ 96 m  sur Rue du Professeur Zimmermann
+Continuez environ 102 m  sur Place Jules Guesde
+Continuez environ 99 m  sur Rue Sébastien Gryphe
+Continuez environ 40 m  sur Rue Jaboulay
+Continuez environ 60 m  sur Rue Jaboulay
+Continuez environ 84 m  sur Rue Jaboulay
+Continuez environ 96 m  sur Rue Pasteur
+Continuez environ 206 m  sur Rue Pasteur
+Continuez environ 72 m  sur Rue de l'Université
+Continuez environ 82 m  sur Rue de l'Université
+Continuez environ 220 m  sur Pont de l'UniversitéQuai Claude Bernard
+Continuez environ 54 m  sur Pont de l'Université
+Continuez environ 83 m  sur Quai du Docteur Gailleton
+Continuez environ 632 m  sur Quai du Docteur Gailleton Quai Jules Courmont
+Continuez environ 122 m  sur Quai Jules Courmont
+Continuez environ 29 m  sur Quai Jules Courmont
+Continuez environ 332 m  sur Quai Jules Courmont
+Continuez environ 15 m  sur Quai Jules Courmont
+Continuez environ 168 m  sur Quai Jean Moulin
+Continuez environ 130 m  sur Quai Jean Moulin
+Continuez environ 38 m  sur Quai Jean Moulin
+Continuez environ 145 m  sur Quai Jean Moulin
+Continuez environ 47 m  sur Quai Jean Moulin
+Continuez environ 42 m  sur Quai Jean Moulin
+Continuez environ 23 m  sur Quai André Lassagne
+Continuez environ 33 m  sur Quai André Lassagne
+Continuez environ 167 m  sur Quai André Lassagne
+Continuez environ 75 m  sur Quai André Lassagne
+Continuez environ 80 m  sur Quai André Lassagne
+Continuez environ 218 m  sur Quai André Lassagne Cours d'Herbouville
+Continuez environ 299 m  sur Cours d'Herbouville
+Continuez environ 16 m  sur Cours d'Herbouville
+Continuez environ 102 m  sur Cours d'Herbouville
+Continuez environ 175 m  sur Cours d'Herbouville
+Continuez environ 25 m  sur 
+Tu arrives au point de livraison à 10:02:38
+L'adresse de livraison N° 10 est 1362781062)
+
+Chemin 12
+Tu pars de (1362781062,PICKUP)
+Continuez environ 233 m  sur Pont Winston Churchill
+Continuez environ 152 m  sur Avenue de Grande-Bretagne
+Continuez environ 10 m  sur Boulevard des Belges
+Continuez environ 61 m  sur Boulevard des Belges
+Continuez environ 124 m  sur Boulevard des Belges
+Continuez environ 80 m  sur Boulevard des Belges
+Continuez environ 113 m  sur Boulevard des Belges
+Continuez environ 48 m  sur Boulevard des Belges
+Continuez environ 66 m  sur Boulevard des Belges
+Continuez environ 58 m  sur Rue Garibaldi
 Continuez environ 83 m  sur Rue Garibaldi
-Continuez environ 116 m  sur Rue Garibaldi
-Continuez environ 74 m  sur Rue Garibaldi
-Continuez environ 68 m  sur Rue Garibaldi
-Continuez environ 78 m  sur Rue Garibaldi
-Continuez environ 100 m  sur Rue Garibaldi
-Continuez environ 75 m  sur Rue Garibaldi
-Continuez environ 82 m  sur Rue Garibaldi
-Continuez environ 82 m  sur Rue Garibaldi
-Continuez environ 84 m  sur Rue Garibaldi
-Continuez environ 76 m  sur Rue Garibaldi
-Continuez environ 506 m  sur Rue Garibaldi
-Continuez environ 60 m  sur Rue Garibaldi
-Continuez environ 404 m  sur Rue Garibaldi
+Continuez environ 10 m  sur Rue Garibaldi
+Continuez environ 123 m  sur Rue Garibaldi
+Continuez environ 71 m  sur Rue Montgolfier
+Continuez environ 80 m  sur Rue Montgolfier
+Continuez environ 77 m  sur Rue Montgolfier
+Continuez environ 81 m  sur Rue Montgolfier
+Continuez environ 55 m  sur Avenue Verguin
+Continuez environ 38 m  sur Avenue Verguin
+Continuez environ 123 m  sur Avenue Verguin
+Continuez environ 176 m  sur Avenue Verguin
+Continuez environ 11 m  sur Avenue Verguin
+Continuez environ 64 m  sur Cours André Philip
+Continuez environ 99 m  sur Cours André Philip
+Continuez environ 73 m  sur Cours André Philip
+Continuez environ 105 m  sur Cours André Philip
+Continuez environ 93 m  sur Cours André Philip
+Continuez environ 109 m  sur Cours André Philip
+Continuez environ 8 m  sur Rond-Point des Charpennes
+Continuez environ 13 m  sur Rond-Point des Charpennes
+Continuez environ 8 m  sur Rond-Point des Charpennes
+Continuez environ 98 m  sur Cours André Philip
+Continuez environ 52 m  sur Cours André Philip
+Continuez environ 52 m  sur Rue Francis de Pressensé
+Continuez environ 103 m  sur Rue Francis de Pressensé
+Continuez environ 19 m  sur 
+Continuez environ 6 m  sur 
+Continuez environ 33 m  sur Rue Francis de Pressensé
+Continuez environ 49 m  sur Rue Francis de Pressensé
+Continuez environ 101 m  sur Rue Francis de Pressensé
+Continuez environ 92 m  sur Rue Francis de Pressensé
+Continuez environ 14 m  sur 
+Continuez environ 13 m  sur 
+Tu arrives au point de livraison à 10:23:53
+L'adresse de livraison N° 11 est 2774590477)
+
+Chemin 13
+Tu pars de (2774590477,DELIVERY)
+Continuez environ 16 m  sur 
+Continuez environ 136 m  sur Cours de la République
+Continuez environ 95 m  sur Cours de la République
+Continuez environ 267 m  sur Cours de la République
+Continuez environ 77 m  sur Rue Anatole France
+Continuez environ 68 m  sur Rue Anatole France
+Continuez environ 53 m  sur Rue Anatole France
+Continuez environ 114 m  sur Rue Anatole France
+Continuez environ 92 m  sur Rue Anatole France
+Continuez environ 71 m  sur Rue Anatole France
+Continuez environ 129 m  sur Rue Notre-Dame
+Continuez environ 65 m  sur Rue Germain
+Continuez environ 99 m  sur Rue Germain
+Continuez environ 77 m  sur Rue Germain
+Continuez environ 98 m  sur Rue Germain
+Continuez environ 92 m  sur Rue Bellecombe
+Continuez environ 74 m  sur Rue Bellecombe
+Continuez environ 84 m  sur Rue Bellecombe
+Continuez environ 70 m  sur Rue Saint-Antoine
+Continuez environ 99 m  sur Rue Maurice Flandin
+Continuez environ 76 m  sur Rue Maurice Flandin
+Continuez environ 253 m  sur Rue Maurice Flandin
+Continuez environ 58 m  sur Rue Maurice Flandin
+Continuez environ 175 m  sur Rue Maurice Flandin
+Continuez environ 68 m  sur Rue Paul Bert
+Continuez environ 128 m  sur Rue du Général Mouton-Duvernet
+Continuez environ 61 m  sur Rue du Général Mouton-Duvernet
+Continuez environ 34 m  sur Rue du Général Mouton-Duvernet
+Continuez environ 64 m  sur Rue du Général Mouton-Duvernet
+Continuez environ 72 m  sur Rue du Général Mouton-Duvernet
+Continuez environ 113 m  sur Avenue Félix Faure
+Continuez environ 63 m  sur Avenue Félix Faure
+Continuez environ 150 m  sur Avenue Félix Faure
+Continuez environ 85 m  sur Avenue Félix Faure
+Continuez environ 58 m  sur Avenue Félix Faure
+Continuez environ 9 m  sur Avenue Félix Faure
+Continuez environ 65 m  sur Avenue Félix Faure
+Continuez environ 93 m  sur Avenue Félix Faure
+Continuez environ 265 m  sur Rue Garibaldi
 Continuez environ 56 m  sur Rue Garibaldi
 Continuez environ 45 m  sur Rue Garibaldi
 Continuez environ 74 m  sur Rue Garibaldi
@@ -46,195 +362,43 @@ Continuez environ 348 m  sur Rue Paul Duvivier
 Continuez environ 64 m  sur Rue Paul Duvivier
 Continuez environ 255 m  sur Rue Paul Duvivier
 Continuez environ 56 m  sur Route de Vienne
-Continuez environ 223 m  sur Rue Auguste Chollat
-Continuez environ 76 m  sur Rue Auguste Chollat
-Continuez environ 145 m  sur Rue de Montagny
-Continuez environ 133 m  sur Rue de Montagny
-Tu arrives au point de livraison à 08:24:39
-L'adresse de livraison N° 0 est 59654812)
+Continuez environ 13 m  sur Route de Vienne
+Continuez environ 83 m  sur Route de Vienne
+Tu arrives au point de livraison à 10:54:03
+L'adresse de livraison N° 12 est 27359745)
 
-Chemin 2
-Tu pars de (59654812,PICKUP)
-Continuez environ 42 m  sur Rue de Montagny
-Continuez environ 302 m  sur Rue de Montagny
-Continuez environ 40 m  sur Rue de Montagny
-Continuez environ 122 m  sur Rue de Montagny
-Continuez environ 15 m  sur Route de Vienne
-Continuez environ 165 m  sur Route de Vienne
-Continuez environ 23 m  sur Route de Vienne
-Continuez environ 56 m  sur Route de Vienne
-Continuez environ 147 m  sur Rue Henri Barbusse
-Continuez environ 66 m  sur Rue de Montagny
-Continuez environ 182 m  sur Rue Garon-Duret
-Tu arrives au point de livraison à 08:31:16
-L'adresse de livraison N° 1 est 984553611)
-
-Chemin 3
-Tu pars de (984553611,PICKUP)
-Continuez environ 76 m  sur Rue Garon-Duret
-Continuez environ 93 m  sur Rue Garon-Duret
-Continuez environ 71 m  sur Rue Pierre Delore
-Continuez environ 34 m  sur Rue Pierre Delore
-Continuez environ 11 m  sur Rue Pierre Delore
-Continuez environ 8 m  sur Rue Henri Barbusse
-Continuez environ 103 m  sur Rue Paul Cazeneuve
-Continuez environ 20 m  sur Rue Paul Cazeneuve
-Continuez environ 195 m  sur Rue Paul Cazeneuve
-Continuez environ 86 m  sur Rue Ludovic Arrachart
-Continuez environ 67 m  sur Rue Joseph Chapelle
-Continuez environ 75 m  sur Rue Joseph Chapelle
-Continuez environ 19 m  sur Rue Joseph Chapelle
-Continuez environ 76 m  sur Rue Joseph Chapelle
-Continuez environ 92 m  sur Rue Joseph Chapelle
-Continuez environ 71 m  sur Rue Joseph Chapelle
-Continuez environ 113 m  sur Rue Joseph Chapelle
-Continuez environ 128 m  sur Rue Joseph Chapelle
+Chemin 14
+Tu pars de (27359745,DELIVERY)
+Continuez environ 83 m  sur Route de Vienne
+Continuez environ 118 m  sur Rue Pierre Delore
+Continuez environ 176 m  sur Rue Pierre Delore
+Continuez environ 99 m  sur Rue Pierre Delore
+Continuez environ 115 m  sur Rue Pierre Delore
+Continuez environ 406 m  sur Rue Audibert et Lavirotte
+Continuez environ 22 m  sur Rue Audibert et Lavirotte
+Continuez environ 55 m  sur Rue Audibert et Lavirotte
+Continuez environ 244 m  sur Boulevard des États-Unis
+Continuez environ 20 m  sur Rue Villon
+Continuez environ 166 m  sur Rue Villon
+Continuez environ 79 m  sur Avenue Berthelot
+Continuez environ 94 m  sur Avenue Berthelot
+Continuez environ 61 m  sur Avenue Berthelot
+Continuez environ 255 m  sur Avenue Berthelot
 Continuez environ 69 m  sur Avenue Berthelot
 Continuez environ 27 m  sur Boulevard Jean XXIII
 Continuez environ 223 m  sur Boulevard Jean XXIII
 Continuez environ 288 m  sur Boulevard Jean XXIII
-Continuez environ 25 m  sur Rue Maryse Bastié
-Continuez environ 137 m  sur Rue Maryse Bastié
-Continuez environ 227 m  sur Rue Maryse Bastié
-Continuez environ 121 m  sur Rue Maryse Bastié
-Continuez environ 164 m  sur Rue Feuillat
-Continuez environ 137 m  sur Rue Feuillat
-Continuez environ 59 m  sur Rue Feuillat
-Continuez environ 93 m  sur Rue Feuillat
-Continuez environ 91 m  sur Rue Feuillat
-Continuez environ 65 m  sur Rue Feuillat
-Continuez environ 154 m  sur Rue Feuillat
-Continuez environ 84 m  sur Rue Feuillat
-Continuez environ 112 m  sur Rue Feuillat
-Continuez environ 239 m  sur Rue Feuillat
-Continuez environ 22 m  sur Route de Genas
-Continuez environ 69 m  sur Route de Genas
-Continuez environ 37 m  sur Route de Genas
-Continuez environ 27 m  sur Rue du Dauphiné
-Tu arrives au point de livraison à 08:47:27
-L'adresse de livraison N° 2 est 1368674802)
-
-Chemin 4
-Tu pars de (1368674802,DELIVERY)
-Continuez environ 40 m  sur Rue du Dauphiné
-Continuez environ 64 m  sur Rue du Dauphiné
-Continuez environ 37 m  sur Route de Genas
-Continuez environ 34 m  sur Place des Maisons Neuves
-Continuez environ 50 m  sur Place des Maisons Neuves
-Continuez environ 12 m  sur Place des Maisons Neuves
-Continuez environ 12 m  sur Rue Frédéric Mistral
-Continuez environ 151 m  sur Rue Paul Bert
-Continuez environ 121 m  sur Rue Paul Bert
-Continuez environ 127 m  sur Rue Paul Bert
-Continuez environ 212 m  sur Rue Paul Bert
-Continuez environ 85 m  sur Rue Paul Bert
-Continuez environ 128 m  sur Rue Paul Bert
-Continuez environ 82 m  sur Rue Paul Bert
-Continuez environ 168 m  sur Rue Paul Bert
-Continuez environ 68 m  sur Rue Paul Bert
-Continuez environ 226 m  sur Rue Paul Bert
-Continuez environ 11 m  sur Rue Paul Bert
-Continuez environ 64 m  sur Rue Paul Bert
-Continuez environ 30 m  sur Rue Paul Bert
-Continuez environ 69 m  sur Rue Paul Bert
-Continuez environ 72 m  sur Rue Paul Bert
-Continuez environ 71 m  sur Rue Paul Bert
-Continuez environ 71 m  sur Rue Paul Bert
-Continuez environ 64 m  sur Rue Paul Bert
-Continuez environ 8 m  sur Rue Paul Bert
-Continuez environ 19 m  sur Rue Paul Bert
-Continuez environ 103 m  sur Rue Paul Bert
-Continuez environ 62 m  sur Rue André Philip
-Continuez environ 64 m  sur Rue André Philip
-Continuez environ 57 m  sur Rue André Philip
-Continuez environ 67 m  sur Rue André Philip
-Continuez environ 76 m  sur Rue André Philip
-Continuez environ 83 m  sur Rue André Philip
-Continuez environ 135 m  sur Rue Servient
-Continuez environ 97 m  sur Rue Servient
-Continuez environ 78 m  sur Rue de Créqui
-Continuez environ 82 m  sur Rue de Créqui
-Continuez environ 64 m  sur Rue de Créqui
-Continuez environ 61 m  sur Rue de Créqui
-Continuez environ 83 m  sur Rue de Créqui
-Continuez environ 55 m  sur Rue de Créqui
-Continuez environ 52 m  sur Rue de Créqui
-Continuez environ 70 m  sur Rue de Créqui
-Continuez environ 61 m  sur Rue de Créqui
-Continuez environ 27 m  sur Rue de Créqui
-Continuez environ 30 m  sur Rue de Créqui
-Continuez environ 34 m  sur Rue de Créqui
-Continuez environ 50 m  sur Rue de Créqui
-Tu arrives au point de livraison à 09:09:43
-L'adresse de livraison N° 3 est 25316399)
-
-Chemin 5
-Tu pars de (25316399,DELIVERY)
-Continuez environ 97 m  sur Rue Cuvier
-Continuez environ 84 m  sur Rue Duguesclin
-Continuez environ 56 m  sur Rue Duguesclin
-Continuez environ 59 m  sur Rue Duguesclin
-Continuez environ 72 m  sur Rue Duguesclin
-Continuez environ 51 m  sur Rue Duguesclin
-Continuez environ 66 m  sur Rue Duguesclin
-Continuez environ 246 m  sur Cours Lafayette
-Continuez environ 100 m  sur Rue Garibaldi
-Continuez environ 75 m  sur Rue Garibaldi
-Continuez environ 82 m  sur Rue Garibaldi
-Continuez environ 82 m  sur Rue Garibaldi
-Continuez environ 84 m  sur Rue Garibaldi
-Continuez environ 76 m  sur Rue Garibaldi
-Continuez environ 234 m  sur Rue Garibaldi
-Continuez environ 17 m  sur Rue Garibaldi
-Continuez environ 8 m  sur Rue Paul Bert
-Continuez environ 64 m  sur Rue Paul Bert
-Continuez environ 71 m  sur Rue Paul Bert
-Continuez environ 71 m  sur Rue Paul Bert
-Continuez environ 72 m  sur Rue Paul Bert
-Continuez environ 69 m  sur Rue Paul Bert
-Continuez environ 30 m  sur Rue Paul Bert
-Continuez environ 64 m  sur Rue Paul Bert
-Continuez environ 11 m  sur Rue Paul Bert
-Continuez environ 226 m  sur Rue Paul Bert
-Continuez environ 68 m  sur Rue Paul Bert
-Continuez environ 165 m  sur Avenue Lacassagne
-Continuez environ 178 m  sur Avenue Lacassagne
-Continuez environ 77 m  sur Avenue Lacassagne
-Continuez environ 74 m  sur Avenue Lacassagne
-Continuez environ 59 m  sur Avenue Lacassagne
-Continuez environ 176 m  sur Avenue Lacassagne
-Continuez environ 66 m  sur Avenue Lacassagne
-Continuez environ 97 m  sur Avenue Lacassagne
-Continuez environ 48 m  sur Avenue Lacassagne
-Continuez environ 89 m  sur Avenue Lacassagne
-Continuez environ 114 m  sur Avenue Lacassagne
-Continuez environ 51 m  sur Avenue Lacassagne
-Continuez environ 119 m  sur Avenue Lacassagne
-Continuez environ 92 m  sur Avenue Lacassagne
-Continuez environ 105 m  sur Avenue Lacassagne
-Continuez environ 60 m  sur Avenue Lacassagne
-Continuez environ 91 m  sur Avenue Lacassagne
-Continuez environ 54 m  sur Avenue Lacassagne
-Continuez environ 47 m  sur Avenue Lacassagne
-Continuez environ 42 m  sur Avenue Lacassagne
-Continuez environ 33 m  sur Avenue Lacassagne
-Continuez environ 63 m  sur Avenue Lacassagne
-Continuez environ 20 m  sur Avenue Lacassagne
-Continuez environ 32 m  sur Avenue Lacassagne
-Continuez environ 106 m  sur Avenue Lacassagne
-Continuez environ 55 m  sur Avenue Lacassagne
-Continuez environ 69 m  sur Avenue Lacassagne
-Continuez environ 88 m  sur Avenue Lacassagne
-Continuez environ 74 m  sur Avenue Lacassagne
-Continuez environ 48 m  sur Cours Eugénie
-Continuez environ 104 m  sur Cours Eugénie
-Continuez environ 77 m  sur Cours Eugénie
-Continuez environ 78 m  sur Cours Eugénie
-Continuez environ 74 m  sur Cours Eugénie
-Continuez environ 80 m  sur Cours Eugénie
-Continuez environ 71 m  sur Cours Eugénie
-Continuez environ 93 m  sur Cours Eugénie
-Continuez environ 10 m  sur Cours Eugénie
+Continuez environ 158 m  sur Boulevard Jean XXIII
+Continuez environ 221 m  sur Boulevard Jean XXIII
+Continuez environ 83 m  sur Boulevard Jean XXIII
+Continuez environ 14 m  sur Avenue des Frères Lumière
+Continuez environ 46 m  sur Place d'Arsonval
+Continuez environ 77 m  sur Avenue Rockefeller
+Continuez environ 177 m  sur Avenue Rockefeller
+Continuez environ 248 m  sur Avenue Rockefeller
+Continuez environ 34 m  sur Avenue Rockefeller
+Continuez environ 115 m  sur Avenue Rockefeller
+Continuez environ 133 m  sur Avenue Rockefeller
 Continuez environ 278 m  sur Avenue Rockefeller
 Continuez environ 38 m  sur Avenue Rockefeller
 Continuez environ 11 m  sur Avenue Rockefeller
@@ -243,174 +407,40 @@ Continuez environ 47 m  sur Avenue Franklin Roosevelt
 Continuez environ 32 m  sur Avenue Franklin Roosevelt
 Continuez environ 86 m  sur Avenue Franklin Roosevelt
 Continuez environ 143 m  sur Avenue Franklin Roosevelt
-Continuez environ 142 m  sur Rue Pierre Bourdan
-Continuez environ 168 m  sur Rue Pierre Bourdan
-Continuez environ 64 m  sur Rue de la Paix
-Continuez environ 47 m  sur Rue de la Paix
-Continuez environ 42 m  sur Rue de la Paix
-Continuez environ 37 m  sur Rue de la Paix
-Continuez environ 144 m  sur Rue de la Paix
-Continuez environ 183 m  sur Rue Jean Jaurès
-Continuez environ 83 m  sur Rue Jean Voillot
-Continuez environ 197 m  sur Avenue Édouard Herriot
-Continuez environ 15 m  sur Avenue Édouard Herriot
-Continuez environ 55 m  sur Avenue Édouard Herriot
-Continuez environ 29 m  sur Avenue Édouard Herriot
-Continuez environ 13 m  sur 
-Continuez environ 149 m  sur Rue Léon Bourgeois
-Continuez environ 26 m  sur Rue Léon Bourgeois
-Continuez environ 96 m  sur Rue du Quartier Neuf
-Tu arrives au point de livraison à 09:40:09
-L'adresse de livraison N° 4 est 1678996781)
+Continuez environ 57 m  sur Avenue Franklin Roosevelt
+Continuez environ 86 m  sur Avenue Franklin Roosevelt
+Continuez environ 144 m  sur Avenue Franklin Roosevelt
+Continuez environ 68 m  sur Avenue Franklin Roosevelt
+Continuez environ 58 m  sur Avenue Franklin Roosevelt
+Continuez environ 45 m  sur Avenue Franklin Roosevelt
+Continuez environ 82 m  sur Avenue Franklin Roosevelt
+Tu arrives au point de livraison à 11:23:31
+L'adresse de livraison N° 13 est 194605322)
 
-Chemin 6
-Tu pars de (1678996781,PICKUP)
-Continuez environ 96 m  sur Rue du Quartier Neuf
-Continuez environ 9 m  sur Rue du Quartier Neuf
-Continuez environ 170 m  sur Rue Léon Bourgeois
-Continuez environ 8 m  sur 
-Continuez environ 8 m  sur 
-Continuez environ 29 m  sur Avenue Édouard Herriot
-Continuez environ 54 m  sur Avenue Édouard Herriot
-Continuez environ 215 m  sur Avenue Édouard Herriot
-Continuez environ 83 m  sur Rue Jean Voillot
-Continuez environ 183 m  sur Rue Jean Jaurès
-Continuez environ 144 m  sur Rue de la Paix
-Continuez environ 37 m  sur Rue de la Paix
-Continuez environ 42 m  sur Rue de la Paix
-Continuez environ 47 m  sur Rue de la Paix
-Continuez environ 64 m  sur Rue de la Paix
-Continuez environ 11 m  sur Rue de la Paix
-Continuez environ 79 m  sur Rue de la Paix
-Continuez environ 96 m  sur Rue de la Paix
-Continuez environ 116 m  sur Rue de la Paix
-Continuez environ 54 m  sur Rue de la Paix
-Continuez environ 68 m  sur Rue des Essarts
-Continuez environ 61 m  sur Rue des Essarts
-Continuez environ 10 m  sur Rue Laennec
-Continuez environ 32 m  sur Rue Laennec
-Continuez environ 323 m  sur Rue Laennec
-Continuez environ 54 m  sur Rue Laennec
-Continuez environ 22 m  sur Rue Laennec
-Continuez environ 42 m  sur Rue Laennec
-Continuez environ 85 m  sur Rue Thomas Blanchet
-Continuez environ 63 m  sur Boulevard Ambroise Paré
-Continuez environ 73 m  sur Boulevard Ambroise Paré
-Continuez environ 27 m  sur Boulevard Ambroise Paré
-Continuez environ 20 m  sur Boulevard Ambroise Paré
-Continuez environ 77 m  sur Boulevard Ambroise Paré
-Continuez environ 42 m  sur Boulevard Ambroise Paré
-Continuez environ 305 m  sur Boulevard Ambroise Paré
-Continuez environ 11 m  sur Boulevard Ambroise Paré
-Continuez environ 282 m  sur Boulevard Edmond Michelet
-Continuez environ 13 m  sur Avenue du Général Frère
-Continuez environ 21 m  sur Avenue du Général Frère
-Continuez environ 48 m  sur Rue du Professeur Beauvisage
-Continuez environ 89 m  sur Rue du Professeur Beauvisage
-Continuez environ 9 m  sur Rue du Professeur Beauvisage
-Continuez environ 204 m  sur Rue du Professeur Beauvisage
-Continuez environ 115 m  sur Rue du Professeur Beauvisage
-Continuez environ 75 m  sur Rue du Professeur Beauvisage
-Continuez environ 63 m  sur Rue du Professeur Beauvisage
-Continuez environ 78 m  sur Rue du Professeur Beauvisage
-Continuez environ 19 m  sur Rue du Professeur Beauvisage
-Continuez environ 79 m  sur Rue du Professeur Beauvisage
-Continuez environ 65 m  sur Rue du Professeur Beauvisage
-Continuez environ 167 m  sur Rue Ludovic Arrachart
-Continuez environ 57 m  sur Rue Ludovic Arrachart
-Continuez environ 99 m  sur Rue Jean Sarrazin
-Continuez environ 144 m  sur Rue Denis Père et Fils
-Continuez environ 144 m  sur Rue Denis Père et Fils
-Continuez environ 33 m  sur Rue Paul Cazeneuve
-Continuez environ 66 m  sur Rue Paul Cazeneuve
-Continuez environ 8 m  sur Rue Paul Cazeneuve
-Continuez environ 238 m  sur Rue Henri Barbusse
-Continuez environ 83 m  sur Rue Henri Barbusse
-Continuez environ 12 m  sur Rue Henri Barbusse
-Continuez environ 147 m  sur Rue Henri Barbusse
-Continuez environ 11 m  sur Rue Henri Barbusse
-Continuez environ 16 m  sur Rue Challemel-Lacour
-Continuez environ 46 m  sur Rue Challemel-Lacour
-Continuez environ 24 m  sur Rue Challemel-Lacour
-Continuez environ 89 m  sur Rue Challemel-Lacour
-Continuez environ 43 m  sur Rue Challemel-Lacour
-Continuez environ 585 m  sur Rue Challemel-Lacour
-Continuez environ 36 m  sur Rue Challemel-Lacour
-Continuez environ 72 m  sur Rue Challemel-Lacour
-Continuez environ 310 m  sur Rue Challemel-Lacour
-Continuez environ 237 m  sur Rue Simon Fryd
-Continuez environ 138 m  sur Avenue Debourg
-Tu arrives au point de livraison à 10:14:21
-L'adresse de livraison N° 5 est 26084216)
-
-Chemin 7
-Tu pars de (26084216,DELIVERY)
-Continuez environ 223 m  sur Avenue Jean Jaurès
-Continuez environ 129 m  sur Avenue Jean Jaurès
-Continuez environ 77 m  sur Avenue Jean Jaurès
-Continuez environ 142 m  sur Avenue Jean Jaurès
-Continuez environ 86 m  sur Avenue Jean Jaurès
-Continuez environ 79 m  sur Avenue Jean Jaurès
-Continuez environ 88 m  sur Avenue Jean Jaurès
-Continuez environ 74 m  sur Avenue Jean Jaurès
-Continuez environ 155 m  sur Avenue Jean Jaurès
-Continuez environ 188 m  sur Avenue Jean Jaurès
-Continuez environ 97 m  sur Avenue Jean Jaurès
-Continuez environ 159 m  sur Avenue Jean Jaurès
-Continuez environ 98 m  sur Avenue Jean Jaurès
-Continuez environ 71 m  sur Avenue Jean Jaurès
-Continuez environ 6 m  sur Avenue Jean Jaurès
-Continuez environ 18 m  sur Avenue Jean Jaurès
-Continuez environ 140 m  sur Avenue Jean Jaurès
-Continuez environ 9 m  sur Avenue Jean Jaurès
-Continuez environ 90 m  sur Avenue Jean Jaurès
-Continuez environ 108 m  sur Avenue Jean Jaurès
-Continuez environ 79 m  sur Avenue Jean Jaurès
-Continuez environ 78 m  sur Avenue Jean Jaurès
-Continuez environ 112 m  sur Avenue Jean Jaurès
-Continuez environ 80 m  sur Avenue Jean Jaurès
-Continuez environ 61 m  sur Avenue Jean Jaurès
-Continuez environ 52 m  sur Avenue Jean Jaurès
-Continuez environ 52 m  sur Avenue Jean Jaurès
-Continuez environ 175 m  sur Avenue Jean Jaurès
-Continuez environ 125 m  sur Avenue Maréchal de Saxe
-Continuez environ 34 m  sur Avenue Maréchal de Saxe
-Continuez environ 81 m  sur Avenue Maréchal de Saxe
-Continuez environ 31 m  sur Avenue Maréchal de Saxe
-Continuez environ 73 m  sur Rue Paul Bert
-Continuez environ 38 m  sur Rue Paul Bert
-Continuez environ 71 m  sur Rue Edison
-Continuez environ 115 m  sur Rue Edison
-Continuez environ 17 m  sur Rue Chaponnay
-Continuez environ 64 m  sur Rue de Créqui
-Continuez environ 56 m  sur Rue de Créqui
-Continuez environ 21 m  sur Rue de Créqui
-Continuez environ 86 m  sur Rue de Créqui
-Continuez environ 78 m  sur Rue de Créqui
-Continuez environ 82 m  sur Rue de Créqui
-Continuez environ 64 m  sur Rue de Créqui
-Continuez environ 61 m  sur Rue de Créqui
-Continuez environ 83 m  sur Rue de Créqui
-Continuez environ 55 m  sur Rue de Créqui
-Continuez environ 52 m  sur Rue de Créqui
-Continuez environ 70 m  sur Rue de Créqui
-Continuez environ 61 m  sur Rue de Créqui
-Continuez environ 27 m  sur Rue de Créqui
-Continuez environ 30 m  sur Rue de Créqui
-Continuez environ 34 m  sur Rue de Créqui
-Continuez environ 50 m  sur Rue de Créqui
-Continuez environ 97 m  sur Rue Cuvier
-Continuez environ 135 m  sur Rue Cuvier
-Continuez environ 55 m  sur Rue Boileau
-Continuez environ 77 m  sur Rue Boileau
-Continuez environ 111 m  sur Rue de Sèze
-Continuez environ 155 m  sur Rue de Sèze
-Continuez environ 87 m  sur Rue Tête d'Or
-Continuez environ 89 m  sur Rue Tête d'Or
-Continuez environ 40 m  sur Rue Tête d'Or
-Continuez environ 42 m  sur Rue Tête d'Or
-Continuez environ 51 m  sur Rue Tête d'Or
-Continuez environ 80 m  sur Rue Sully
-Tu arrives au point de livraison à 10:45:28
-L'adresse de livraison N° 6 est 25327124)
+Chemin 15
+Tu pars de (194605322,DELIVERY)
+Continuez environ 60 m  sur Boulevard Laurent Bonnevay
+Continuez environ 38 m  sur Avenue Franklin Roosevelt
+Continuez environ 73 m  sur Avenue Franklin Roosevelt
+Continuez environ 51 m  sur Avenue Franklin Roosevelt
+Continuez environ 144 m  sur Avenue Franklin Roosevelt
+Continuez environ 144 m  sur Avenue Franklin Roosevelt
+Continuez environ 86 m  sur Avenue Franklin Roosevelt
+Continuez environ 57 m  sur Avenue Franklin Roosevelt
+Continuez environ 143 m  sur Avenue Franklin Roosevelt
+Continuez environ 86 m  sur Avenue Franklin Roosevelt
+Continuez environ 32 m  sur Avenue Franklin Roosevelt
+Continuez environ 29 m  sur Avenue Franklin Roosevelt
+Continuez environ 85 m  sur Avenue Franklin Roosevelt
+Continuez environ 119 m  sur Boulevard Pinel
+Continuez environ 179 m  sur Boulevard Pinel
+Continuez environ 36 m  sur Boulevard Pinel
+Continuez environ 142 m  sur Boulevard Pinel
+Continuez environ 11 m  sur Boulevard Pinel
+Continuez environ 24 m  sur Avenue Lacassagne
+Continuez environ 21 m  sur Avenue Lacassagne
+Continuez environ 26 m  sur Place Jules Hottin
+Continuez environ 57 m  sur Place Jules Hottin
+Tu arrives au point de livraison à 11:36:04
+L'adresse de livraison N° 14 est 25610888)
 

@@ -165,13 +165,21 @@ function drawEntrepot(e){
     }).addTo(entrepotLayer);
 }
 
-async function calculTournee(){
-    if(!carteData||!demandeData){ alert("Charger la carte et la demande d'abord."); return; }
-    const r=await fetch("http://localhost:8080/api/tournee/calculer",{method:"POST"});
+async function calculTournee(nombreLivreurs = 1){
+    if(!carteData || !demandeData){ alert("Charger la carte et la demande d'abord."); return; }
+    const r = await fetch(`http://localhost:8080/api/tournee/calculer?nombreLivreurs=${nombreLivreurs}`, { method:"POST" });
     if(!r.ok){ alert(await r.text()); return; }
-    const t=await r.json();
-    drawTournee(t.demande);
+    const toutesLesTournees = await r.json();
+
+    resetTournee(); // nettoie l'ancienne animation et polylignes
+
+    // Dessiner chaque tournée avec une couleur différente
+    toutesLesTournees.forEach((tournee, i) => {
+        const color = colors[i % colors.length];
+        drawTournee(tournee, color);
+    });
 }
+
 
 function makeStepNumberIcon(n,color){
     const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="34" height="18" viewBox="0 0 34 18">
@@ -183,27 +191,34 @@ function makeStepNumberIcon(n,color){
 
 function midPoint(a,b){ return [(a[0]+b[0])/2,(a[1]+b[1])/2]; }
 
-function drawTournee(t){
-    if(!map||!carteData) return;
+function drawTournee(t, color='#000'){
+    if(!map || !carteData) return;
     if(window.tourneeLayer) window.tourneeLayer.clearLayers(); else window.tourneeLayer=L.layerGroup().addTo(map);
     if(window.directionNumbersLayer) window.directionNumbersLayer.clearLayers(); else window.directionNumbersLayer=L.layerGroup().addTo(map);
-    const n=carteData.noeuds, all=[], color='#000', K=6; let labelCount=0; animPath=[];
+
+    const n = carteData.noeuds;
+    const all = [];
+    const K = 6;
+    let labelCount = 0;
+    animPath = [];
+
     t.chemins.forEach(c=>{
         const latlngs=[];
         c.troncons.forEach((tc,i)=>{
-            const o=n[tc.idOrigine], d=n[tc.idDestination]; if(!o||!d) return;
-            const A=[o.latitude,o.longitude], B=[d.latitude,d.longitude];
+            const o = n[tc.idOrigine], d = n[tc.idDestination]; if(!o||!d) return;
+            const A = [o.latitude,o.longitude], B = [d.latitude,d.longitude];
             latlngs.push(A); latlngs.push(B); all.push(A); all.push(B);
-            if(i%K===0){ labelCount++; L.marker(midPoint(A,B),{icon:makeStepNumberIcon(labelCount,color)}).addTo(window.directionNumbersLayer); }
+            if(i % K === 0){ labelCount++; L.marker(midPoint(A,B), {icon: makeStepNumberIcon(labelCount,color)}).addTo(window.directionNumbersLayer); }
         });
         if(latlngs.length>0){
-            L.polyline(latlngs,{color,weight:3,opacity:0.9}).addTo(window.tourneeLayer);
-            animPath=animPath.concat(animPath.length>0&&animPath.at(-1)[0]===latlngs[0][0]?latlngs.slice(1):latlngs);
+            L.polyline(latlngs, {color, weight:3, opacity:0.9}).addTo(window.tourneeLayer);
+            animPath = animPath.concat(animPath.length>0 && animPath.at(-1)[0]===latlngs[0][0] ? latlngs.slice(1) : latlngs);
         }
     });
     if(all.length>0) map.fitBounds(L.latLngBounds(all).pad(0.1));
     addAnimationButton();
 }
+
 
 function samplePathMeters(path, stepM){
     if(path.length<2) return path.slice();
@@ -311,8 +326,10 @@ document.addEventListener('DOMContentLoaded',()=>{
     });
 
     calculTourneeBouton.addEventListener('click', async () => {
-        await calculTournee();
+        const nbLivreurs = parseInt(document.getElementById('nbLivreurs').value) || 1;
+        await calculTournee(nbLivreurs);
     });
+
 
     document.getElementById('xmlCarte').addEventListener('change', function() {
         const file = this.files[0];

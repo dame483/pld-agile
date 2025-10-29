@@ -1,7 +1,11 @@
 package fr.insalyon.pldagile.modele;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class Livreur {
     private long id;
+
+    @JsonIgnore
     private Tournee tournee; // <-- nouvelle référence à sa tournée
 
     public Livreur(long id) {
