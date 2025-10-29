@@ -1,0 +1,12 @@
+#!/bin/bash
+echo "🚀 Lancement des tests JUnit avant commit..."
+git rm -r --cached target/ 
+mvn -q test
+
+if [ $? -ne 0 ]; then
+  echo "❌ Les tests JUnit ont échoué. Commit annulé."
+  exit 1
+fi
+
+echo "✅ Tous les tests JUnit ont réussi, commit autorisé."
+exit 0

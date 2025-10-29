@@ -39,8 +39,8 @@ public class parseurTourneeJson {
                 JSONObject noeudDePassageArriveeJson = cheminObject.getJSONObject("NoeudDePassageArrivee");
                 for (int j = 0; j < tronconArray.length(); j++) {
                     JSONObject tronconObject = tronconArray.getJSONObject(j);
-                    Troncon troncon = new Troncon(tronconObject.getInt("idOrigine"),
-                            tronconObject.getInt("idDestination"),
+                    Troncon troncon = new Troncon(tronconObject.getLong("idOrigine"),
+                            tronconObject.getLong("idDestination"),
                             tronconObject.getDouble("longueur"),
                             tronconObject.getString("nomRue"));
                     listTroncons.add(troncon);
