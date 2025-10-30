@@ -1,5 +1,6 @@
 package fr.insalyon.pldagile.sortie;
 
+import fr.insalyon.pldagile.modele.Carte;
 import fr.insalyon.pldagile.modele.Chemin;
 import fr.insalyon.pldagile.modele.Tournee;
 import fr.insalyon.pldagile.modele.Troncon;
@@ -12,9 +13,11 @@ import java.util.List;
 
 public class SauvegarderTournee {
     private List<Tournee> listTournee;
+    private Carte carte;
 
-    public SauvegarderTournee(List<Tournee> listTournee) {
+    public SauvegarderTournee(List<Tournee> listTournee, Carte carte) {
         this.listTournee = listTournee;
+        this.carte = carte;
     }
 
     public void sauvegarderTournee() throws Exception {
@@ -70,6 +73,7 @@ public class SauvegarderTournee {
 
             try (FileWriter fileWriter = new FileWriter(jsonFile)) {
                 JSONObject root = new JSONObject();
+                root.put("Carte", carte.);
                 root.put("tournees", tourneesArray);
                 fileWriter.write(root.toString(4));
                 System.out.println("Sauvegarde terminée : " + jsonFile.getAbsolutePath());
