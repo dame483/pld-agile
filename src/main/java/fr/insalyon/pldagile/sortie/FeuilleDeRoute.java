@@ -17,7 +17,7 @@ public class FeuilleDeRoute {
     }
 
     public void genererFeuilleDeRoute(int index) throws Exception {
-        File feuilleDeRoute = new File("src/main/java/fr/insalyon/pldagile/sortie/feuilleDeRoute" + (index + 1) + ".txt");
+        File feuilleDeRoute = new File("src/main/java/fr/insalyon/pldagile/sortie/feuilleDeRoute/feuilleDeRoute" + (index + 1) + ".txt");
         try {
             if (feuilleDeRoute.createNewFile()) {
                 System.out.println("Feuille de route créée pour le livreur");
@@ -25,7 +25,7 @@ public class FeuilleDeRoute {
             } else {
                 System.out.println("Ce fichier existe déjà");
             }
-            try (FileWriter writer = new FileWriter("src/main/java/fr/insalyon/pldagile/sortie/feuilleDeRoute" + (index + 1) + ".txt")) {
+            try (FileWriter writer = new FileWriter("src/main/java/fr/insalyon/pldagile/sortie/feuilleDeRoute/feuilleDeRoute" + (index + 1) + ".txt")) {
 
                 writer.write("L'heure de départ de l'entrepôt : " + tournee.getChemins().get(0).getNoeudDePassageDepart().getHoraireDepart()+ "\n\n");
 

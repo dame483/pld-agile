@@ -46,7 +46,7 @@ public class ParsingTourneeJsonTest {
         sauvegarderTournee.sauvegarderTournee();
         parseurTourneeJson parseurJson = new parseurTourneeJson();
         for (int i = 0; i < tourneeList.size(); i++) {
-            Tournee tourneeParseur = parseurJson.parseurTournee("src/main/java/fr/insalyon/pldagile/sortie/sauvegardeTourne" + (i + 1) + ".json");
+            Tournee tourneeParseur = parseurJson.parseurTournee("src/main/java/fr/insalyon/pldagile/sortie/tourneeJson/sauvegardeTourne" + (i + 1) + ".json");
             assertEquals(tourneeList.get(i).getChemins().size(), tourneeParseur.getChemins().size(), "La tournée parsée doit etre identique que la tournée initiale en chemins");
             assertEquals(tourneeList.get(i).getDureeTotale(), tourneeParseur.getDureeTotale(),"les tournées doivent etre identiques en terme de durée totale");
             assertEquals(tourneeList.get(i).getLongueurTotale(), tourneeParseur.getLongueurTotale(), "les distances totales doivernt etre identiques");
