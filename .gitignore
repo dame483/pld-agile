@@ -7,5 +7,7 @@ httpRequests/
 # Datasource local storage ignored files
 dataSources/
 dataSources.local.xml
-src/main/java/fr/insalyon/pldagile/sortie/feuilleDeRoute
-src/main/java/fr/insalyon/pldagile/sortie/tourneeJson
+src/main/java/fr/insalyon/pldagile/sortie/feuilleDeRoute/*
+src/main/java/fr/insalyon/pldagile/sortie/tourneeJson/*
+!src/main/java/fr/insalyon/pldagile/sortie/tourneeJson/.gitkeep
+!src/main/java/fr/insalyon/pldagile/sortie/feuilleDeRoute/.gitkeep
