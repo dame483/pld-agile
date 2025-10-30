@@ -1,6 +1,6 @@
 package fr.insalyon.pldagile.controleur;
 
-import fr.insalyon.pldagile.algorithme.CalculTournee;
+import fr.insalyon.pldagile.algorithme.CalculTournees;
 import fr.insalyon.pldagile.modele.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -8,16 +8,17 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.time.LocalTime;
+import java.util.List;
 
 @Component
 public class EtatDemandeLivraisonChargee implements Etat {
 
     private final Carte carte;
-    private final DemandeDeLivraison demLivraison;
+    private final DemandeDeLivraison demande;
 
     public EtatDemandeLivraisonChargee(Carte carte, DemandeDeLivraison demande) {
         this.carte = carte;
-        this.demLivraison = demande;
+        this.demande = demande;
     }
 
     @Override
@@ -44,15 +45,15 @@ public class EtatDemandeLivraisonChargee implements Etat {
     }
 
     @Override
-    public Object runCalculTournee(Controlleur c) {
+    public Object runCalculTournee(Controlleur c, int nombreLivreurs) {
         try {
-            LocalTime heureDepart = demLivraison.getEntrepot().getHoraireDepart();
+            LocalTime heureDepart = demande.getEntrepot().getHoraireDepart();
 
-            CalculTournee t = new CalculTournee(carte, demLivraison, 4.1, heureDepart);
-            Tournee tournee = t.calculerTournee();
+            CalculTournees t = new CalculTournees(carte, demande, 4.1, nombreLivreurs, heureDepart);
+            List<Tournee> toutesLesTournees = t.calculerTournees();
 
-            c.setCurrentState(new EtatTourneeCalcule(carte, demLivraison));
-            return tournee;
+            c.setCurrentState(new EtatTourneeCalcule(carte, demande, toutesLesTournees));
+            return toutesLesTournees;
 
         } catch (Exception e) {
             return e;
@@ -82,6 +83,30 @@ public class EtatDemandeLivraisonChargee implements Etat {
                 System.err.println("Impossible de supprimer le fichier temporaire : " + tempFile.getAbsolutePath());
             }
         }
+    }
+
+    @Override
+    public Object creerFeuillesDeRoute(Controlleur c) {
+        System.err.println("Erreur : impossible de créer une feuille de route avant le calcul de la tournée.");
+        return null;
+    }
+
+    @Override
+    public Object saveTournee(Controlleur c) {
+        System.err.println("Erreur : impossible de sauvegarder une tournée avant son calcul.");
+        return null;
+    }
+
+    @Override
+    public Object loadTournee(Controlleur c, MultipartFile file, Carte carte) {
+        Object result = uploadXML("tournee", file, carte);
+
+        if (result instanceof List<?> liste && !liste.isEmpty() && liste.get(0) instanceof Tournee) {
+            List<Tournee> toutesLesTournees = (List<Tournee>) liste;
+            c.setCurrentState(new EtatTourneeCalcule(carte, null, toutesLesTournees));
+            return toutesLesTournees;
+        }
+        return result;
     }
 
     @Override

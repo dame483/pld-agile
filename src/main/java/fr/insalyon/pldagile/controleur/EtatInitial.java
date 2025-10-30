@@ -60,12 +60,30 @@ public class EtatInitial implements Etat {
     }
 
     @Override
+    public Object creerFeuillesDeRoute(Controlleur c) {
+        System.err.println("Erreur : impossible de créer une feuille de route avant le calcul de la tournée.");
+        return null;
+    }
+
+    @Override
+    public Object saveTournee(Controlleur c) {
+        System.err.println("Erreur : impossible de sauvegarder une tournée avant son calcul.");
+        return null;
+    }
+
+    @Override
+    public Object loadTournee(Controlleur c, MultipartFile file, Carte carte) {
+        System.err.println("Erreur : impossible de charger une tournée avant de charger une carte associée.");
+        return null;
+    }
+
+    @Override
     public String getName() {
         return "Etat Initial";
     }
 
     @Override
-    public Object runCalculTournee(Controlleur c) {
+    public Object runCalculTournee(Controlleur c, int nombreLivreurs) {
         return null;
     }
 

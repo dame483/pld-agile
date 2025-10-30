@@ -1,6 +1,6 @@
 package fr.insalyon.pldagile;
 
-import fr.insalyon.pldagile.algorithme.CalculTournee;
+import fr.insalyon.pldagile.algorithme.CalculTournees;
 import fr.insalyon.pldagile.modele.*;
 import fr.insalyon.pldagile.sortie.parseurTourneeJson;
 import org.junit.jupiter.api.Test;
@@ -34,9 +34,10 @@ public class ParsingTourneeJsonTest {
         double vitesse = 4.16; // m/s
 
         //  Calcul de la tournée
-        CalculTournee calculTournee = new CalculTournee(ville, demande, vitesse, heureDepart);
+        CalculTournees calculTournee = new CalculTournees(ville, demande, vitesse, 1, heureDepart); // 1 livreur pour le test
         System.out.println("\nCalcul de la tournée initiale");
-        Tournee tournee = calculTournee.calculerTournee();
+        Tournee tournee = calculTournee.calculerTournees().get(0);
+
         //Parsing de la tournée
         System.out.println("appel du parsing Json");
         parseurTourneeJson parseurJson = new parseurTourneeJson();

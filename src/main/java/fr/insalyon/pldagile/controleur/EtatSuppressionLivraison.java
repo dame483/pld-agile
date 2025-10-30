@@ -1,21 +1,19 @@
 package fr.insalyon.pldagile.controleur;
 
-import fr.insalyon.pldagile.modele.Carte;
-import fr.insalyon.pldagile.modele.CarteParseurXML;
-import fr.insalyon.pldagile.modele.DemandeDeLivraison;
-import fr.insalyon.pldagile.modele.DemandeDeLivraisonParseurXML;
+import fr.insalyon.pldagile.modele.*;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.util.List;
 
 public class EtatSuppressionLivraison implements Etat{
 
     private Carte carte;
-    private DemandeDeLivraison demandeDeLivraison;
+    private DemandeDeLivraison demande;
 
     public EtatSuppressionLivraison(DemandeDeLivraison demandeDeLivraison, Carte carte) {
-        this.demandeDeLivraison = demandeDeLivraison;
+        this.demande = demandeDeLivraison;
         this.carte = carte;
     }
 
@@ -54,7 +52,7 @@ public class EtatSuppressionLivraison implements Etat{
     public void deleteLivraison(Controlleur c) {
 */
     @Override
-    public Object runCalculTournee(Controlleur c) {
+    public Object runCalculTournee(Controlleur c, int nombreLivreurs) {
         return null;
     }
 
@@ -108,6 +106,32 @@ public class EtatSuppressionLivraison implements Etat{
             }
         }
     }
+
+    @Override
+    public Object creerFeuillesDeRoute(Controlleur c) {
+        System.err.println("Erreur : impossible de créer une feuille de route en mode modification de la tournée.");
+        return null;
+    }
+
+    @Override
+    public Object saveTournee(Controlleur c) {
+        System.err.println("Erreur : impossible de sauvegarder la tournée en mode modification.");
+        return null;
+    }
+
+    @Override
+    public Object loadTournee(Controlleur c, MultipartFile file, Carte carte) {
+        Object result = uploadXML("tournee", file, carte);
+
+        if (result instanceof List<?> liste && !liste.isEmpty() && liste.get(0) instanceof Tournee) {
+            List<Tournee> toutesLesTournees = (List<Tournee>) liste;
+            c.setCurrentState(new EtatTourneeCalcule(carte, null, toutesLesTournees));
+            return toutesLesTournees;
+        }
+
+        return result;
+    }
+
 
     @Override
     public String getName() {
