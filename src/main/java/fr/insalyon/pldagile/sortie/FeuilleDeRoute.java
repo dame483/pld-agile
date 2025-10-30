@@ -50,7 +50,7 @@ public class FeuilleDeRoute {
         }
     }
 
-    public void sauvegarderTournee() throws Exception {
+    public void sauvegarderTournee(int index) throws Exception {
         List<Chemin> chemins = tournee.getChemins();
         JSONArray cheminsArray = new JSONArray();
         System.out.println("appel de sauvegarde tournée");
@@ -91,7 +91,7 @@ public class FeuilleDeRoute {
 
                 cheminsArray.put(cheminObject);
             }
-                File jsonFile = new File("src/main/java/fr/insalyon/pldagile/sortie/sauvegardeTourne.json");
+                File jsonFile = new File("src/main/java/fr/insalyon/pldagile/sortie/sauvegardeTourne" + (index + 1) + ".json");
                 try (FileWriter fileWriter = new FileWriter(jsonFile)) {
                     JSONObject tourneeObject = new JSONObject();
                     tourneeObject.put("tournee", cheminsArray);

@@ -119,7 +119,7 @@ public class EtatTourneeCalcule implements Etat {
             for (int i = 0; i < toutesLesTournees.size(); i++) {
                 Tournee t = toutesLesTournees.get(i);
                 FeuilleDeRoute feuille = new FeuilleDeRoute(t);
-                feuille.sauvegarderTournee();
+                feuille.sauvegarderTournee(i);
 
                 System.out.println("Tournée #" + (i + 1) + " sauvegardée avec succès !");
             }
