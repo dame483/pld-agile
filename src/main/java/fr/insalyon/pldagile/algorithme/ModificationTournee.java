@@ -17,6 +17,7 @@ public class ModificationTournee {
 
 
     // CODER METHODE AJOUTERNOEUD :
+    // transformer les noeuds en noeud de passage
     //  suppression du chemin qui a pour départ noeudPrécédent mon nouveau noeud ajouté  -> supprimerChemin(Tournee tournee, Chemin chemin)
     //  ajout du nouveau chemin entre noeudPrécédent et noeud ajouté -> recalculerChemin(Tournee tournee, NoeudDePassage precedent, NoeudDePassage suivant, int index)
     // ajout nouveau chemin entre noeud ajouté et le suivant du noeudPrécédent -> same
