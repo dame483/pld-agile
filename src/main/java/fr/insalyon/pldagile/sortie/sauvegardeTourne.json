@@ -1,0 +1,374 @@
+{"tournee": [
+    {
+        "NoeudDePassageDepart": {
+            "latitude": 45.757305,
+            "typeNoeud": "ENTREPOT",
+            "horaireArrivee": "08:38:56",
+            "id": 2835339774,
+            "horaireDepart": "08:00",
+            "longitude": 4.8666577
+        },
+        "longueurTotale": 447.119953,
+        "NoeudDePassageArrivee": {
+            "latitude": 45.759434,
+            "typeNoeud": "PICKUP",
+            "horaireArrivee": "08:01:47",
+            "id": 208769120,
+            "horaireDepart": "08:08:47",
+            "longitude": 4.869736
+        },
+        "troncons": [
+            {
+                "longueur": 96.5331,
+                "idDestination": 2835339775,
+                "nomRue": "Impasse de l'Ordre",
+                "idOrigine": 2835339774
+            },
+            {
+                "longueur": 61.78396,
+                "idDestination": 26079654,
+                "nomRue": "Rue Antoine Charial",
+                "idOrigine": 2835339775
+            },
+            {
+                "longueur": 66.22617,
+                "idDestination": 2587460577,
+                "nomRue": "Rue Baraban",
+                "idOrigine": 26079654
+            },
+            {
+                "longueur": 47.348785,
+                "idDestination": 26086129,
+                "nomRue": "Rue Baraban",
+                "idOrigine": 2587460577
+            },
+            {
+                "longueur": 29.557299,
+                "idDestination": 26086128,
+                "nomRue": "Rue Baraban",
+                "idOrigine": 26086129
+            },
+            {
+                "longueur": 106.253914,
+                "idDestination": 208769112,
+                "nomRue": "Avenue Georges Pompidou",
+                "idOrigine": 26086128
+            },
+            {
+                "longueur": 39.416725,
+                "idDestination": 208769120,
+                "nomRue": "Rue Nazareth",
+                "idOrigine": 208769112
+            }
+        ]
+    },
+    {
+        "NoeudDePassageDepart": {
+            "latitude": 45.759434,
+            "typeNoeud": "PICKUP",
+            "horaireArrivee": "08:01:47",
+            "id": 208769120,
+            "horaireDepart": "08:08:47",
+            "longitude": 4.869736
+        },
+        "longueurTotale": 865.7453997,
+        "NoeudDePassageArrivee": {
+            "latitude": 45.762653,
+            "typeNoeud": "PICKUP",
+            "horaireArrivee": "08:12:15",
+            "id": 1679901320,
+            "horaireDepart": "08:19:15",
+            "longitude": 4.875565
+        },
+        "troncons": [
+            {
+                "longueur": 10.284923,
+                "idDestination": 208769133,
+                "nomRue": "Rue Nazareth",
+                "idOrigine": 208769120
+            },
+            {
+                "longueur": 83.729836,
+                "idDestination": 208769083,
+                "nomRue": "Rue Nazareth",
+                "idOrigine": 208769133
+            },
+            {
+                "longueur": 103.36165,
+                "idDestination": 208769145,
+                "nomRue": "Rue Nazareth",
+                "idOrigine": 208769083
+            },
+            {
+                "longueur": 5.3707037,
+                "idDestination": 208769180,
+                "nomRue": "Rue Nazareth",
+                "idOrigine": 208769145
+            },
+            {
+                "longueur": 20.712637,
+                "idDestination": 208769163,
+                "nomRue": "Rue Nazareth",
+                "idOrigine": 208769180
+            },
+            {
+                "longueur": 140.8208,
+                "idDestination": 208769047,
+                "nomRue": "Rue François Gillet",
+                "idOrigine": 208769163
+            },
+            {
+                "longueur": 127.59808,
+                "idDestination": 208769039,
+                "nomRue": "Rue Pascal",
+                "idOrigine": 208769047
+            },
+            {
+                "longueur": 157.37244,
+                "idDestination": 54803905,
+                "nomRue": "Avenue Marc Sangnier",
+                "idOrigine": 208769039
+            },
+            {
+                "longueur": 92.98088,
+                "idDestination": 1679901326,
+                "nomRue": "Avenue Marc Sangnier",
+                "idOrigine": 54803905
+            },
+            {
+                "longueur": 123.51345,
+                "idDestination": 1679901320,
+                "nomRue": "Rue Clos Poncet",
+                "idOrigine": 1679901326
+            }
+        ]
+    },
+    {
+        "NoeudDePassageDepart": {
+            "latitude": 45.762653,
+            "typeNoeud": "PICKUP",
+            "horaireArrivee": "08:12:15",
+            "id": 1679901320,
+            "horaireDepart": "08:19:15",
+            "longitude": 4.875565
+        },
+        "longueurTotale": 1804.087078,
+        "NoeudDePassageArrivee": {
+            "latitude": 45.754128,
+            "typeNoeud": "DELIVERY",
+            "horaireArrivee": "08:26:28",
+            "id": 25336179,
+            "horaireDepart": "08:34:28",
+            "longitude": 4.863194
+        },
+        "troncons": [
+            {
+                "longueur": 114.625244,
+                "idDestination": 55474973,
+                "nomRue": "Rue Pascal",
+                "idOrigine": 1679901320
+            },
+            {
+                "longueur": 109.41269,
+                "idDestination": 208769039,
+                "nomRue": "Rue Pascal",
+                "idOrigine": 55474973
+            },
+            {
+                "longueur": 127.59808,
+                "idDestination": 208769047,
+                "nomRue": "Rue Pascal",
+                "idOrigine": 208769039
+            },
+            {
+                "longueur": 140.8208,
+                "idDestination": 208769163,
+                "nomRue": "Rue François Gillet",
+                "idOrigine": 208769047
+            },
+            {
+                "longueur": 19.012548,
+                "idDestination": 3267479470,
+                "nomRue": "Place de la Ferrandière",
+                "idOrigine": 208769163
+            },
+            {
+                "longueur": 3.812855,
+                "idDestination": 3870641963,
+                "nomRue": "Place de la Ferrandière",
+                "idOrigine": 3267479470
+            },
+            {
+                "longueur": 104.45981,
+                "idDestination": 208769091,
+                "nomRue": "Place de la Ferrandière",
+                "idOrigine": 3870641963
+            },
+            {
+                "longueur": 92.4231,
+                "idDestination": 208769219,
+                "nomRue": "Place de la Ferrandière",
+                "idOrigine": 208769091
+            },
+            {
+                "longueur": 12.926414,
+                "idDestination": 208769227,
+                "nomRue": "Place de la Ferrandière",
+                "idOrigine": 208769219
+            },
+            {
+                "longueur": 35.125885,
+                "idDestination": 208769112,
+                "nomRue": "Place de la Ferrandière",
+                "idOrigine": 208769227
+            },
+            {
+                "longueur": 106.253914,
+                "idDestination": 26086128,
+                "nomRue": "Avenue Georges Pompidou",
+                "idOrigine": 208769112
+            },
+            {
+                "longueur": 29.557299,
+                "idDestination": 26086129,
+                "nomRue": "Rue Baraban",
+                "idOrigine": 26086128
+            },
+            {
+                "longueur": 47.348785,
+                "idDestination": 2587460577,
+                "nomRue": "Rue Baraban",
+                "idOrigine": 26086129
+            },
+            {
+                "longueur": 66.22617,
+                "idDestination": 26079654,
+                "nomRue": "Rue Baraban",
+                "idOrigine": 2587460577
+            },
+            {
+                "longueur": 79.02355,
+                "idDestination": 26079655,
+                "nomRue": "Rue Antoine Charial",
+                "idOrigine": 26079654
+            },
+            {
+                "longueur": 145.00984,
+                "idDestination": 26057085,
+                "nomRue": "Rue Turbil",
+                "idOrigine": 26079655
+            },
+            {
+                "longueur": 232.252,
+                "idDestination": 26317229,
+                "nomRue": "Rue Turbil",
+                "idOrigine": 26057085
+            },
+            {
+                "longueur": 49.68636,
+                "idDestination": 26317233,
+                "nomRue": "Avenue Félix Faure",
+                "idOrigine": 26317229
+            },
+            {
+                "longueur": 26.020561,
+                "idDestination": 25611760,
+                "nomRue": "Avenue Félix Faure",
+                "idOrigine": 26317233
+            },
+            {
+                "longueur": 214.0224,
+                "idDestination": 250042857,
+                "nomRue": "Avenue Félix Faure",
+                "idOrigine": 25611760
+            },
+            {
+                "longueur": 48.468773,
+                "idDestination": 25336179,
+                "nomRue": "Avenue Félix Faure",
+                "idOrigine": 250042857
+            }
+        ]
+    },
+    {
+        "NoeudDePassageDepart": {
+            "latitude": 45.754128,
+            "typeNoeud": "DELIVERY",
+            "horaireArrivee": "08:26:28",
+            "id": 25336179,
+            "horaireDepart": "08:34:28",
+            "longitude": 4.863194
+        },
+        "longueurTotale": 1115.263934,
+        "NoeudDePassageArrivee": {
+            "latitude": 45.757305,
+            "typeNoeud": "ENTREPOT",
+            "horaireArrivee": "08:38:56",
+            "id": 2835339774,
+            "horaireDepart": "08:00",
+            "longitude": 4.8666577
+        },
+        "troncons": [
+            {
+                "longueur": 48.468773,
+                "idDestination": 250042857,
+                "nomRue": "Avenue Félix Faure",
+                "idOrigine": 25336179
+            },
+            {
+                "longueur": 214.0224,
+                "idDestination": 25611760,
+                "nomRue": "Avenue Félix Faure",
+                "idOrigine": 250042857
+            },
+            {
+                "longueur": 26.020561,
+                "idDestination": 26317233,
+                "nomRue": "Avenue Félix Faure",
+                "idOrigine": 25611760
+            },
+            {
+                "longueur": 240.98518,
+                "idDestination": 26057084,
+                "nomRue": "Rue Baraban",
+                "idOrigine": 26317233
+            },
+            {
+                "longueur": 153.978,
+                "idDestination": 26079654,
+                "nomRue": "Rue Baraban",
+                "idOrigine": 26057084
+            },
+            {
+                "longueur": 66.22617,
+                "idDestination": 2587460577,
+                "nomRue": "Rue Baraban",
+                "idOrigine": 26079654
+            },
+            {
+                "longueur": 134.90417,
+                "idDestination": 2587460578,
+                "nomRue": "Rue des Teinturiers",
+                "idOrigine": 2587460577
+            },
+            {
+                "longueur": 64.645546,
+                "idDestination": 26079653,
+                "nomRue": "Rue Étienne Richerand",
+                "idOrigine": 2587460578
+            },
+            {
+                "longueur": 69.480034,
+                "idDestination": 2835339775,
+                "nomRue": "Rue Antoine Charial",
+                "idOrigine": 26079653
+            },
+            {
+                "longueur": 96.5331,
+                "idDestination": 2835339774,
+                "nomRue": "Impasse de l'Ordre",
+                "idOrigine": 2835339775
+            }
+        ]
+    }
+]}

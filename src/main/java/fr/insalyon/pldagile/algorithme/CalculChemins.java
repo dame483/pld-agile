@@ -105,4 +105,30 @@ public class CalculChemins {
 
         return chemins;
     }
+
+    /**
+     * Calcule le plus court chemin entre deux nœuds précis à partir de la carte.
+     * Utilise Dijkstra et retourne directement le Chemin correspondant.
+     */
+    public Chemin calculerCheminPlusCourt(NoeudDePassage depart, NoeudDePassage arrivee) {
+        if (depart == null || arrivee == null) {
+            throw new IllegalArgumentException("Les nœuds de départ et d'arrivée ne peuvent pas être nuls.");
+        }
+
+        // Exécute Dijkstra depuis le nœud de départ
+        Map<Long, List<Troncon>> chemins = dijkstra(depart);
+        List<Troncon> troncons = chemins.get(arrivee.getId());
+
+        if (troncons == null) {
+            // Aucun chemin trouvé
+            return null;
+        }
+
+        double longueurTotale = troncons.stream()
+                .mapToDouble(Troncon::getLongueur)
+                .sum();
+
+        return new Chemin(troncons, longueurTotale, depart, arrivee);
+    }
+
 }

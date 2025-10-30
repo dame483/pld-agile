@@ -8,17 +8,17 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.util.List;
 
-public class EtatAjouterLivraison implements Etat {
+public class EtatAjoutLivraison implements Etat {
     private  Carte carte;
     private DemandeDeLivraison demande;
 
-    public EtatAjouterLivraison(Carte carte, DemandeDeLivraison demandeDeLivraison) {
+    public EtatAjoutLivraison(Carte carte, DemandeDeLivraison demandeDeLivraison) {
         this.carte = carte;
         this.demande = demandeDeLivraison;
     }
 
     @Override
-    public Carte loadCarte(Controlleur c,@RequestParam("file") MultipartFile file )
+    public Carte loadCarte(Controleur c, @RequestParam("file") MultipartFile file )
     {
         Carte carte=(Carte)uploadXML("carte", file,this.carte);
         if(carte==null )
@@ -31,7 +31,7 @@ public class EtatAjouterLivraison implements Etat {
     }
 
     @Override
-    public Object loadDemandeLivraison(Controlleur c, @RequestParam("file")  MultipartFile file, Carte carte) {
+    public Object loadDemandeLivraison(Controleur c, @RequestParam("file")  MultipartFile file, Carte carte) {
         Object dem=uploadXML("demande", file, this.carte);
         if(dem instanceof DemandeDeLivraison){
             c.setCurrentState(new EtatDemandeLivraisonChargee(carte,(DemandeDeLivraison) dem));
@@ -42,19 +42,19 @@ public class EtatAjouterLivraison implements Etat {
     }
 
     @Override
-    public Object creerFeuillesDeRoute(Controlleur c) {
+    public Object creerFeuillesDeRoute(Controleur c) {
         System.err.println("Erreur : impossible de créer une feuille de route en mode modification de la tournée.");
         return null;
     }
 
     @Override
-    public Object saveTournee(Controlleur c) {
+    public Object saveTournee(Controleur c) {
         System.err.println("Erreur : impossible de sauvegarder la tournée en mode modification.");
         return null;
     }
 
     @Override
-    public Object loadTournee(Controlleur c, MultipartFile file, Carte carte) {
+    public Object loadTournee(Controleur c, MultipartFile file, Carte carte) {
         Object result = uploadXML("tournee", file, carte);
 
         if (result instanceof List<?> liste && !liste.isEmpty() && liste.get(0) instanceof Tournee) {
@@ -65,26 +65,29 @@ public class EtatAjouterLivraison implements Etat {
         return result;
     }
 
+    public Object passerEnModeSuppression(Controleur c){
+        return null;
+    }
 
 
 
     /*@Override
-    public void addLivraison(Controlleur c,@RequestParam("file")  MultipartFile file, Carte carte) {
+    public void addLivraison(Controleur c,@RequestParam("file")  MultipartFile file, Carte carte) {
 
     }
 
     @Override
-    public void deleteLivraison(Controlleur c) {
+    public void deleteLivraison(Controleur c) {
 
     }
 
     @Override
-    public Object runCalculTournee(Controlleur c) {
+    public Object runCalculTournee(Controleur c) {
         return null;
     }*/
 
     /*@Override
-    public void saveTournee(Controlleur c) {
+    public void saveTournee(Controleur c) {
 
     }*/
 
@@ -135,12 +138,15 @@ public class EtatAjouterLivraison implements Etat {
     }
 
     @Override
+    public void passerEnModeSuppression(Controleur c, Tournee tournee){return;}
+
+    @Override
     public String getName() {
         return "Etat Ajout de Livraison";
     }
 
     @Override
-    public Object runCalculTournee(Controlleur c, int nombreLivreurs) {
+    public Object runCalculTournee(Controleur c, int nombreLivreurs, double vitesse) {
         return null;
     }
 }

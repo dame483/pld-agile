@@ -51,7 +51,21 @@ public class Chemin {
 
     @Override
     public String toString() {
-        return String.format("Chemin{longueurTotale=%.2f, troncons=%s}", longueurTotal, troncons);
+        StringBuilder sb = new StringBuilder();
+        sb.append("Chemin{");
+        sb.append("depart=").append(NoeudDePassageDepart.getId());
+        sb.append(", arrivee=").append(NoeudDePassageArrivee.getId());
+        sb.append(", longueurTotale=").append(String.format("%.2f", longueurTotal));
+        sb.append(", troncons=[");
+
+        for (int i = 0; i < troncons.size(); i++) {
+            Troncon t = troncons.get(i);
+            sb.append(t.getNomRue()); // ou t.getNomRue() si disponible
+            if (i < troncons.size() - 1) sb.append(" -> ");
+        }
+
+        sb.append("]}");
+        return sb.toString();
     }
 
 

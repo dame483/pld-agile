@@ -33,5 +33,8 @@ public class Carte {
         }
         return null; // aucun tronçon direct trouvé
     }
+    public Noeud getNoeudParId(long id) {
+        return noeuds.get(id); // renvoie null si l'ID n'existe pas
+    }
 
 }

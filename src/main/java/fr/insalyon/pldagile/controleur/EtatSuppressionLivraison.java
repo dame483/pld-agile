@@ -10,15 +10,16 @@ import java.util.List;
 public class EtatSuppressionLivraison implements Etat{
 
     private Carte carte;
-    private DemandeDeLivraison demande;
+    private Tournee tournee;
 
-    public EtatSuppressionLivraison(DemandeDeLivraison demandeDeLivraison, Carte carte) {
-        this.demande = demandeDeLivraison;
+    public EtatSuppressionLivraison(Carte carte, Tournee tournee) {
         this.carte = carte;
+        this.tournee = tournee;
     }
 
+
     @Override
-    public Carte loadCarte(Controlleur c,@RequestParam("file") MultipartFile file )
+    public Carte loadCarte(Controleur c, @RequestParam("file") MultipartFile file )
     {
         Carte carte=(Carte)uploadXML("carte", file,this.carte);
         if(carte==null )
@@ -31,7 +32,7 @@ public class EtatSuppressionLivraison implements Etat{
     }
 
     @Override
-    public Object loadDemandeLivraison(Controlleur c, @RequestParam("file")  MultipartFile file, Carte carte) {
+    public Object loadDemandeLivraison(Controleur c, @RequestParam("file")  MultipartFile file, Carte carte) {
         Object dem=uploadXML("demande", file, this.carte);
         if(dem instanceof DemandeDeLivraison){
             c.setCurrentState(new EtatDemandeLivraisonChargee(carte,(DemandeDeLivraison) dem));
@@ -42,24 +43,11 @@ public class EtatSuppressionLivraison implements Etat{
     }
 
 
-
-    /*@Override
-    public void addLivraison(Controlleur c,@RequestParam("file")  MultipartFile file, Carte carte) {
-
-    }
-
     @Override
-    public void deleteLivraison(Controlleur c) {
-*/
-    @Override
-    public Object runCalculTournee(Controlleur c, int nombreLivreurs) {
+    public Object runCalculTournee(Controleur c, int nombreLivreurs, double vitesse) {
         return null;
     }
 
-    /*@Override
-    public void saveTournee(Controlleur c) {
-
-    }*/
 
 
     @Override
@@ -108,19 +96,19 @@ public class EtatSuppressionLivraison implements Etat{
     }
 
     @Override
-    public Object creerFeuillesDeRoute(Controlleur c) {
+    public Object creerFeuillesDeRoute(Controleur c) {
         System.err.println("Erreur : impossible de créer une feuille de route en mode modification de la tournée.");
         return null;
     }
 
     @Override
-    public Object saveTournee(Controlleur c) {
+    public Object saveTournee(Controleur c) {
         System.err.println("Erreur : impossible de sauvegarder la tournée en mode modification.");
         return null;
     }
 
     @Override
-    public Object loadTournee(Controlleur c, MultipartFile file, Carte carte) {
+    public Object loadTournee(Controleur c, MultipartFile file, Carte carte) {
         Object result = uploadXML("tournee", file, carte);
 
         if (result instanceof List<?> liste && !liste.isEmpty() && liste.get(0) instanceof Tournee) {
@@ -132,9 +120,43 @@ public class EtatSuppressionLivraison implements Etat{
         return result;
     }
 
+    @Override
+    public void passerEnModeSuppression(Controleur c, Tournee tournee){return;}
+
 
     @Override
     public String getName() {
         return "Etat Supression de Livraison";
     }
+
+    public Tournee getTournee() {
+        return tournee;
+    }
+
+    public void supprimmerLivraison(Controleur c, Long idNoeudClique, Long idNoeudAssocie, double vitesse) {
+        if (idNoeudAssocie == null || idNoeudClique == null) {
+            System.err.println("Erreur : un des nœuds est null.");
+            return;
+        }
+
+        // Création de la commande de suppression
+        Commande commandeSuppression = new CommandeSuppressionLivraison(
+                tournee,// la tournée sur laquelle on supprime
+                carte,
+                vitesse,
+                idNoeudClique,  // nœud sélectionné sur la carte (pickup ou delivery)
+                idNoeudAssocie  // le nœud associé correspondant
+        );
+
+        // Exécution de la commande via le contrôleur (gestion de l'historique)
+        c.executerCommande(commandeSuppression);
+
+        // Affichage console pour debug
+        System.out.println("Livraison supprimée : " + idNoeudClique + " et " + idNoeudAssocie);
+    }
+
+
+
+
+
 }

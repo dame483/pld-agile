@@ -2,6 +2,7 @@ package fr.insalyon.pldagile.controleur;
 
 import fr.insalyon.pldagile.modele.Carte;
 import fr.insalyon.pldagile.modele.CarteParseurXML;
+import fr.insalyon.pldagile.modele.Tournee;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -13,7 +14,7 @@ public class EtatInitial implements Etat {
     public EtatInitial() {}
 
     @Override
-    public Carte loadCarte(Controlleur c, MultipartFile file) {
+    public Carte loadCarte(Controleur c, MultipartFile file) {
         Carte carte = (Carte) uploadXML("carte", file, null);
 
         if (carte != null) {
@@ -26,7 +27,7 @@ public class EtatInitial implements Etat {
     }
 
     @Override
-    public Object loadDemandeLivraison(Controlleur c, MultipartFile file, Carte carte) {
+    public Object loadDemandeLivraison(Controleur c, MultipartFile file, Carte carte) {
         System.out.println("Impossible de charger une demande sans carte !");
         return null;
     }
@@ -60,19 +61,19 @@ public class EtatInitial implements Etat {
     }
 
     @Override
-    public Object creerFeuillesDeRoute(Controlleur c) {
+    public Object creerFeuillesDeRoute(Controleur c) {
         System.err.println("Erreur : impossible de créer une feuille de route avant le calcul de la tournée.");
         return null;
     }
 
     @Override
-    public Object saveTournee(Controlleur c) {
+    public Object saveTournee(Controleur c) {
         System.err.println("Erreur : impossible de sauvegarder une tournée avant son calcul.");
         return null;
     }
 
     @Override
-    public Object loadTournee(Controlleur c, MultipartFile file, Carte carte) {
+    public Object loadTournee(Controleur c, MultipartFile file, Carte carte) {
         System.err.println("Erreur : impossible de charger une tournée avant de charger une carte associée.");
         return null;
     }
@@ -83,8 +84,11 @@ public class EtatInitial implements Etat {
     }
 
     @Override
-    public Object runCalculTournee(Controlleur c, int nombreLivreurs) {
+    public Object runCalculTournee(Controleur c, int nombreLivreurs, double vitesse) {
         return null;
     }
+
+    @Override
+    public void passerEnModeSuppression(Controleur c, Tournee tournee){return;}
 
 }

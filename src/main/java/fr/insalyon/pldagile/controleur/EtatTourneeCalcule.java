@@ -2,7 +2,6 @@ package fr.insalyon.pldagile.controleur;
 
 import fr.insalyon.pldagile.algorithme.CalculTournees;
 import fr.insalyon.pldagile.modele.*;
-import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import fr.insalyon.pldagile.sortie.FeuilleDeRoute;
@@ -24,7 +23,7 @@ public class EtatTourneeCalcule implements Etat {
     }
 
     @Override
-    public Carte loadCarte(Controlleur c, @RequestParam("file") MultipartFile file) {
+    public Carte loadCarte(Controleur c, @RequestParam("file") MultipartFile file) {
         Carte newCarte = (Carte) uploadXML("carte", file, this.carte);
         if (newCarte != null) {
             c.setCurrentState(new EtatCarteChargee(newCarte));
@@ -36,7 +35,7 @@ public class EtatTourneeCalcule implements Etat {
     }
 
     @Override
-    public Object loadDemandeLivraison(Controlleur c, @RequestParam("file") MultipartFile file, Carte carte) {
+    public Object loadDemandeLivraison(Controleur c, @RequestParam("file") MultipartFile file, Carte carte) {
         Object dem = uploadXML("demande", file, this.carte);
         if (dem instanceof DemandeDeLivraison) {
             c.setCurrentState(new EtatDemandeLivraisonChargee(carte, (DemandeDeLivraison) dem));
@@ -46,11 +45,11 @@ public class EtatTourneeCalcule implements Etat {
     }
 
     @Override
-    public Object runCalculTournee(Controlleur c, int nombreLivreurs) {
+    public Object runCalculTournee(Controleur c, int nombreLivreurs, double vitesse) {
         try {
             LocalTime heureDepart = demande.getEntrepot().getHoraireDepart();
 
-            CalculTournees t = new CalculTournees(carte, demande, 4.1, nombreLivreurs, heureDepart);
+            CalculTournees t = new CalculTournees(carte, demande, vitesse, nombreLivreurs, heureDepart);
             List<Tournee> toutesLesTournees = t.calculerTournees();
 
             c.setCurrentState(new EtatTourneeCalcule(carte, demande, toutesLesTournees));
@@ -87,7 +86,7 @@ public class EtatTourneeCalcule implements Etat {
     }
 
     @Override
-    public Object creerFeuillesDeRoute(Controlleur c) {
+    public Object creerFeuillesDeRoute(Controleur c) {
         try {
             if (toutesLesTournees == null || toutesLesTournees.isEmpty()) {
                 return "Aucune tournée à générer.";
@@ -110,7 +109,7 @@ public class EtatTourneeCalcule implements Etat {
     }
 
     @Override
-    public Object saveTournee(Controlleur c) {
+    public Object saveTournee(Controleur c) {
         try {
             if (toutesLesTournees == null || toutesLesTournees.isEmpty()) {
                 return "Aucune tournée à sauvegarder.";
@@ -133,7 +132,7 @@ public class EtatTourneeCalcule implements Etat {
     }
 
     @Override
-    public Object loadTournee(Controlleur c, MultipartFile file, Carte carte) {
+    public Object loadTournee(Controleur c, MultipartFile file, Carte carte) {
         Object result = uploadXML("tournee", file, carte);
 
         if (result instanceof Tournee tournee) {
@@ -143,6 +142,16 @@ public class EtatTourneeCalcule implements Etat {
         }
         return result;
     }
+
+    @Override
+    public void passerEnModeSuppression(Controleur c, Tournee tournee) {
+        if (tournee == null) {
+            System.err.println("Erreur : aucune tournée fournie pour passer en mode suppression.");
+            return;
+        }
+        c.setCurrentState(new EtatSuppressionLivraison(carte, tournee));
+    }
+
 
 
     @Override

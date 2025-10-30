@@ -19,7 +19,7 @@ public class EtatCarteChargee implements Etat {
     }
 
     @Override
-    public Carte loadCarte(Controlleur c, @RequestParam("file") MultipartFile file) {
+    public Carte loadCarte(Controleur c, @RequestParam("file") MultipartFile file) {
         Carte nouvelleCarte = (Carte) uploadXML("carte", file, this.carte);
 
         if (nouvelleCarte == null) {
@@ -32,7 +32,7 @@ public class EtatCarteChargee implements Etat {
     }
 
     @Override
-    public Object loadDemandeLivraison(Controlleur c, @RequestParam("file") MultipartFile file, Carte carte) {
+    public Object loadDemandeLivraison(Controleur c, @RequestParam("file") MultipartFile file, Carte carte) {
         Object dem = uploadXML("demande", file, this.carte);
         if (dem instanceof DemandeDeLivraison demande) {
             c.setCurrentState(new EtatDemandeLivraisonChargee(this.carte, demande));
@@ -87,25 +87,25 @@ public class EtatCarteChargee implements Etat {
     }
 
     @Override
-    public Object runCalculTournee(Controlleur c, int nombreLivreurs) {
+    public Object runCalculTournee(Controleur c, int nombreLivreurs, double vitesse){
         System.err.println("Erreur : impossible de calculer une tournée sans demande de livraison.");
         return null;
     }
 
     @Override
-    public Object creerFeuillesDeRoute(Controlleur c) {
+    public Object creerFeuillesDeRoute(Controleur c) {
         System.err.println("Erreur : impossible de créer une feuille de route avant le calcul de la tournée.");
         return null;
     }
 
     @Override
-    public Object saveTournee(Controlleur c) {
+    public Object saveTournee(Controleur c) {
         System.err.println("Erreur : impossible de sauvegarder une tournée avant son calcul.");
         return null;
     }
 
     @Override
-    public Object loadTournee(Controlleur c, MultipartFile file, Carte carte) {
+    public Object loadTournee(Controleur c, MultipartFile file, Carte carte) {
         Object result = uploadXML("tournee", file, carte);
 
         if (result instanceof List<?> liste && !liste.isEmpty() && liste.get(0) instanceof Tournee) {
@@ -116,6 +116,8 @@ public class EtatCarteChargee implements Etat {
         return result;
     }
 
+    @Override
+    public void passerEnModeSuppression(Controleur c, Tournee tournee){return;}
 
     @Override
     public String getName() {

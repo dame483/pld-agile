@@ -2,6 +2,7 @@ package fr.insalyon.pldagile.controleur;
 
 import fr.insalyon.pldagile.modele.Carte;
 import fr.insalyon.pldagile.modele.DemandeDeLivraison;
+import fr.insalyon.pldagile.modele.Noeud;
 import fr.insalyon.pldagile.modele.Tournee;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,14 +15,18 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api")
 @CrossOrigin(origins = "*")
-public class Controlleur {
+public class Controleur {
 
     private Etat etatActuelle;
     private Carte carte;
     private DemandeDeLivraison demande;
+    private ListeDeCommandes historique;
+    private double vitesse = 4.1;
 
-    public Controlleur() {
+
+    public Controleur() {
         this.etatActuelle = new EtatInitial();
+        this.historique = new ListeDeCommandes();
     }
 
     @PostMapping("/upload-carte")
@@ -80,7 +85,7 @@ public class Controlleur {
     @PostMapping("/tournee/calculer")
     public ResponseEntity<?> calculerTournee(@RequestParam(defaultValue = "1") int nombreLivreurs) {
         try {
-            Object result = etatActuelle.runCalculTournee(this, nombreLivreurs);
+            Object result = etatActuelle.runCalculTournee(this, nombreLivreurs, vitesse);
 
             if (result instanceof List<?> listeTournees) {
                 // Crée un Map explicite pour le JSON
@@ -176,6 +181,112 @@ public class Controlleur {
             return ResponseEntity.badRequest().body("Exception : " + e.getMessage());
         }
     }
+
+    @PostMapping("/tournee/mode-suppression")
+    public ResponseEntity<?> passerEnModeSuppression(@RequestBody Tournee tourneeCible) {
+        try {
+            if (tourneeCible == null) {
+                return ResponseEntity.badRequest().body("Aucune tournée fournie pour passer en mode suppression.");
+            }
+
+            // On délègue la logique à l’état courant (EtatTourneeCalcule)
+            if (etatActuelle instanceof EtatTourneeCalcule etatTourneeCalcule) {
+                etatTourneeCalcule.passerEnModeSuppression(this, tourneeCible);
+                return ResponseEntity.ok(Map.of(
+                        "message", "Passage en mode suppression effectué.",
+                        "etatCourant", getCurrentState()
+                ));
+            } else {
+                return ResponseEntity.badRequest().body(
+                        "Impossible de passer en mode suppression depuis l'état actuel : " + getCurrentState()
+                );
+            }
+
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Erreur : " + e.getMessage());
+        }
+    }
+
+
+    @DeleteMapping("/livraison/supprimer")
+    public ResponseEntity<?> supprimerLivraison(@RequestBody Map<String, Long> body) {
+        try {
+            Long idNoeudClique = body.get("idNoeudClique");
+            Long idNoeudAssocie = body.get("idNoeudAssocie");
+
+            if (!(etatActuelle instanceof EtatSuppressionLivraison etatSuppression)) {
+                return ResponseEntity.badRequest()
+                        .body(Map.of("message", "Action impossible : l'application n'est pas en mode suppression."));
+            }
+
+            if (idNoeudClique == null || idNoeudAssocie == null) {
+                return ResponseEntity.badRequest()
+                        .body(Map.of("message", "Identifiants de nœuds manquants."));
+            }
+
+            if (idNoeudClique.equals(idNoeudAssocie)) {
+                return ResponseEntity.badRequest()
+                        .body(Map.of("message", "Les nœuds de pickup et de livraison doivent être différents."));
+            }
+
+
+            // Appel du pattern Commande via l'état courant
+            etatSuppression.supprimmerLivraison(this, idNoeudClique, idNoeudAssocie, vitesse);
+
+            return ResponseEntity.ok(Map.of(
+                    "message", "Livraison supprimée avec succès.",
+                    "etatCourant", getCurrentState(),
+                    "tournee", etatSuppression.getTournee()
+            ));
+
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Erreur : " + e.getMessage()));
+        }
+    }
+
+
+    // --- Annuler la dernière commande ---
+    @PostMapping("/annuler")
+    public ResponseEntity<?> annuler() {
+        try {
+            this.annulerCommande();
+            return ResponseEntity.ok(Map.of(
+                    "message", "Annulation effectuée"
+
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Erreur lors de l'annulation : " + e.getMessage()));
+        }
+    }
+
+    // --- Refaire la dernière commande annulée ---
+    @PostMapping("/restaurer")
+    public ResponseEntity<?> restaurer() {
+        try {
+            this.restaurerCommande();
+            return ResponseEntity.ok(Map.of(
+                    "message", "Rétablissement effectué"
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("message", "Erreur lors du rétablissement : " + e.getMessage()));
+        }
+    }
+
+
+
+
+    public void executerCommande(Commande commande) {
+        historique.executerCommande(commande);
+    }
+
+    public void annulerCommande() {
+        historique.annuler();
+    }
+
+    public void restaurerCommande() {
+        historique.restaurer();
+    }
+
 
     public void setCurrentState(Etat etat) {
         this.etatActuelle = etat;

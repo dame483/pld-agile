@@ -1,0 +1,70 @@
+L'heure de départ de l'entrepôt : 08:00
+
+Chemin 1
+Tu pars de (2835339774,ENTREPOT)
+Continuez environ 97 m  sur Impasse de l'Ordre
+Continuez environ 62 m  sur Rue Antoine Charial
+Continuez environ 67 m  sur Rue Baraban
+Continuez environ 48 m  sur Rue Baraban
+Continuez environ 30 m  sur Rue Baraban
+Continuez environ 107 m  sur Avenue Georges Pompidou
+Continuez environ 40 m  sur Rue Nazareth
+Tu arrives au point de livraison à 08:01:47
+L'adresse de livraison N° 0 est 208769120)
+
+Chemin 2
+Tu pars de (208769120,PICKUP)
+Continuez environ 11 m  sur Rue Nazareth
+Continuez environ 84 m  sur Rue Nazareth
+Continuez environ 104 m  sur Rue Nazareth
+Continuez environ 6 m  sur Rue Nazareth
+Continuez environ 21 m  sur Rue Nazareth
+Continuez environ 141 m  sur Rue François Gillet
+Continuez environ 128 m  sur Rue Pascal
+Continuez environ 158 m  sur Avenue Marc Sangnier
+Continuez environ 93 m  sur Avenue Marc Sangnier
+Continuez environ 124 m  sur Rue Clos Poncet
+Tu arrives au point de livraison à 08:12:15
+L'adresse de livraison N° 1 est 1679901320)
+
+Chemin 3
+Tu pars de (1679901320,PICKUP)
+Continuez environ 115 m  sur Rue Pascal
+Continuez environ 110 m  sur Rue Pascal
+Continuez environ 128 m  sur Rue Pascal
+Continuez environ 141 m  sur Rue François Gillet
+Continuez environ 20 m  sur Place de la Ferrandière
+Continuez environ 4 m  sur Place de la Ferrandière
+Continuez environ 105 m  sur Place de la Ferrandière
+Continuez environ 93 m  sur Place de la Ferrandière
+Continuez environ 13 m  sur Place de la Ferrandière
+Continuez environ 36 m  sur Place de la Ferrandière
+Continuez environ 107 m  sur Avenue Georges Pompidou
+Continuez environ 30 m  sur Rue Baraban
+Continuez environ 48 m  sur Rue Baraban
+Continuez environ 67 m  sur Rue Baraban
+Continuez environ 80 m  sur Rue Antoine Charial
+Continuez environ 146 m  sur Rue Turbil
+Continuez environ 233 m  sur Rue Turbil
+Continuez environ 50 m  sur Avenue Félix Faure
+Continuez environ 27 m  sur Avenue Félix Faure
+Continuez environ 215 m  sur Avenue Félix Faure
+Continuez environ 49 m  sur Avenue Félix Faure
+Tu arrives au point de livraison à 08:26:28
+L'adresse de livraison N° 2 est 25336179)
+
+Chemin 4
+Tu pars de (25336179,DELIVERY)
+Continuez environ 49 m  sur Avenue Félix Faure
+Continuez environ 215 m  sur Avenue Félix Faure
+Continuez environ 27 m  sur Avenue Félix Faure
+Continuez environ 241 m  sur Rue Baraban
+Continuez environ 154 m  sur Rue Baraban
+Continuez environ 67 m  sur Rue Baraban
+Continuez environ 135 m  sur Rue des Teinturiers
+Continuez environ 65 m  sur Rue Étienne Richerand
+Continuez environ 70 m  sur Rue Antoine Charial
+Continuez environ 97 m  sur Impasse de l'Ordre
+Tu arrives au point de livraison à 08:38:56
+L'adresse de livraison N° 3 est 2835339774)
+
