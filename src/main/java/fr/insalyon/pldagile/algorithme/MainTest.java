@@ -44,7 +44,7 @@ public class MainTest {
 
                 // Génération de la feuille de route
                 FeuilleDeRoute feuille = new FeuilleDeRoute(tournee);
-                feuille.generateFeuilleDeRoute(1);
+                feuille.genererFeuilleDeRoute(1);
                 //feuille.sauvegarderTournee(1);
 
                 double distanceTotale = 0;

@@ -3,11 +3,13 @@ package fr.insalyon.pldagile;
 import fr.insalyon.pldagile.algorithme.CalculTournees;
 import fr.insalyon.pldagile.modele.*;
 import fr.insalyon.pldagile.sortie.FeuilleDeRoute;
+import fr.insalyon.pldagile.sortie.SauvegarderTournee;
 import fr.insalyon.pldagile.sortie.parseurTourneeJson;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.time.LocalTime;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -37,18 +39,20 @@ public class ParsingTourneeJsonTest {
         //  Calcul de la tournée
         CalculTournees calculTournee = new CalculTournees(ville, demande, vitesse, 1, heureDepart); // 1 livreur pour le test
         System.out.println("\nCalcul de la tournée initiale");
-        Tournee tournee = calculTournee.calculerTournees().get(0);
+        List<Tournee> tourneeList = calculTournee.calculerTournees();
 
         //Parsing de la tournée
-        FeuilleDeRoute feuilleDeRoute = new FeuilleDeRoute(tournee);
-        feuilleDeRoute.sauvegarderTournee(0);
+        SauvegarderTournee sauvegarderTournee = new SauvegarderTournee(tourneeList);
+        sauvegarderTournee.sauvegarderTournee();
         parseurTourneeJson parseurJson = new parseurTourneeJson();
-        Tournee tourneeParseur = parseurJson.parseurTournee("src/main/java/fr/insalyon/pldagile/sortie/sauvegardeTourne1.json");
+        for (int i = 0; i < tourneeList.size(); i++) {
+            Tournee tourneeParseur = parseurJson.parseurTournee("src/main/java/fr/insalyon/pldagile/sortie/sauvegardeTourne" + (i + 1) + ".json");
+            assertEquals(tourneeList.get(i).getChemins().size(), tourneeParseur.getChemins().size(), "La tournée parsée doit etre identique que la tournée initiale en chemins");
+            assertEquals(tourneeList.get(i).getDureeTotale(), tourneeParseur.getDureeTotale(),"les tournées doivent etre identiques en terme de durée totale");
+            assertEquals(tourneeList.get(i).getLongueurTotale(), tourneeParseur.getLongueurTotale(), "les distances totales doivernt etre identiques");
+        }
 
 
-        assertEquals(tournee.getChemins().size(), tourneeParseur.getChemins().size(), "La tournée parsée doit etre identique que la tournée initiale en chemins");
-        assertEquals(tournee.getDureeTotale(), tourneeParseur.getDureeTotale(),"les tournées doivent etre identiques en terme de durée totale");
-        assertEquals(tournee.getLongueurTotale(), tourneeParseur.getLongueurTotale(), "les distances totales doivernt etre identiques");
 
     }
 
