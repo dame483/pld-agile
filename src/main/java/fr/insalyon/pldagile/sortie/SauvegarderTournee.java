@@ -18,11 +18,15 @@ public class SauvegarderTournee {
     }
 
     public void sauvegarderTournee() throws Exception {
-        for (int i = 0; i < listTournee.size(); i++) {
-            List<Chemin> chemins = listTournee.get(i).getChemins();
-            JSONArray cheminsArray = new JSONArray();
-            System.out.println("appel de sauvegarde tournée");
-            try {
+        File jsonFile = new File("src/main/java/fr/insalyon/pldagile/sortie/tourneeJson/sauvegardeTourne.json");
+        JSONArray tourneesArray = new JSONArray();
+
+        try {
+            for (Tournee tournee : listTournee) {
+                List<Chemin> chemins = tournee.getChemins();
+                JSONObject tourneeObject = new JSONObject();
+                JSONArray cheminsArray = new JSONArray();
+                System.out.println("appel de sauvegarde tournée");
                 for (Chemin chemin : chemins) {
                     JSONObject cheminObject = new JSONObject();
 
@@ -59,19 +63,23 @@ public class SauvegarderTournee {
 
                     cheminsArray.put(cheminObject);
                 }
-                File jsonFile = new File("src/main/java/fr/insalyon/pldagile/sortie/tourneeJson/sauvegardeTourne" + (i + 1) + ".json");
+                tourneeObject.put("dureeTotale", tournee.getDureeTotale());
+                tourneeObject.put("chemins", cheminsArray);
+                tourneesArray.put(tourneeObject);
+            }
 
-                try (FileWriter fileWriter = new FileWriter(jsonFile)) {
-                    JSONObject tourneeObject = new JSONObject();
-                    tourneeObject.put("tournee", cheminsArray);
-                    fileWriter.write(tourneeObject.toString(4));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    throw new Exception("Erreur lors de la sauvegarde de la tournée", e);
-                }
+            try (FileWriter fileWriter = new FileWriter(jsonFile)) {
+                JSONObject root = new JSONObject();
+                root.put("tournees", tourneesArray);
+                fileWriter.write(root.toString(4));
+                System.out.println("Sauvegarde terminée : " + jsonFile.getAbsolutePath());
             } catch (Exception e) {
                 e.printStackTrace();
+                throw new Exception("Erreur lors de la sauvegarde de la tournée", e);
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new Exception("Erreur lors de la sauvegarde de la tournée", e);
         }
     }
 }
