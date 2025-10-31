@@ -1,49 +1,127 @@
 L'heure de départ de l'entrepôt : 08:00
 
 Chemin 1
-Tu pars de (2835339774,ENTREPOT)
-Continuez environ 97 m  sur Impasse de l'Ordre
-Continuez environ 62 m  sur Rue Antoine Charial
-Continuez environ 67 m  sur Rue Baraban
-Continuez environ 48 m  sur Rue Baraban
-Continuez environ 30 m  sur Rue Baraban
-Continuez environ 107 m  sur Avenue Georges Pompidou
-Continuez environ 40 m  sur Rue Nazareth
-Tu arrives au point de livraison à 08:01:49
-L'adresse de livraison N° 0 est 208769120)
+Tu pars de (1349383079,ENTREPOT)
+Continuez environ 72 m  sur Avenue des Colonnes
+Continuez environ 212 m  sur Avenue Pasteur
+Continuez environ 78 m  sur Rue Villard
+Continuez environ 95 m  sur Rue Villard
+Continuez environ 153 m  sur Avenue du Bois
+Continuez environ 66 m  sur Rue du Square
+Continuez environ 258 m  sur Rue Docteur Charles Faguin
+Continuez environ 14 m  sur Avenue Franklin Roosevelt
+Continuez environ 8 m  sur Avenue Franklin Roosevelt
+Continuez environ 17 m  sur Avenue Franklin Roosevelt
+Continuez environ 91 m  sur Avenue Franklin Roosevelt
+Continuez environ 56 m  sur Avenue Franklin Roosevelt
+Continuez environ 38 m  sur Avenue Franklin Roosevelt
+Continuez environ 73 m  sur Avenue Franklin Roosevelt
+Continuez environ 51 m  sur Avenue Franklin Roosevelt
+Continuez environ 144 m  sur Avenue Franklin Roosevelt
+Continuez environ 144 m  sur Avenue Franklin Roosevelt
+Continuez environ 86 m  sur Avenue Franklin Roosevelt
+Continuez environ 57 m  sur Avenue Franklin Roosevelt
+Continuez environ 143 m  sur Avenue Franklin Roosevelt
+Continuez environ 86 m  sur Avenue Franklin Roosevelt
+Continuez environ 32 m  sur Avenue Franklin Roosevelt
+Continuez environ 29 m  sur Avenue Franklin Roosevelt
+Continuez environ 85 m  sur Avenue Franklin Roosevelt
+Continuez environ 119 m  sur Boulevard Pinel
+Continuez environ 179 m  sur Boulevard Pinel
+Continuez environ 36 m  sur Boulevard Pinel
+Continuez environ 142 m  sur Boulevard Pinel
+Continuez environ 11 m  sur Boulevard Pinel
+Continuez environ 31 m  sur Boulevard Pinel
+Continuez environ 143 m  sur Boulevard Pinel
+Continuez environ 179 m  sur Boulevard Pinel
+Continuez environ 88 m  sur Boulevard Pinel
+Continuez environ 53 m  sur Boulevard Pinel
+Continuez environ 94 m  sur Boulevard Pinel
+Continuez environ 136 m  sur Boulevard Pinel
+Continuez environ 67 m  sur Boulevard Pinel
+Continuez environ 27 m  sur Boulevard Pinel
+Continuez environ 99 m  sur Rue du Vinatier
+Continuez environ 46 m  sur Rue du Vinatier
+Continuez environ 31 m  sur Rue du Vinatier
+Continuez environ 102 m  sur Rue du Vinatier
+Continuez environ 20 m  sur Route de Genas
+Continuez environ 16 m  sur Rue Émile Decorps
+Continuez environ 61 m  sur Rue Émile Decorps
+Continuez environ 21 m  sur Rue Émile Decorps
+Continuez environ 17 m  sur Rue Émile Decorps
+Continuez environ 102 m  sur Rue Émile Decorps
+Continuez environ 66 m  sur Rue Émile Decorps
+Continuez environ 196 m  sur Rue Émile Decorps
+Continuez environ 25 m  sur Rue Émile Decorps
+Continuez environ 127 m  sur Rue Émile Decorps
+Continuez environ 230 m  sur Rue Antoine Primat
+Continuez environ 120 m  sur Rue Antoine Primat
+Continuez environ 182 m  sur Rue Louis Ducroize
+Tu arrives au point de livraison à 08:19:37
+L'adresse de livraison N° 0 est 55444018)
 
 Chemin 2
-Tu pars de (208769120,PICKUP)
-Continuez environ 11 m  sur Rue Nazareth
-Continuez environ 21 m  sur Rue Louis Jasseron
-Continuez environ 13 m  sur Place de la Ferrandière
-Continuez environ 36 m  sur Place de la Ferrandière
-Continuez environ 107 m  sur Avenue Georges Pompidou
-Continuez environ 30 m  sur Rue Baraban
-Continuez environ 48 m  sur Rue Baraban
-Continuez environ 67 m  sur Rue Baraban
-Continuez environ 80 m  sur Rue Antoine Charial
-Continuez environ 146 m  sur Rue Turbil
-Continuez environ 233 m  sur Rue Turbil
-Continuez environ 50 m  sur Avenue Félix Faure
-Continuez environ 27 m  sur Avenue Félix Faure
-Continuez environ 215 m  sur Avenue Félix Faure
-Continuez environ 49 m  sur Avenue Félix Faure
-Tu arrives au point de livraison à 08:13:22
-L'adresse de livraison N° 1 est 25336179)
+Tu pars de (55444018,PICKUP)
+Continuez environ 182 m  sur Rue Louis Ducroize
+Continuez environ 162 m  sur Rue Antoine Primat
+Continuez environ 392 m  sur Rue Poizat
+Continuez environ 20 m  sur Rue Général Leclerc
+Continuez environ 21 m  sur Rue Général Leclerc
+Continuez environ 18 m  sur Rue Général Leclerc
+Continuez environ 60 m  sur Rue Général Leclerc
+Continuez environ 104 m  sur Rue Général Leclerc
+Continuez environ 53 m  sur Rue de l'Église
+Continuez environ 25 m  sur Place Ronde André Bourgogne
+Continuez environ 139 m  sur Cours Richard Vitton
+Continuez environ 139 m  sur Cours Richard Vitton
+Continuez environ 3 m  sur Cours Richard Vitton
+Continuez environ 129 m  sur Boulevard Pinel
+Continuez environ 101 m  sur Boulevard Pinel
+Continuez environ 91 m  sur Boulevard Pinel
+Continuez environ 93 m  sur Rue Gelas
+Continuez environ 51 m  sur Rue Gelas
+Continuez environ 104 m  sur Place Charles Dufraine
+Continuez environ 89 m  sur Place Charles Dufraine
+Tu arrives au point de livraison à 08:28:36
+L'adresse de livraison N° 1 est 26470086)
 
 Chemin 3
-Tu pars de (25336179,DELIVERY)
-Continuez environ 49 m  sur Avenue Félix Faure
-Continuez environ 215 m  sur Avenue Félix Faure
-Continuez environ 27 m  sur Avenue Félix Faure
-Continuez environ 241 m  sur Rue Baraban
-Continuez environ 154 m  sur Rue Baraban
-Continuez environ 67 m  sur Rue Baraban
-Continuez environ 135 m  sur Rue des Teinturiers
-Continuez environ 65 m  sur Rue Étienne Richerand
-Continuez environ 70 m  sur Rue Antoine Charial
-Continuez environ 97 m  sur Impasse de l'Ordre
-Tu arrives au point de livraison à 08:25:54
-L'adresse de livraison N° 2 est 2835339774)
+Tu pars de (26470086,DELIVERY)
+Continuez environ 27 m  sur Rue Jules Massenet
+Continuez environ 266 m  sur Rue Chambovet
+Continuez environ 123 m  sur Boulevard Pinel
+Continuez environ 179 m  sur Boulevard Pinel
+Continuez environ 143 m  sur Boulevard Pinel
+Continuez environ 31 m  sur Boulevard Pinel
+Continuez environ 11 m  sur Boulevard Pinel
+Continuez environ 22 m  sur Boulevard Pinel
+Continuez environ 12 m  sur Boulevard Pinel
+Continuez environ 34 m  sur Boulevard Pinel
+Continuez environ 92 m  sur Boulevard Pinel
+Continuez environ 16 m  sur Boulevard Pinel
+Continuez environ 23 m  sur Boulevard Pinel
+Continuez environ 179 m  sur Boulevard Pinel
+Continuez environ 161 m  sur Boulevard Pinel
+Continuez environ 12 m  sur Boulevard Pinel
+Continuez environ 11 m  sur Avenue Rockefeller
+Continuez environ 48 m  sur Avenue Franklin Roosevelt
+Continuez environ 47 m  sur Avenue Franklin Roosevelt
+Continuez environ 32 m  sur Avenue Franklin Roosevelt
+Continuez environ 86 m  sur Avenue Franklin Roosevelt
+Continuez environ 143 m  sur Avenue Franklin Roosevelt
+Continuez environ 142 m  sur Rue Pierre Bourdan
+Continuez environ 168 m  sur Rue Pierre Bourdan
+Continuez environ 64 m  sur Rue de la Paix
+Continuez environ 47 m  sur Rue de la Paix
+Continuez environ 42 m  sur Rue de la Paix
+Continuez environ 37 m  sur Rue de la Paix
+Continuez environ 144 m  sur Rue de la Paix
+Continuez environ 183 m  sur Rue Jean Jaurès
+Continuez environ 65 m  sur Rue Jean Jaurès
+Continuez environ 71 m  sur Rue Jean Jaurès
+Continuez environ 121 m  sur Rue Jean Jaurès
+Continuez environ 53 m  sur Avenue du Bois
+Continuez environ 100 m  sur Avenue des Colonnes
+Tu arrives au point de livraison à 09:06:35
+L'adresse de livraison N° 2 est 1349383079)
 

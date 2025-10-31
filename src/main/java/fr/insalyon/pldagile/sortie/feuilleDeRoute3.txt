@@ -8,102 +8,113 @@ Continuez environ 78 m  sur Rue Villard
 Continuez environ 95 m  sur Rue Villard
 Continuez environ 153 m  sur Avenue du Bois
 Continuez environ 66 m  sur Rue du Square
-Continuez environ 49 m  sur Rue du Square
-Continuez environ 126 m  sur Rue des Roses
-Continuez environ 71 m  sur Rue Jean Jaurès
-Continuez environ 65 m  sur Rue Jean Jaurès
-Continuez environ 183 m  sur Rue Jean Jaurès
-Continuez environ 144 m  sur Rue de la Paix
-Continuez environ 37 m  sur Rue de la Paix
-Continuez environ 42 m  sur Rue de la Paix
-Continuez environ 47 m  sur Rue de la Paix
-Continuez environ 64 m  sur Rue de la Paix
-Continuez environ 11 m  sur Rue de la Paix
-Continuez environ 79 m  sur Rue de la Paix
-Continuez environ 96 m  sur Rue de la Paix
-Continuez environ 116 m  sur Rue de la Paix
-Continuez environ 54 m  sur Rue de la Paix
-Continuez environ 68 m  sur Rue des Essarts
-Continuez environ 61 m  sur Rue des Essarts
-Continuez environ 10 m  sur Rue Laennec
-Continuez environ 32 m  sur Rue Laennec
-Continuez environ 323 m  sur Rue Laennec
-Continuez environ 54 m  sur Rue Laennec
-Continuez environ 22 m  sur Rue Laennec
-Continuez environ 42 m  sur Rue Laennec
-Continuez environ 85 m  sur Rue Thomas Blanchet
-Continuez environ 63 m  sur Boulevard Ambroise Paré
-Continuez environ 73 m  sur Boulevard Ambroise Paré
-Continuez environ 27 m  sur Boulevard Ambroise Paré
-Continuez environ 20 m  sur Boulevard Ambroise Paré
-Continuez environ 77 m  sur Boulevard Ambroise Paré
-Continuez environ 42 m  sur Boulevard Ambroise Paré
-Continuez environ 305 m  sur Boulevard Ambroise Paré
-Continuez environ 11 m  sur Boulevard Ambroise Paré
-Continuez environ 36 m  sur Avenue Jean Mermoz
-Tu arrives au point de livraison à 08:12:59
-L'adresse de livraison N° 0 est 27362899)
+Continuez environ 258 m  sur Rue Docteur Charles Faguin
+Continuez environ 14 m  sur Avenue Franklin Roosevelt
+Continuez environ 8 m  sur Avenue Franklin Roosevelt
+Continuez environ 17 m  sur Avenue Franklin Roosevelt
+Continuez environ 91 m  sur Avenue Franklin Roosevelt
+Continuez environ 56 m  sur Avenue Franklin Roosevelt
+Continuez environ 38 m  sur Avenue Franklin Roosevelt
+Continuez environ 73 m  sur Avenue Franklin Roosevelt
+Continuez environ 51 m  sur Avenue Franklin Roosevelt
+Continuez environ 144 m  sur Avenue Franklin Roosevelt
+Continuez environ 144 m  sur Avenue Franklin Roosevelt
+Continuez environ 86 m  sur Avenue Franklin Roosevelt
+Continuez environ 57 m  sur Avenue Franklin Roosevelt
+Continuez environ 143 m  sur Avenue Franklin Roosevelt
+Continuez environ 86 m  sur Avenue Franklin Roosevelt
+Continuez environ 32 m  sur Avenue Franklin Roosevelt
+Continuez environ 29 m  sur Avenue Franklin Roosevelt
+Continuez environ 65 m  sur Avenue Franklin Roosevelt
+Continuez environ 11 m  sur Avenue Rockefeller
+Continuez environ 316 m  sur Avenue Rockefeller
+Continuez environ 134 m  sur Avenue Rockefeller
+Continuez environ 115 m  sur Avenue Rockefeller
+Continuez environ 33 m  sur Avenue Rockefeller
+Continuez environ 31 m  sur Avenue Rockefeller
+Continuez environ 395 m  sur Avenue Rockefeller
+Continuez environ 70 m  sur Avenue Rockefeller
+Continuez environ 93 m  sur Place d'Arsonval
+Continuez environ 81 m  sur Cours Albert Thomas
+Continuez environ 48 m  sur Cours Albert Thomas
+Continuez environ 209 m  sur Cours Albert Thomas
+Continuez environ 117 m  sur Cours Albert Thomas
+Continuez environ 103 m  sur Cours Albert Thomas
+Continuez environ 5 m  sur Cours Albert Thomas
+Continuez environ 66 m  sur Cours Albert Thomas
+Continuez environ 130 m  sur Cours Albert Thomas
+Continuez environ 139 m  sur Cours Albert Thomas
+Continuez environ 88 m  sur Cours Albert Thomas
+Continuez environ 165 m  sur Cours Albert Thomas
+Continuez environ 95 m  sur Cours Albert Thomas
+Continuez environ 55 m  sur Cours Albert Thomas
+Continuez environ 81 m  sur Cours Albert Thomas
+Continuez environ 131 m  sur Cours Albert Thomas
+Continuez environ 71 m  sur Cours Albert Thomas
+Continuez environ 67 m  sur Cours Albert Thomas
+Continuez environ 11 m  sur 
+Continuez environ 97 m  sur Cours Gambetta
+Continuez environ 145 m  sur Rue Pierre Robin
+Continuez environ 138 m  sur Rue Pierre Robin
+Continuez environ 61 m  sur Grande Rue de la Guillotière
+Continuez environ 51 m  sur Grande Rue de la Guillotière
+Continuez environ 116 m  sur Boulevard des Tchécoslovaques
+Tu arrives au point de livraison à 08:22:23
+L'adresse de livraison N° 0 est 26121686)
 
 Chemin 2
-Tu pars de (27362899,PICKUP)
-Continuez environ 74 m  sur Avenue Jean Mermoz
-Continuez environ 81 m  sur Avenue Jean Mermoz
-Continuez environ 9 m  sur Rue du Professeur Joseph Nicolas
-Continuez environ 162 m  sur Rue du Professeur Joseph Nicolas
-Continuez environ 20 m  sur Rue du Professeur Joseph Nicolas
-Continuez environ 128 m  sur Rue du Professeur Joseph Nicolas
-Continuez environ 42 m  sur Boulevard Ambroise Paré
-Continuez environ 77 m  sur Boulevard Ambroise Paré
-Continuez environ 20 m  sur Boulevard Ambroise Paré
-Continuez environ 27 m  sur Boulevard Ambroise Paré
-Continuez environ 73 m  sur Boulevard Ambroise Paré
-Continuez environ 63 m  sur Boulevard Ambroise Paré
-Continuez environ 87 m  sur Boulevard Ambroise Paré
-Continuez environ 66 m  sur Boulevard Ambroise Paré
-Continuez environ 126 m  sur Boulevard Ambroise Paré
-Continuez environ 177 m  sur Boulevard Ambroise Paré
-Continuez environ 23 m  sur Rue Viala
-Continuez environ 8 m  sur Rue Viala
-Continuez environ 95 m  sur Rue Viala
-Continuez environ 98 m  sur Rue Viala
-Continuez environ 80 m  sur Rue Viala
-Continuez environ 81 m  sur Rue Viala
-Continuez environ 54 m  sur Rue Viala
-Continuez environ 27 m  sur Rue Viala
-Continuez environ 113 m  sur Rue Viala
-Continuez environ 213 m  sur Rue Viala
-Continuez environ 90 m  sur Rue Ferdinand Buisson
-Continuez environ 54 m  sur Rue Ferdinand Buisson
-Continuez environ 55 m  sur Rue Ferdinand Buisson
-Continuez environ 57 m  sur Rue Ferdinand Buisson
-Continuez environ 115 m  sur Rue Ferdinand Buisson
-Continuez environ 65 m  sur Rue Ferdinand Buisson
-Continuez environ 65 m  sur Rue Ferdinand Buisson
-Continuez environ 59 m  sur Rue Ferdinand Buisson
-Continuez environ 48 m  sur Rue Ferdinand Buisson
-Continuez environ 52 m  sur Rue Ferdinand Buisson
-Continuez environ 75 m  sur Rue Ferdinand Buisson
-Continuez environ 93 m  sur Rue Ferdinand Buisson
-Continuez environ 93 m  sur Rue Ferdinand Buisson
-Continuez environ 176 m  sur Rue Ferdinand Buisson
-Continuez environ 23 m  sur Cours Richard Vitton
-Continuez environ 20 m  sur Route de Genas
-Continuez environ 16 m  sur Rue Émile Decorps
-Continuez environ 61 m  sur Rue Émile Decorps
-Continuez environ 21 m  sur Rue Émile Decorps
-Continuez environ 17 m  sur Rue Émile Decorps
-Continuez environ 102 m  sur Rue Émile Decorps
-Continuez environ 66 m  sur Rue Émile Decorps
-Continuez environ 196 m  sur Rue Émile Decorps
-Continuez environ 25 m  sur Rue Émile Decorps
-Tu arrives au point de livraison à 08:30:47
-L'adresse de livraison N° 1 est 505061101)
+Tu pars de (26121686,PICKUP)
+Continuez environ 85 m  sur Boulevard des Tchécoslovaques
+Continuez environ 46 m  sur Boulevard des Tchécoslovaques
+Continuez environ 54 m  sur Rue du Général Mouton-Duvernet Cours Albert Thomas
+Continuez environ 8 m  sur Rue du Général Mouton-Duvernet
+Continuez environ 54 m  sur Rue du Général Mouton-Duvernet
+Continuez environ 257 m  sur Rue du Dauphiné
+Continuez environ 55 m  sur Rue du Dauphiné
+Continuez environ 97 m  sur Rue du Dauphiné
+Continuez environ 96 m  sur Rue du Dauphiné
+Continuez environ 118 m  sur Rue du Dauphiné
+Continuez environ 223 m  sur Rue du Dauphiné
+Continuez environ 74 m  sur Rue du Dauphiné
+Continuez environ 70 m  sur Rue du Dauphiné
+Continuez environ 72 m  sur Rue du Dauphiné
+Continuez environ 33 m  sur Rue du Dauphiné
+Continuez environ 39 m  sur Rue du Dauphiné
+Continuez environ 111 m  sur Rue du Dauphiné
+Continuez environ 140 m  sur Rue du Dauphiné
+Continuez environ 64 m  sur Rue du Dauphiné
+Continuez environ 37 m  sur Route de Genas
+Continuez environ 69 m  sur Route de Genas
+Continuez environ 22 m  sur Route de Genas
+Continuez environ 84 m  sur Route de Genas
+Continuez environ 64 m  sur Route de Genas
+Continuez environ 56 m  sur Route de Genas
+Continuez environ 46 m  sur Route de Genas
+Continuez environ 47 m  sur Route de Genas
+Continuez environ 26 m  sur Route de Genas
+Continuez environ 57 m  sur Route de Genas
+Continuez environ 56 m  sur Route de Genas
+Continuez environ 40 m  sur Route de Genas
+Continuez environ 50 m  sur Route de Genas
+Continuez environ 141 m  sur Cours Richard Vitton
+Continuez environ 21 m  sur Rue Antonin Perrin
+Continuez environ 44 m  sur Rue Antonin Perrin
+Continuez environ 96 m  sur Rue George Sand
+Continuez environ 55 m  sur Rue George Sand
+Continuez environ 134 m  sur Rue George Sand
+Continuez environ 80 m  sur Rue George Sand
+Continuez environ 87 m  sur Rue George Sand
+Continuez environ 18 m  sur Rue Général Leclerc
+Continuez environ 211 m  sur Avenue Paul Krüger
+Continuez environ 98 m  sur Avenue Paul Krüger
+Continuez environ 119 m  sur Avenue Paul Krüger
+Continuez environ 229 m  sur Avenue Paul Krüger
+Continuez environ 228 m  sur Avenue Paul Krüger
+Tu arrives au point de livraison à 08:43:12
+L'adresse de livraison N° 1 est 191134392)
 
 Chemin 3
-Tu pars de (505061101,DELIVERY)
-Continuez environ 25 m  sur Rue Émile Decorps
-Continuez environ 196 m  sur Rue Émile Decorps
-Continuez environ 228 m  sur Avenue Paul Krüger
+Tu pars de (191134392,DELIVERY)
 Continuez environ 147 m  sur Avenue Paul Krüger
 Continuez environ 32 m  sur Rue Pierre Bressat
 Continuez environ 279 m  sur Rue Pierre Bressat
@@ -135,6 +146,6 @@ Continuez environ 258 m  sur Rue Docteur Charles Faguin
 Continuez environ 66 m  sur Rue du Square
 Continuez environ 89 m  sur Avenue du Bois
 Continuez environ 100 m  sur Avenue des Colonnes
-Tu arrives au point de livraison à 08:52:59
+Tu arrives au point de livraison à 09:06:35
 L'adresse de livraison N° 2 est 1349383079)
 

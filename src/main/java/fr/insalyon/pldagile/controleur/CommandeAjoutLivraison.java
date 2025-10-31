@@ -30,7 +30,7 @@ public class CommandeAjoutLivraison implements Commande {
     @Override
     public void executer() {
         ModificationTournee modif = new ModificationTournee(new CalculChemins(carte), vitesse);
-       // modif.ajouterLivraison(tournee, idPickup, idDelivery, idPrecedentPickup, idPrecedentDelivery);
+       // modif.ajouterLivraison(tournee, idPrecedent, idNoeud)
     }
 
     @Override
