@@ -118,7 +118,6 @@ public class ModificationControleurTest {
 
         // Génération de la feuille de route (optionnel si tu veux juste afficher)
         FeuilleDeRoute feuille = new FeuilleDeRoute(tournee);
-        feuille.generateFeuilleDeRoute(1);
 
         double distanceTotale = 0;
         List<Chemin> chemins = tournee.getChemins();

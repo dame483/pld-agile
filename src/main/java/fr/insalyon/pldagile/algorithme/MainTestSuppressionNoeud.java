@@ -47,8 +47,7 @@ public class MainTestSuppressionNoeud {
 
                 // Génération de la feuille de route
                 FeuilleDeRoute feuille = new FeuilleDeRoute(tournee);
-                feuille.generateFeuilleDeRoute(1);
-                feuille.sauvegarderTournee();
+
 
                 double distanceTotale = 0;
                 List<Chemin> chemins = tournee.getChemins();
