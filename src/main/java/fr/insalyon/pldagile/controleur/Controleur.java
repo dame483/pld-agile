@@ -230,7 +230,6 @@ public class Controleur {
             }
 
 
-            // Appel du pattern Commande via l'état courant
             etatSuppression.supprimmerLivraison(this, idNoeudClique, idNoeudAssocie, vitesse);
 
             return ResponseEntity.ok(Map.of(
@@ -239,36 +238,50 @@ public class Controleur {
                     "tournee", etatSuppression.getTournee()
             ));
 
+
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of("message", "Erreur : " + e.getMessage()));
         }
     }
 
 
-    // --- Annuler la dernière commande ---
+
     @PostMapping("/annuler")
     public ResponseEntity<?> annuler() {
         try {
             this.annulerCommande();
-            return ResponseEntity.ok(Map.of(
-                    "message", "Annulation effectuée"
 
+            // Récupère la tournée actuelle après annulation
+            Tournee tourneeActuelle = null;
+            if (etatActuelle instanceof EtatSuppressionLivraison etatSupp) {
+                tourneeActuelle = etatSupp.getTournee();
+            }
+
+            return ResponseEntity.ok(Map.of(
+                    "message", "Annulation effectuée",
+                    "tournee", tourneeActuelle
             ));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(Map.of("message", "Erreur lors de l'annulation : " + e.getMessage()));
+            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         }
     }
 
-    // --- Refaire la dernière commande annulée ---
     @PostMapping("/restaurer")
     public ResponseEntity<?> restaurer() {
         try {
             this.restaurerCommande();
+
+            Tournee tourneeActuelle = null;
+            if (etatActuelle instanceof EtatSuppressionLivraison etatSupp) {
+                tourneeActuelle = etatSupp.getTournee();
+            }
+
             return ResponseEntity.ok(Map.of(
-                    "message", "Rétablissement effectué"
+                    "message", "Rétablissement effectué",
+                    "tournee", tourneeActuelle  // ← Retourne l'état après restauration
             ));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(Map.of("message", "Erreur lors du rétablissement : " + e.getMessage()));
+            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         }
     }
 

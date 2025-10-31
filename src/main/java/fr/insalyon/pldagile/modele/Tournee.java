@@ -22,6 +22,7 @@ public class Tournee {
         this.longueurTotale = longueurTotale;
     }
 
+
     public Livreur getLivreur() {
         return livreur;
     }
