@@ -87,7 +87,7 @@ public class EtatCarteChargee implements Etat {
     }
 
     @Override
-    public Object runCalculTournee(Controlleur c, int nombreLivreurs) {
+    public Object runCalculTournee(Controlleur c, int nombreLivreurs, double vitesse){
         System.err.println("Erreur : impossible de calculer une tournée sans demande de livraison.");
         return null;
     }
@@ -116,6 +116,8 @@ public class EtatCarteChargee implements Etat {
         return result;
     }
 
+    @Override
+    public void passerEnModeModification(Controlleur c, Tournee tournee){return;}
 
     @Override
     public String getName() {

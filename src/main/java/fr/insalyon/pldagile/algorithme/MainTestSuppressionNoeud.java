@@ -8,7 +8,7 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-public class MainTest {
+public class MainTestSuppressionNoeud {
 
     public static void main(String[] args) {
         try {
@@ -27,25 +27,27 @@ public class MainTest {
             double vitesse = 4.16; // m/s
             int nombreLivreurs = 1;
 
-            // Calcul des tournées pour tous les livreurs
+            // Calcul des tournées
             CalculTournees calculTournees = new CalculTournees(ville, demande, vitesse, nombreLivreurs, heureDepart);
-            System.out.println("\nCalcul des tournées...");
             List<Tournee> toutesLesTournees = calculTournees.calculerTournees();
-            System.out.println("Tournées calculées.\n");
+
+            // Suppression d’un noeud spécifique dans la première tournée
+            Tournee tournee = toutesLesTournees.get(0);
+
+            long idNoeudASupprimer = 208769457; // exemple : noeud DELIVERY à supprimer
+            ModificationTournee modifTournee = new ModificationTournee(new CalculChemins(ville), vitesse);
+            tournee = modifTournee.supprimerNoeud(tournee, idNoeudASupprimer);
 
             DateTimeFormatter formatHeure = DateTimeFormatter.ofPattern("HH:mm:ss");
 
             // Affichage des tournées et génération des feuilles de route
-            for (Tournee tournee : toutesLesTournees) {
                 Livreur livreur = tournee.getLivreur();
-                if (livreur == null) continue;
 
                 System.out.printf("=== Tournée livreur %d ===\n", livreur.getId());
 
                 // Génération de la feuille de route
                 FeuilleDeRoute feuille = new FeuilleDeRoute(tournee);
-                feuille.genererFeuilleDeRoute(1);
-                //feuille.sauvegarderTournee(1);
+
 
                 double distanceTotale = 0;
                 List<Chemin> chemins = tournee.getChemins();
@@ -87,9 +89,7 @@ public class MainTest {
                 NoeudDePassage entrepot = chemins.get(chemins.size() - 1).getNoeudDePassageArrivee();
                 System.out.printf("Heure de fin estimée : %s\n\n", entrepot.getHoraireArrivee().format(formatHeure));
                 //NoeudDePassage trouve = tournee.getNoeudParId(1679901320);
-               // System.out.print(trouve);
-            }
-
+                // System.out.print(trouve);
 
 
         } catch (Exception e) {

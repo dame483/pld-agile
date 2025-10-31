@@ -2,6 +2,7 @@ package fr.insalyon.pldagile.controleur;
 
 import fr.insalyon.pldagile.modele.Carte;
 import fr.insalyon.pldagile.modele.CarteParseurXML;
+import fr.insalyon.pldagile.modele.Tournee;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -83,8 +84,11 @@ public class EtatInitial implements Etat {
     }
 
     @Override
-    public Object runCalculTournee(Controlleur c, int nombreLivreurs) {
+    public Object runCalculTournee(Controlleur c, int nombreLivreurs, double vitesse) {
         return null;
     }
+
+    @Override
+    public void passerEnModeModification(Controlleur c, Tournee tournee){return;}
 
 }
