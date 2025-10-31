@@ -23,7 +23,7 @@ public class EtatTourneeCalcule implements Etat {
     }
 
     @Override
-    public Carte loadCarte(Controleur c, @RequestParam("file") MultipartFile file) {
+    public Carte loadCarte(Controlleur c, @RequestParam("file") MultipartFile file) {
         Carte newCarte = (Carte) uploadXML("carte", file, this.carte);
         if (newCarte != null) {
             c.setCurrentState(new EtatCarteChargee(newCarte));
@@ -35,7 +35,7 @@ public class EtatTourneeCalcule implements Etat {
     }
 
     @Override
-    public Object loadDemandeLivraison(Controleur c, @RequestParam("file") MultipartFile file, Carte carte) {
+    public Object loadDemandeLivraison(Controlleur c, @RequestParam("file") MultipartFile file, Carte carte) {
         Object dem = uploadXML("demande", file, this.carte);
         if (dem instanceof DemandeDeLivraison) {
             c.setCurrentState(new EtatDemandeLivraisonChargee(carte, (DemandeDeLivraison) dem));
@@ -45,7 +45,7 @@ public class EtatTourneeCalcule implements Etat {
     }
 
     @Override
-    public Object runCalculTournee(Controleur c, int nombreLivreurs, double vitesse) {
+    public Object runCalculTournee(Controlleur c, int nombreLivreurs, double vitesse) {
         try {
             LocalTime heureDepart = demande.getEntrepot().getHoraireDepart();
 
@@ -86,7 +86,7 @@ public class EtatTourneeCalcule implements Etat {
     }
 
     @Override
-    public Object creerFeuillesDeRoute(Controleur c) {
+    public Object creerFeuillesDeRoute(Controlleur c) {
         try {
             if (toutesLesTournees == null || toutesLesTournees.isEmpty()) {
                 return "Aucune tournée à générer.";
@@ -109,7 +109,7 @@ public class EtatTourneeCalcule implements Etat {
     }
 
     @Override
-    public Object saveTournee(Controleur c) {
+    public Object saveTournee(Controlleur c) {
         try {
             if (toutesLesTournees == null || toutesLesTournees.isEmpty()) {
                 return "Aucune tournée à sauvegarder.";
@@ -132,7 +132,7 @@ public class EtatTourneeCalcule implements Etat {
     }
 
     @Override
-    public Object loadTournee(Controleur c, MultipartFile file, Carte carte) {
+    public Object loadTournee(Controlleur c, MultipartFile file, Carte carte) {
         Object result = uploadXML("tournee", file, carte);
 
         if (result instanceof Tournee tournee) {
@@ -144,12 +144,12 @@ public class EtatTourneeCalcule implements Etat {
     }
 
     @Override
-    public void passerEnModeSuppression(Controleur c, Tournee tournee) {
+    public void passerEnModeModification(Controlleur c, Tournee tournee) {
         if (tournee == null) {
-            System.err.println("Erreur : aucune tournée fournie pour passer en mode suppression.");
+            System.err.println("Erreur : aucune tournée fournie pour passer en mode modification.");
             return;
         }
-        c.setCurrentState(new EtatSuppressionLivraison(carte, tournee));
+        c.setCurrentState(new EtatModificationTournee(carte, tournee));
     }
 
 

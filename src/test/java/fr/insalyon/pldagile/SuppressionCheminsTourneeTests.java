@@ -3,8 +3,6 @@ package fr.insalyon.pldagile;
 import fr.insalyon.pldagile.algorithme.CalculChemins;
 import fr.insalyon.pldagile.algorithme.CalculTournees;
 import fr.insalyon.pldagile.algorithme.ModificationTournee;
-import fr.insalyon.pldagile.controleur.Controleur;
-import fr.insalyon.pldagile.controleur.EtatSuppressionLivraison;
 import fr.insalyon.pldagile.modele.*;
 import org.junit.jupiter.api.Test;
 

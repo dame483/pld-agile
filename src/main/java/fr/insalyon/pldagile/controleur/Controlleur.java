@@ -2,7 +2,6 @@ package fr.insalyon.pldagile.controleur;
 
 import fr.insalyon.pldagile.modele.Carte;
 import fr.insalyon.pldagile.modele.DemandeDeLivraison;
-import fr.insalyon.pldagile.modele.Noeud;
 import fr.insalyon.pldagile.modele.Tournee;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,7 +14,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api")
 @CrossOrigin(origins = "*")
-public class Controleur {
+public class Controlleur {
 
     private Etat etatActuelle;
     private Carte carte;
@@ -24,7 +23,7 @@ public class Controleur {
     private double vitesse = 4.1;
 
 
-    public Controleur() {
+    public Controlleur() {
         this.etatActuelle = new EtatInitial();
         this.historique = new ListeDeCommandes();
     }
@@ -40,7 +39,7 @@ public class Controleur {
 
                 return ResponseEntity.ok(Map.of(
                         "message", " Carte chargée avec succès",
-                        "etatCourant", getCurrentState(),
+                        "etatCourant", getCurrentState().getName(),
                         "carte", newCarte
                 ));
             } else {
@@ -67,7 +66,7 @@ public class Controleur {
                 this.demande = demande; //
                 return ResponseEntity.ok(Map.of(
                         "message", "Demande chargée avec succès",
-                        "etatCourant", getCurrentState(),
+                        "etatCourant", getCurrentState().getName(),
                         "demande", demande
                 ));
             } else if (result instanceof Exception e) {
@@ -167,7 +166,7 @@ public class Controleur {
 
                 return ResponseEntity.ok(Map.of(
                         "message", "Tournées chargées avec succès",
-                        "etatCourant", getCurrentState(),
+                        "etatCourant", getCurrentState().getName(),
                         "tournees", toutesLesTournees
                 ));
             } else if (result instanceof Exception e) {
@@ -182,65 +181,76 @@ public class Controleur {
         }
     }
 
-    @PostMapping("/tournee/mode-suppression")
-    public ResponseEntity<?> passerEnModeSuppression(@RequestBody Tournee tourneeCible) {
+    @PostMapping("/tournee/mode-modification")
+    public ResponseEntity<?> passerEnModeModification(@RequestBody Tournee tourneeCible) {
         try {
-            if (tourneeCible == null) {
-                return ResponseEntity.badRequest().body("Aucune tournée fournie pour passer en mode suppression.");
-            }
+            if (tourneeCible == null)
+                return ResponseEntity.badRequest().body("Aucune tournée fournie.");
 
-            // On délègue la logique à l’état courant (EtatTourneeCalcule)
             if (etatActuelle instanceof EtatTourneeCalcule etatTourneeCalcule) {
-                etatTourneeCalcule.passerEnModeSuppression(this, tourneeCible);
+                etatTourneeCalcule.passerEnModeModification(this, tourneeCible);
                 return ResponseEntity.ok(Map.of(
-                        "message", "Passage en mode suppression effectué.",
-                        "etatCourant", getCurrentState()
+                        "message", "Passage en mode modification effectué.",
+                        "etatCourant", getCurrentState().getName()
                 ));
             } else {
-                return ResponseEntity.badRequest().body(
-                        "Impossible de passer en mode suppression depuis l'état actuel : " + getCurrentState()
-                );
+                return ResponseEntity.badRequest().body("Impossible depuis l'état actuel : " + getCurrentState());
             }
-
         } catch (Exception e) {
             return ResponseEntity.badRequest().body("Erreur : " + e.getMessage());
         }
     }
 
 
-    @DeleteMapping("/livraison/supprimer")
-    public ResponseEntity<?> supprimerLivraison(@RequestBody Map<String, Long> body) {
+    @PostMapping("/tournee/modifier")
+    public ResponseEntity<?> modifierTournee(@RequestBody Map<String, Object> body) {
         try {
-            Long idNoeudClique = body.get("idNoeudClique");
-            Long idNoeudAssocie = body.get("idNoeudAssocie");
+            String mode = (String) body.get("mode"); // "ajouter" ou "supprimer"
 
-            if (!(etatActuelle instanceof EtatSuppressionLivraison etatSuppression)) {
-                return ResponseEntity.badRequest()
-                        .body(Map.of("message", "Action impossible : l'application n'est pas en mode suppression."));
+            if (mode == null)
+                return ResponseEntity.badRequest().body(Map.of("message", "Le mode doit être précisé (ajouter/supprimer)."));
+
+            if (!(etatActuelle instanceof EtatModificationTournee etatModif))
+                return ResponseEntity.badRequest().body(Map.of("message", "L'application n'est pas en mode modification."));
+
+
+            if (mode.equalsIgnoreCase("supprimer")) {
+
+                Long idPickup = ((Number) body.get("idNoeudPickup")).longValue();
+                Long idDelivery = ((Number) body.get("idNoeudDelivery")).longValue();
+
+                etatModif.modifierTournee(this, mode, Map.of(
+                        "idNoeudPickup", idPickup,
+                        "idNoeudDelivery", idDelivery
+                ), vitesse);
+
+            } else if (mode.equalsIgnoreCase("ajouter")) {
+
+                Long idPickup = ((Number) body.get("idNoeudPickup")).longValue();
+                Long idDelivery = ((Number) body.get("idNoeudDelivery")).longValue();
+                Long idPrecedentPickup = ((Number) body.get("idPrecedentPickup")).longValue();
+                Long idPrecedentDelivery = ((Number) body.get("idPrecedentDelivery")).longValue();
+
+                etatModif.modifierTournee(this, mode, Map.of(
+                        "idNoeudPickup", idPickup,
+                        "idNoeudDelivery", idDelivery,
+                        "idPrecedentPickup", idPrecedentPickup,
+                        "idPrecedentDelivery", idPrecedentDelivery
+                ), vitesse);
+
+            } else {
+                return ResponseEntity.badRequest().body(Map.of("message", "Mode inconnu : " + mode));
             }
 
-            if (idNoeudClique == null || idNoeudAssocie == null) {
-                return ResponseEntity.badRequest()
-                        .body(Map.of("message", "Identifiants de nœuds manquants."));
-            }
-
-            if (idNoeudClique.equals(idNoeudAssocie)) {
-                return ResponseEntity.badRequest()
-                        .body(Map.of("message", "Les nœuds de pickup et de livraison doivent être différents."));
-            }
-
-
-            etatSuppression.supprimmerLivraison(this, idNoeudClique, idNoeudAssocie, vitesse);
 
             return ResponseEntity.ok(Map.of(
-                    "message", "Livraison supprimée avec succès.",
-                    "etatCourant", getCurrentState(),
-                    "tournee", etatSuppression.getTournee()
+                    "message", "Opération effectuée : " + mode,
+                    "tournee", etatModif.getTournee(),
+                    "etatCourant", getCurrentState().getName()
             ));
 
-
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(Map.of("message", "Erreur : " + e.getMessage()));
+            return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         }
     }
 
@@ -253,7 +263,7 @@ public class Controleur {
 
             // Récupère la tournée actuelle après annulation
             Tournee tourneeActuelle = null;
-            if (etatActuelle instanceof EtatSuppressionLivraison etatSupp) {
+            if (etatActuelle instanceof EtatModificationTournee etatSupp) {
                 tourneeActuelle = etatSupp.getTournee();
             }
 
@@ -272,7 +282,7 @@ public class Controleur {
             this.restaurerCommande();
 
             Tournee tourneeActuelle = null;
-            if (etatActuelle instanceof EtatSuppressionLivraison etatSupp) {
+            if (etatActuelle instanceof EtatModificationTournee etatSupp) {
                 tourneeActuelle = etatSupp.getTournee();
             }
 
@@ -305,8 +315,8 @@ public class Controleur {
         this.etatActuelle = etat;
     }
 
-    public String getCurrentState() {
-        return etatActuelle.getName();
+    public Etat getCurrentState() {
+        return etatActuelle;
     }
 
     public Carte getCarte() {
