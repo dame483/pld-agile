@@ -114,10 +114,9 @@ public class ModificationControleurTest {
         }
 
         Livreur livreur = tournee.getLivreur();
+
         System.out.printf("=== Tournée livreur %d ===\n", livreur.getId());
 
-        // Génération de la feuille de route (optionnel si tu veux juste afficher)
-        FeuilleDeRoute feuille = new FeuilleDeRoute(tournee);
 
         double distanceTotale = 0;
         List<Chemin> chemins = tournee.getChemins();
