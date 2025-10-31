@@ -55,79 +55,49 @@ async function uploadCarte(file){
         demandeData = null;
 
         drawCarte(carteData);
-
-        const colisButton = document.querySelector('.navbar-item img[alt="Ajouter une demande de livraison"]');
-        const mapButton = document.querySelector('.navbar-item img[alt="Ajouter une carte"]');
-
-        mapButton.style.filter = "";
-        colisButton.style.filter = "drop-shadow(0 0 10px rgba(225,225,0,1))";
-        colisButton.src = "tools/colis-logo-white.png";
-        colisButton.style.cursor = "pointer";
-
-        document.getElementById('welcome-message').style.display = "none";
-        document.getElementById('carte-chargee-message').style.display = "flex";
-        document.getElementById('livraisons').style.display = "none";
-        tableau = document.getElementById('tableauDemandes');
-        tableau.style.display = "none";
-        tableau.innerHTML = "";
-        document.getElementById('tournee-chargee').style.display = "none";
-
-        // vider les layers de livraisons / entrepôt / tournée / numéros
-        if (livraisonsLayer) livraisonsLayer.clearLayers();
-        if (entrepotLayer) entrepotLayer.clearLayers();
-        if (window.tourneeLayer) window.tourneeLayer.clearLayers();
-        if (window.directionNumbersLayer) window.directionNumbersLayer.clearLayers();
-
-        // arrêter et enlever l'animation si présente
-        stopAnimation();
-        if (animControl) { map.removeControl(animControl); animControl = null; }
-        animPath = []; isAnimating = false; isPaused = false;
-
-        // 4) activer/désactiver l'input demande selon le nouvel état renvoyé (optionnel)
-        // si le backend renvoie "Etat Carte Chargee", on garde le champ demande activé
-        if (res.etatCourant && res.etatCourant.toLowerCase().includes("carte")) {
-            document.getElementById('xmlDemande').disabled = false;
-            document.getElementById('fileNameCarte').style.display = "inline";
-        } else {
-            document.getElementById('xmlDemande').disabled = true;
-            document.getElementById('fileNameCarte').style.display = "none";
-        }
+        resetCarte();
+        await updateUIFromEtat();
     }catch(err){
         alert(err.message);
     }
 }
 
 async function uploadDemande(file){
-    if(!carteData){alert("Charger le plan XML d'abord."); return;}
+    if(!carteData){
+        alert("Charger le plan XML d'abord.");
+        return;
+    }
     const formData=new FormData();
     formData.append("file",file);
     try{
         const response=await fetch("http://localhost:8080/api/upload-demande",{method:"POST",body:formData});
-        if(!response.ok){alert(await response.text());return;}
+        if(!response.ok){
+            alert(await response.text());
+            return;
+        }
         const res=await response.json();
         demandeData = res.demande;
         document.getElementById('nbLivreurs').max = demandeData.livraisons.length || 1;
-        document.getElementById('livraisons').style.display = "inline";
         drawLivraisons(demandeData);
         drawEntrepot(demandeData.entrepot);
-
-        const colisButton = document.querySelector('.navbar-item img[alt="Ajouter une demande de livraison"]');
-        colisButton.style.filter = "";
-
-        const fileNameCarte = document.getElementById('fileNameCarte');
-        fileNameCarte.style.display = "none";
-        const fileNameDemande = document.getElementById('fileNameDemande');
-        fileNameDemande.style.display = "inline";
-        document.getElementById('carte-chargee-message').style.display = "none";
-        document.getElementById('calcul-tournee').style.display = "flex";
-        document.getElementById('tournee-chargee').style.display = "none";
-
+        await updateUIFromEtat();
     }catch(err){
         alert(err.message);
     }
 }
 
 // AFFICHAGE CARTE ET DEMANDES
+
+function resetCarte(){
+    if (livraisonsLayer) livraisonsLayer.clearLayers();
+    if (entrepotLayer) entrepotLayer.clearLayers();
+    if (window.tourneeLayer) window.tourneeLayer.clearLayers();
+    if (window.directionNumbersLayer) window.directionNumbersLayer.clearLayers();
+
+    stopAnimation();
+    if (animControl) { map.removeControl(animControl); animControl = null; }
+    animPath = []; isAnimating = false; isPaused = false;
+}
 
 function drawCarte(carte) {
     const n = carte.noeuds || {};
@@ -243,24 +213,24 @@ function addLegend(){
 // TOURNEES
 
 async function calculTournee(nombreLivreurs = 1){
-    if(!carteData || !demandeData){ alert("Charger la carte et la demande d'abord."); return; }
+    if(!carteData || !demandeData){
+        alert("Charger la carte et la demande d'abord.");
+        return;
+    }
     const r = await fetch(`http://localhost:8080/api/tournee/calculer?nombreLivreurs=${nombreLivreurs}`, { method:"POST" });
-    if(!r.ok){ alert(await r.text()); return; }
+    if(!r.ok){
+        alert(await r.text());
+        return;
+    }
     const toutesLesTournees = await r.json();
 
-    resetTournee(); // nettoie l'ancienne animation et polylignes
-
-    // Dessiner chaque tournée avec une couleur différente
+    resetTournee();
     toutesLesTournees.tournees.forEach((tournee, i) => {
         const color = colors[i % colors.length];
         drawTournee(tournee, color, i);
     });
     addAnimationButton();
-    document.getElementById('tableauDemandes').style.display = "none";
-    document.getElementById('livraisons').style.display = "none";
-    document.getElementById('calcul-tournee').style.display = "none";
-
-    document.getElementById('tournee-chargee').style.display = "inline";
+    await updateUIFromEtat();
 }
 
 function resetTournee(){
@@ -452,22 +422,64 @@ function addAnimationButton() {
     animControl.addTo(map);
 }
 
+// AFFICHAGE GLOBAL
+
+async function updateUIFromEtat() {
+    try {
+        const res = await fetch("http://localhost:8080/api/etat");
+        if(!res.ok) return;
+        const data = await res.json();
+
+        document.getElementById('welcome-message').style.display = "none";
+        document.getElementById('carte-chargee-message').style.display = "none";
+        document.getElementById('livraisons').style.display = "none";
+        document.getElementById('tableauDemandes').style.display = "none";
+        document.getElementById('tableauDemandes').innerHTML = "";
+        document.getElementById('tournee-chargee').style.display = "none";
+        document.getElementById('calcul-tournee').style.display = "none";
+        document.getElementById('fileNameCarte').style.display = "none";
+        document.getElementById('fileNameDemande').style.display = "none";
+        document.getElementById('xmlDemande').disabled = false;
+        document.querySelector('.navbar-item img[alt="Ajouter une demande de livraison"]').style.filter = "";
+        document.querySelector('.navbar-item img[alt="Ajouter une carte"]').style.filter = "";
+        document.querySelector('.navbar-item img[alt="Ajouter une demande de livraison"]').src = "tools/colis-logo-white.png";
+        document.querySelector('.navbar-item img[alt="Ajouter une demande de livraison"]').style.cursor = "pointer";
+
+        if(data.etat === "Etat Initial") {
+            document.getElementById('welcome-message').style.display = "flex";
+            document.querySelector('.navbar-item img[alt="Ajouter une carte"]').style.filter = "drop-shadow(0 0 10px rgba(225,225,0,1))";
+            document.querySelector('.navbar-item img[alt="Ajouter une demande de livraison"]').src = "tools/colis-logo-gray.png";
+            document.querySelector('.navbar-item img[alt="Ajouter une demande de livraison"]').style.cursor = "not-allowed";
+            document.getElementById('xmlDemande').disabled = true;
+        } else if(data.tourneeChargee) {
+            document.getElementById('tournee-chargee').style.display = "inline";
+        } else if(data.demandeChargee) {
+            document.getElementById('livraisons').style.display = "inline";
+            document.getElementById('fileNameDemande').style.display = "inline";
+            document.getElementById('calcul-tournee').style.display = "flex";
+        } else if (data.carteChargee) {
+            document.getElementById('carte-chargee-message').style.display = "flex";
+            document.getElementById('fileNameCarte').style.display = "inline";
+            document.querySelector('.navbar-item img[alt="Ajouter une demande de livraison"]').style.filter = "drop-shadow(0 0 10px rgba(225,225,0,1))";
+        }
+
+    } catch(err){
+        console.error(err);
+    }
+}
+
 // GESTION DES CLICS
 
-document.addEventListener('DOMContentLoaded',()=>{
-    const inputCarte = document.getElementById('xmlCarte');
-    const inputDemande = document.getElementById('xmlDemande');
+document.addEventListener('DOMContentLoaded',async () => {
+    await updateUIFromEtat();
 
-    const mapButton = document.querySelector('.navbar-item img[alt="Ajouter une carte"]');
-    const colisButton = document.querySelector('.navbar-item img[alt="Ajouter une demande de livraison"]');
-
-    mapButton.style.filter = "drop-shadow(0 0 10px rgba(225,225,0,1))";
-    mapButton.addEventListener('click', () => {
-        inputCarte.click();
+    document.querySelector('.navbar-item img[alt="Ajouter une carte"]').addEventListener('click', () => {
+        document.getElementById('xmlCarte').click();
     });
-    colisButton.addEventListener('click', () => {
-        if (!inputDemande.disabled) {
-            inputDemande.click();
+
+    document.querySelector('.navbar-item img[alt="Ajouter une demande de livraison"]').addEventListener('click', () => {
+        if (!document.getElementById('xmlDemande').disabled) {
+            document.getElementById('xmlDemande').click();
         }
     });
 
@@ -476,14 +488,13 @@ document.addEventListener('DOMContentLoaded',()=>{
         await calculTournee(nbLivreurs);
     });
 
-
-    document.getElementById('xmlCarte').addEventListener('change', function() {
+    document.getElementById('xmlCarte').addEventListener('change', function () {
         const file = this.files[0];
         document.getElementById('fileNameCarte').textContent = file ? `Affichage de ${file.name}` : "";
         if (file) uploadCarte(file);
     });
 
-    document.getElementById('xmlDemande').addEventListener('change', function() {
+    document.getElementById('xmlDemande').addEventListener('change', function () {
         const file = this.files[0];
         document.getElementById('fileNameDemande').textContent = file ? `Affichage de ${file.name}` : "";
         if (file) uploadDemande(file);
@@ -493,41 +504,30 @@ document.addEventListener('DOMContentLoaded',()=>{
         const confirmReset = confirm("Voulez-vous vraiment revenir à la page d’accueil ? Toutes les données chargées seront perdues.");
 
         if (confirmReset) {
-            carteData = null;
-            demandeData = null;
-            livraisonsLayer = null;
-            entrepotLayer = null;
-            window.tronconsLayer = null;
-            window.tourneeLayer = null;
-            window.directionNumbersLayer = null;
-            if (map) {
-                map.remove();
-                map = null;
-            }
+            fetch("http://localhost:8080/api/reset", {method: "POST"})
+                .then(response => response.json())
+                .then(async data => {
+                    console.log(data.message || "Application réinitialisée.");
 
-            document.getElementById('xmlCarte').value = "";
-            document.getElementById('xmlDemande').value = "";
-            document.getElementById('xmlDemande').disabled = true;
+                    carteData = null;
+                    demandeData = null;
+                    livraisonsLayer = null;
+                    entrepotLayer = null;
+                    window.tronconsLayer = null;
+                    window.tourneeLayer = null;
+                    window.directionNumbersLayer = null;
 
-            document.getElementById('fileNameCarte').style.display = "none";
-            document.getElementById('fileNameDemande').style.display = "none";
-            document.getElementById('carte-chargee-message').style.display = "none";
-            document.getElementById('welcome-message').style.display = "flex";
+                    if (map) {
+                        map.remove();
+                        map = null;
+                    }
 
-            tableau = document.getElementById('tableauDemandes');
-            tableau.style.display = "none";
-            tableau.innerHTML = "";
-
-            const mapButton = document.querySelector('.navbar-item img[alt="Ajouter une carte"]');
-            const colisButton = document.querySelector('.navbar-item img[alt="Ajouter une demande de livraison"]');
-
-            mapButton.style.filter = "drop-shadow(0 0 10px rgba(225,225,0,1))";
-            colisButton.src = "tools/colis-logo-gray.png";
-            colisButton.style.filter = "";
-            colisButton.style.cursor = "default";
-
-            document.getElementById('calcul-tournee').style.display = "none";
-            document.getElementById('tournee-chargee').style.display = "none";
+                    await updateUIFromEtat();
+                })
+                .catch(err => {
+                    console.error("Erreur lors de la réinitialisation :", err);
+                    alert("Erreur lors de la réinitialisation du serveur.");
+                });
         }
     });
 
@@ -543,42 +543,41 @@ document.addEventListener('DOMContentLoaded',()=>{
         document.getElementById("inputTournee").click();
     });
 
+    document.querySelectorAll('.navbar-item img').forEach(img => {
+        img.title = img.alt;
+    });
 
-    document.getElementById("inputTournee").addEventListener("change", (event) => {
+    document.getElementById("inputTournee").addEventListener("change", async (event) => {
         const file = event.target.files[0];
         if (!file) return;
 
         const formData = new FormData();
         formData.append("file", file);
 
-        fetch("http://localhost:8080/api/upload-tournee", {
-            method: "POST",
-            body: formData
-        })
-            .then(async (response) => {
-                const data = await response.json().catch(() => ({}));
-
-                if (response.ok) {
-                    const tournees = data.tournees || [];
-                    tournees.forEach((t, i) => {
-                        const color = colors[i % colors.length];
-                        drawTournee(t, color);
-                    });
-                    document.getElementById('welcome-message').style.display = "none";
-                    document.getElementById('tableauDemandes').style.display = "none";
-                    document.getElementById('livraisons').style.display = "none";
-                    document.getElementById('calcul-tournee').style.display = "none";
-                    document.getElementById('fileNameCarte').style.display = "none";
-                    document.getElementById('carte-chargee-message').style.display = "none";
-                    document.getElementById('tournee-chargee').style.display = "inline";
-                } else {
-                    console.error("Erreur serveur :", data);
-                    alert(data.message || "Erreur lors du chargement de la tournée");
-                }
-            })
-            .catch((err) => {
-                console.error("Erreur fetch :", err);
-                alert("Erreur réseau lors du chargement de la tournée");
+        try {
+            const response = await fetch("http://localhost:8080/api/upload-tournee", {
+                method: "POST",
+                body: formData
             });
+
+            const data = await response.json();
+
+            if (response.ok && data.status === "ok") {
+                const tournees = data.tournees || [];
+                tournees.forEach((t, i) => {
+                    const color = colors[i % colors.length];
+                    drawTournee(t, color);
+                });
+
+                demandeData = null;
+                await updateUIFromEtat();
+            } else {
+                console.error("Erreur serveur :", data.message);
+                alert(data.message);
+            }
+        } catch (err) {
+            console.error("Erreur fetch :", err);
+            alert("Erreur réseau lors du chargement de la tournée");
+        }
     });
 });
