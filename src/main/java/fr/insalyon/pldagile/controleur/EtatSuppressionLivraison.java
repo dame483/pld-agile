@@ -1,6 +1,8 @@
 package fr.insalyon.pldagile.controleur;
 
+import fr.insalyon.pldagile.exception.XMLFormatException;
 import fr.insalyon.pldagile.modele.*;
+import fr.insalyon.pldagile.sortie.parseurTourneeJson;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -18,16 +20,21 @@ public class EtatSuppressionLivraison implements Etat{
     }
 
     @Override
-    public Carte loadCarte(Controlleur c,@RequestParam("file") MultipartFile file )
-    {
-        Carte carte=(Carte)uploadXML("carte", file,this.carte);
-        if(carte==null )
-        {
-            c.setCurrentState(new EtatInitial());
-            return carte;
-        }
+    public Carte loadCarte(Controlleur c, MultipartFile file) throws XMLFormatException {
+        Object result = uploadXML("carte", file, null);
 
-        return carte;
+        if (result instanceof Carte carte) {
+            c.setCurrentState(new EtatCarteChargee(carte));
+            return carte;
+        } else if (result instanceof Exception e) {
+            if (e instanceof XMLFormatException xmlEx) {
+                throw xmlEx;
+            } else {
+                throw new XMLFormatException("Erreur lors du chargement de la carte : " + e.getMessage());
+            }
+        } else {
+            throw new XMLFormatException("Fichier XML invalide ou carte non chargée.");
+        }
     }
 
     @Override
@@ -63,46 +70,47 @@ public class EtatSuppressionLivraison implements Etat{
 
 
     @Override
-    public Object uploadXML(String type, MultipartFile file, Carte carte) {
+    public Object uploadXML(String type, MultipartFile file, Carte carte) throws XMLFormatException {
         if (file == null || file.isEmpty()) {
-            System.err.println("Le fichier est vide ou nul.");
-            return null;
+            throw new XMLFormatException("Le fichier est vide ou nul.");
         }
 
         File tempFile = null;
         try {
-
             tempFile = File.createTempFile(type + "-", ".xml");
             file.transferTo(tempFile);
 
             System.out.println("Fichier temporaire créé : " + tempFile.getAbsolutePath());
-
             Object result;
 
-            if ("carte".equalsIgnoreCase(type)) {
+            switch (type.toLowerCase()) {
+                case "carte":
+                    result = CarteParseurXML.loadFromFile(tempFile);
+                    break;
 
-                Carte parsedCarte = CarteParseurXML.loadFromFile(tempFile);
-                result = parsedCarte;
-            } else {
+                case "demande":
+                    result = DemandeDeLivraisonParseurXML.loadFromFile(tempFile, this.carte);
+                    break;
 
-                DemandeDeLivraison parsedDemande = DemandeDeLivraisonParseurXML.loadFromFile(tempFile, this.carte);
-                System.out.println(parsedDemande);
-                result = parsedDemande;
+                case "tournee":
+                    result = parseurTourneeJson.parseurTournee(tempFile.getAbsolutePath());
+                    break;
+
+                default:
+                    throw new XMLFormatException("Type de fichier non reconnu : " + type);
             }
 
             return result;
 
-        } catch (Exception e) {
-            System.err.println("Erreur lors du chargement XML : " + e.getMessage());
-            e.printStackTrace();
-            return e;
-        } finally {
+        } catch (XMLFormatException e) {
+            throw e;
 
-            if (tempFile != null && tempFile.exists()) {
-                boolean deleted = tempFile.delete();
-                if (!deleted) {
-                    System.err.println("Impossible de supprimer le fichier temporaire : " + tempFile.getAbsolutePath());
-                }
+        } catch (Exception e) {
+            throw new XMLFormatException("Erreur lors du chargement du fichier XML/JSON : " + e.getMessage(), e);
+
+        } finally {
+            if (tempFile != null && tempFile.exists() && !tempFile.delete()) {
+                System.err.println("Impossible de supprimer le fichier temporaire : " + tempFile.getAbsolutePath());
             }
         }
     }
@@ -123,13 +131,23 @@ public class EtatSuppressionLivraison implements Etat{
     public Object loadTournee(Controlleur c, MultipartFile file, Carte carte) {
         Object result = uploadXML("tournee", file, carte);
 
-        if (result instanceof List<?> liste && !liste.isEmpty() && liste.get(0) instanceof Tournee) {
-            List<Tournee> toutesLesTournees = (List<Tournee>) liste;
-            c.setCurrentState(new EtatTourneeCalcule(carte, null, toutesLesTournees));
-            return toutesLesTournees;
+        if (result instanceof Exception e) {
+            return e;
         }
 
-        return result;
+        List<Tournee> toutesLesTournees;
+
+        if (result instanceof Tournee tournee) {
+            toutesLesTournees = List.of(tournee);
+        } else if (result instanceof List<?> liste && !liste.isEmpty() && liste.get(0) instanceof Tournee) {
+            toutesLesTournees = (List<Tournee>) liste;
+        } else {
+            return new Exception("Fichier JSON invalide ou format incorrect");
+        }
+
+        c.setCurrentState(new EtatTourneeCalcule(carte, null, toutesLesTournees));
+
+        return toutesLesTournees;
     }
 
 

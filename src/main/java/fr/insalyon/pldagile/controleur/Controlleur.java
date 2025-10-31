@@ -1,5 +1,6 @@
 package fr.insalyon.pldagile.controleur;
 
+import fr.insalyon.pldagile.exception.XMLFormatException;
 import fr.insalyon.pldagile.modele.Carte;
 import fr.insalyon.pldagile.modele.DemandeDeLivraison;
 import fr.insalyon.pldagile.modele.Tournee;
@@ -42,10 +43,12 @@ public class Controlleur {
                 return ResponseEntity.badRequest().body("Erreur : carte non chargée");
             }
 
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Exception : " + e.getMessage());
         }
-
+        catch (XMLFormatException e) {
+            return ResponseEntity.badRequest().body("Erreur : fichier XML mal formaté.");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Erreur inattendue : " + e.getMessage());
+        }
     }
 
 
@@ -150,7 +153,10 @@ public class Controlleur {
     public ResponseEntity<?> loadTournee(@RequestParam("file") MultipartFile file) {
         try {
             if (this.carte == null) {
-                return ResponseEntity.badRequest().body("Veuillez d'abord charger une carte avant la tournée !");
+                return ResponseEntity.badRequest().body(Map.of(
+                        "status", "error",
+                        "message", "Veuillez d'abord charger une carte avant la tournée !"
+                ));
             }
 
             Object result = etatActuelle.loadTournee(this, file, this.carte);
@@ -161,20 +167,59 @@ public class Controlleur {
                 this.etatActuelle = new EtatTourneeCalcule(this.carte, this.demande, toutesLesTournees);
 
                 return ResponseEntity.ok(Map.of(
+                        "status", "ok",
                         "message", "Tournées chargées avec succès",
                         "etatCourant", getCurrentState(),
                         "tournees", toutesLesTournees
                 ));
-            } else if (result instanceof Exception e) {
-                return ResponseEntity.badRequest().body("Erreur : " + e.getMessage());
-            } else {
-                return ResponseEntity.badRequest().body("Erreur inconnue lors du chargement des tournées");
+            }
+
+            else if (result instanceof Exception e) {
+                return ResponseEntity.badRequest().body(Map.of(
+                        "status", "error",
+                        "message", "Erreur : " + e.getMessage()
+                ));
+            }
+            else {
+                return ResponseEntity.badRequest().body(Map.of(
+                        "status", "error",
+                        "message", "Erreur inconnue lors du chargement des tournées"
+                ));
             }
 
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.badRequest().body("Exception : " + e.getMessage());
+            return ResponseEntity.badRequest().body(Map.of(
+                    "status", "error",
+                    "message", "Exception inattendue : " + e.getMessage()
+            ));
         }
+    }
+
+    @PostMapping("/reset")
+    public ResponseEntity<?> resetApplication() {
+        try {
+            this.carte = null;
+            this.demande = null;
+            this.etatActuelle = new EtatInitial();
+
+            return ResponseEntity.ok(Map.of(
+                    "message", "Application réinitialisée avec succès.",
+                    "etatCourant", getCurrentState()
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Erreur lors de la réinitialisation : " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/etat")
+    public ResponseEntity<?> getEtatActuel() {
+        return ResponseEntity.ok(Map.of(
+                "etat", etatActuelle.getName(),
+                "carteChargee", carte != null,
+                "demandeChargee", demande != null,
+                "tourneeChargee", etatActuelle instanceof EtatTourneeCalcule
+        ));
     }
 
     public void setCurrentState(Etat etat) {

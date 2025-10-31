@@ -1,5 +1,6 @@
 package fr.insalyon.pldagile.controleur;
 
+import fr.insalyon.pldagile.exception.XMLFormatException;
 import fr.insalyon.pldagile.modele.Carte;
 import fr.insalyon.pldagile.modele.CarteParseurXML;
 import org.springframework.stereotype.Component;
@@ -13,15 +14,20 @@ public class EtatInitial implements Etat {
     public EtatInitial() {}
 
     @Override
-    public Carte loadCarte(Controlleur c, MultipartFile file) {
-        Carte carte = (Carte) uploadXML("carte", file, null);
+    public Carte loadCarte(Controlleur c, MultipartFile file) throws XMLFormatException {
+        Object result = uploadXML("carte", file, null);
 
-        if (carte != null) {
+        if (result instanceof Carte carte) {
             c.setCurrentState(new EtatCarteChargee(carte));
             return carte;
+        } else if (result instanceof Exception e) {
+            if (e instanceof XMLFormatException xmlEx) {
+                throw xmlEx;
+            } else {
+                throw new XMLFormatException("Erreur lors du chargement de la carte : " + e.getMessage());
+            }
         } else {
-            System.err.println("Erreur : carte non chargée");
-            return null;
+            throw new XMLFormatException("Fichier XML invalide ou carte non chargée.");
         }
     }
 
@@ -32,10 +38,9 @@ public class EtatInitial implements Etat {
     }
 
     @Override
-    public Object uploadXML(String type, MultipartFile file, Carte carte) {
+    public Object uploadXML(String type, MultipartFile file, Carte carte) throws XMLFormatException {
         if (file == null || file.isEmpty()) {
-            System.err.println("Fichier vide !");
-            return null;
+            throw new XMLFormatException("Fichier vide ou non sélectionné !");
         }
 
         File tempFile = null;
@@ -43,39 +48,39 @@ public class EtatInitial implements Etat {
             tempFile = File.createTempFile(type + "-", ".xml");
             file.transferTo(tempFile);
 
-            Carte result = CarteParseurXML.loadFromFile(tempFile);
-            return result;
+            return CarteParseurXML.loadFromFile(tempFile);
 
+        } catch (XMLFormatException e) {
+            throw e;
         } catch (Exception e) {
-            e.printStackTrace();
-            return e;
+            throw new XMLFormatException("Erreur inattendue lors du chargement XML : " + e.getMessage());
         } finally {
             if (tempFile != null && tempFile.exists()) {
                 boolean deleted = tempFile.delete();
                 if (!deleted) {
-                    System.err.println("⚠Impossible de supprimer le fichier temporaire");
+                    System.err.println("⚠ Impossible de supprimer le fichier temporaire");
                 }
             }
         }
     }
 
+
     @Override
     public Object creerFeuillesDeRoute(Controlleur c) {
-        System.err.println("Erreur : impossible de créer une feuille de route avant le calcul de la tournée.");
-        return null;
+        throw new IllegalStateException("Erreur : impossible de créer une feuille de route avant le calcul de la tournée.");
     }
 
     @Override
     public Object saveTournee(Controlleur c) {
-        System.err.println("Erreur : impossible de sauvegarder une tournée avant son calcul.");
-        return null;
+        throw new IllegalStateException("Impossible de sauvegarder une tournée qui n'a pas été calculé.");
     }
+
 
     @Override
     public Object loadTournee(Controlleur c, MultipartFile file, Carte carte) {
-        System.err.println("Erreur : impossible de charger une tournée avant de charger une carte associée.");
-        return null;
+        throw new IllegalStateException("Impossible de charger une tournée sans carte préalablement chargée.");
     }
+
 
     @Override
     public String getName() {
