@@ -42,14 +42,14 @@ public class ParsingTourneeJsonTest {
         List<Tournee> tourneeList = calculTournee.calculerTournees();
 
         //Parsing de la tournée
-        SauvegarderTournee sauvegarderTournee = new SauvegarderTournee(tourneeList);
+        SauvegarderTournee sauvegarderTournee = new SauvegarderTournee(tourneeList, ville);
         sauvegarderTournee.sauvegarderTournee();
         parseurTourneeJson parseurJson = new parseurTourneeJson();
         for (int i = 0; i < tourneeList.size(); i++) {
-            Tournee tourneeParseur = parseurJson.parseurTournee("src/main/java/fr/insalyon/pldagile/sortie/tourneeJson/sauvegardeTourne" + (i + 1) + ".json");
-            assertEquals(tourneeList.get(i).getChemins().size(), tourneeParseur.getChemins().size(), "La tournée parsée doit etre identique que la tournée initiale en chemins");
-            assertEquals(tourneeList.get(i).getDureeTotale(), tourneeParseur.getDureeTotale(),"les tournées doivent etre identiques en terme de durée totale");
-            assertEquals(tourneeList.get(i).getLongueurTotale(), tourneeParseur.getLongueurTotale(), "les distances totales doivernt etre identiques");
+            List<Tournee> tourneeParseur = parseurJson.parseurTournee("src/main/java/fr/insalyon/pldagile/sortie/tourneeJson/sauvegardeTourne.json");
+            assertEquals(tourneeList.get(i).getChemins().size(), tourneeParseur.get(i).getChemins().size(), "La tournée parsée doit etre identique que la tournée initiale en chemins");
+            assertEquals(tourneeList.get(i).getDureeTotale(), tourneeParseur.get(i).getDureeTotale(),"les tournées doivent etre identiques en terme de durée totale");
+            assertEquals(tourneeList.get(i).getLongueurTotale(), tourneeParseur.get(i).getLongueurTotale(), "les distances totales doivernt etre identiques");
         }
 
 
