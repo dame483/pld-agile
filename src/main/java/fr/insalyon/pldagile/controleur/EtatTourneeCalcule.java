@@ -2,6 +2,7 @@ package fr.insalyon.pldagile.controleur;
 
 import fr.insalyon.pldagile.algorithme.CalculTournees;
 import fr.insalyon.pldagile.modele.*;
+import fr.insalyon.pldagile.sortie.SauvegarderTournee;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
@@ -96,7 +97,7 @@ public class EtatTourneeCalcule implements Etat {
             for (int i = 0; i < toutesLesTournees.size(); i++) {
                 Tournee t = toutesLesTournees.get(i);
                 FeuilleDeRoute feuille = new FeuilleDeRoute(t);
-                feuille.generateFeuilleDeRoute(i);
+                feuille.genererFeuilleDeRoute(i);
 
                 System.out.println("Feuille de route créée pour la tournée #" + (i + 1));
             }
@@ -115,14 +116,9 @@ public class EtatTourneeCalcule implements Etat {
             if (toutesLesTournees == null || toutesLesTournees.isEmpty()) {
                 return "Aucune tournée à sauvegarder.";
             }
-
-            for (int i = 0; i < toutesLesTournees.size(); i++) {
-                Tournee t = toutesLesTournees.get(i);
-                FeuilleDeRoute feuille = new FeuilleDeRoute(t);
-                feuille.sauvegarderTournee();
-
-                System.out.println("Tournée #" + (i + 1) + " sauvegardée avec succès !");
-            }
+            SauvegarderTournee sauvegarderTournee = new SauvegarderTournee(toutesLesTournees, c.getCarte());
+            sauvegarderTournee.sauvegarderTournee();
+            System.out.println("Tournées sauvegardées avec succès !");
 
             return "Toutes les tournées ont été sauvegardées avec succès.";
 
