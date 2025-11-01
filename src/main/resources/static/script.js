@@ -7,6 +7,7 @@ let livraisonsLayer=null, entrepotLayer=null;
 let animTimer=null, courierMarker=null, animPath= {};
 let animControl=null, isAnimating=false, isPaused=false;
 let animSpeed=8, animSamples=[], animIndex=0;
+window.toutesLesTournees = [];
 
 const colors=[
     '#e6194b','#3cb44b','#ffe119','#4363d8','#f58231','#911eb4','#46f0f0',
@@ -42,6 +43,26 @@ function samplePathMeters(path, stepM){
     return out;
 }
 
+function formatHoraireFourchette(horaire, deltaMinutes = 30) {
+    if (!horaire) return "";
+
+    const [h, m] = horaire.split(":").map(Number);
+    const total = h * 60 + m;
+
+    const arrondi30 = m => Math.round(m / 30) * 30;
+    const min = Math.max(0, arrondi30(total - Math.floor(deltaMinutes/2)));
+    const max = Math.min(24 * 60, arrondi30(total + Math.floor(deltaMinutes/2)));
+
+    const format = t => {
+        const hh = String(Math.floor(t / 60)).padStart(2, '0');
+        const mm = String(t % 60).padStart(2, '0');
+        return `${hh}:${mm}`;
+    };
+
+    return `${format(min)}-${format(max)}`;
+}
+
+
 // CHARGEMENT
 
 async function uploadCarte(file){
@@ -52,10 +73,8 @@ async function uploadCarte(file){
         if(!response.ok){alert(await response.text());return;}
         const res=await response.json();
         carteData = res.carte;
-        demandeData = null;
-
+        resetLivraisons();
         drawCarte(carteData);
-        resetCarte();
         await updateUIFromEtat();
     }catch(err){
         alert(err.message);
@@ -88,7 +107,10 @@ async function uploadDemande(file){
 
 // AFFICHAGE CARTE ET DEMANDES
 
-function resetCarte(){
+function resetLivraisons(){
+    demandeData = null;
+    document.getElementById('tableauDemandes').innerHTML = "";
+    document.getElementById('tableauTournees').innerHTML = "";
     if (livraisonsLayer) livraisonsLayer.clearLayers();
     if (entrepotLayer) entrepotLayer.clearLayers();
     if (window.tourneeLayer) window.tourneeLayer.clearLayers();
@@ -137,10 +159,10 @@ function drawCarte(carte) {
 function drawLivraisons(d){
     if(!map||!carteData) return;
     livraisonsLayer.clearLayers();
+    resetTournee();
     const n=carteData.noeuds;
 
     const tableau = document.getElementById("tableauDemandes");
-    tableau.style.display = "block";
     tableau.innerHTML = "";
     const header = `
     <table style="border-collapse:collapse;">
@@ -156,12 +178,15 @@ function drawLivraisons(d){
   `;
     tableau.innerHTML = header;
     const tbody = document.getElementById("livraisonBody");
+    window.colorByNodeId = {};
 
     d.livraisons.forEach((l,i)=>{
         const color=colors[i%colors.length];
         const en=n[l.adresseEnlevement.id];
         const lv=n[l.adresseLivraison.id];
         if(!en||!lv) return;
+        window.colorByNodeId[en.id] = color;
+        window.colorByNodeId[lv.id] = color;
         L.marker([en.latitude,en.longitude],{
             icon:L.divIcon({className:'',iconSize:[18,18],
                 html:`<div style="width:18px;height:18px;background:${color};border:2px solid black;border-radius:3px;"></div>`})
@@ -223,6 +248,7 @@ async function calculTournee(nombreLivreurs = 1){
         return;
     }
     const toutesLesTournees = await r.json();
+    window.toutesLesTournees = toutesLesTournees.tournees;
 
     resetTournee();
     toutesLesTournees.tournees.forEach((tournee, i) => {
@@ -241,8 +267,8 @@ function resetTournee(){
     window.animPaths = {}; isAnimating=false; isPaused=false;
 }
 
-function drawTournee(t, color='#000', index){
-    if(!map || !carteData) return;
+function drawTournee(t, color='#000', index) {
+    if (!map || !carteData) return;
     if (!window.tourneeLayer) window.tourneeLayer = L.layerGroup().addTo(map);
     if (!window.directionNumbersLayer) window.directionNumbersLayer = L.layerGroup().addTo(map);
     if (!window.animPaths) window.animPaths = {};
@@ -253,16 +279,23 @@ function drawTournee(t, color='#000', index){
     let labelCount = 0;
     let localAnimPath = [];
 
-    t.chemins.forEach(c=>{
-        const latlngs=[];
-        c.troncons.forEach((tc,i)=>{
-            const o = n[tc.idOrigine], d = n[tc.idDestination]; if(!o||!d) return;
-            const A = [o.latitude,o.longitude], B = [d.latitude,d.longitude];
-            latlngs.push(A); latlngs.push(B); all.push(A); all.push(B);
-            if(i % K === 0){ labelCount++; L.marker(midPoint(A,B), {icon: makeStepNumberIcon(labelCount,color)}).addTo(window.directionNumbersLayer); }
+    t.chemins.forEach(c => {
+        const latlngs = [];
+        c.troncons.forEach((tc, i) => {
+            const o = n[tc.idOrigine], d = n[tc.idDestination];
+            if (!o || !d) return;
+            const A = [o.latitude, o.longitude], B = [d.latitude, d.longitude];
+            latlngs.push(A);
+            latlngs.push(B);
+            all.push(A);
+            all.push(B);
+            if (i % K === 0) {
+                labelCount++;
+                L.marker(midPoint(A, B), {icon: makeStepNumberIcon(labelCount, color)}).addTo(window.directionNumbersLayer);
+            }
         });
         if (latlngs.length > 0) {
-            L.polyline(latlngs, { color, weight: 3, opacity: 0.9 }).addTo(window.tourneeLayer);
+            L.polyline(latlngs, {color, weight: 3, opacity: 0.9}).addTo(window.tourneeLayer);
             localAnimPath = localAnimPath.concat(
                 localAnimPath.length > 0 && localAnimPath.at(-1)[0] === latlngs[0][0]
                     ? latlngs.slice(1)
@@ -270,8 +303,67 @@ function drawTournee(t, color='#000', index){
             );
         }
     });
-    if(all.length>0) map.fitBounds(L.latLngBounds(all).pad(0.1));
+    if (all.length > 0) map.fitBounds(L.latLngBounds(all).pad(0.1));
     window.animPaths[index] = [...localAnimPath];
+    drawTourneeTable(window.toutesLesTournees[0]);
+}
+
+function drawTourneeTable(tournee){
+    const tableauTournees = document.getElementById("tableauTournees");
+    tableauTournees.innerHTML = `
+  <table style="border-collapse:collapse;">
+    <thead>
+      <tr>
+        <th style="border-bottom:1px solid #ccc;padding:4px;">Couleur</th>
+        <th style="border-bottom:1px solid #ccc;border-left:1px solid #ccc;padding:4px;">Ordre</th>
+        <th style="border-bottom:1px solid #ccc;border-left:1px solid #ccc;padding:4px;">Type</th>
+        <th style="border-bottom:1px solid #ccc;border-left:1px solid #ccc;padding:4px;">ID</th>
+        <th style="border-bottom:1px solid #ccc;border-left:1px solid #ccc;padding:4px;">Fourchette horaire</th>
+      </tr>
+    </thead>
+    <tbody id="tourneeBody"></tbody>
+  </table>
+`;
+    const tbody = document.getElementById("tourneeBody");
+    let ordre = 1;
+
+    const chemins = tournee.chemins;
+    const firstNode = chemins[0]?.noeudDePassageDepart;
+    const lastNode = chemins[chemins.length-1]?.noeudDePassageArrivee;
+
+    chemins.forEach(c => {
+        const noeudsChemin = [(c.noeudDePassageDepart && c.noeudDePassageDepart.type === "ENTREPOT") ? c.noeudDePassageDepart : null, c.noeudDePassageArrivee];
+        noeudsChemin.forEach(noeud => {
+            if (!noeud) return;
+            if (["ENTREPOT","PICKUP","DELIVERY"].includes(noeud.type)) {
+
+                const color = window.colorByNodeId?.[noeud.id] || "#000000";
+                const bordercolor = color !== "#000000"? "solid black":"white";
+
+                let horaire = "";
+                if (noeud === firstNode && noeud.type === "ENTREPOT") {
+                    horaire = noeud.horaireDepart || "-";
+                } else if (noeud === lastNode && noeud.type === "ENTREPOT") {
+                    horaire = formatHoraireFourchette(noeud.horaireArrivee) || "-";
+                } else {
+                    horaire = formatHoraireFourchette(noeud.horaireArrivee) || "-";
+                }
+
+                const row = document.createElement("tr");
+                row.innerHTML = `
+              <td style="padding:4px;text-align:center;">
+                <div style="width:18px;height:18px;background:${color};
+                    border:1px solid ${bordercolor};border-radius:3px;margin:auto;"></div>
+              </td>
+              <td style="border-left:1px solid #ccc;padding:4px;text-align:center;">${ordre++}</td>
+              <td style="border-left:1px solid #ccc;padding:4px;text-align:center;">${noeud.type}</td>
+              <td style="border-left:1px solid #ccc;padding:4px;text-align:center;">${noeud.id}</td>
+              <td style="border-left:1px solid #ccc;padding:4px;text-align:center;">${horaire}</td>
+            `;
+                tbody.appendChild(row);
+            }
+        });
+    });
 }
 
 async function creerFeuillesDeRoute() {
@@ -369,7 +461,7 @@ function addAnimationButton() {
         div.innerHTML = `
           <div style="background:rgba(255,255,255,0.85);border-radius:10px;
                       box-shadow:0 0 5px rgba(0,0,0,0.3);padding:8px;
-                      font-size:13px;text-align:center;width:160px;">
+                      font-size:13px;text-align:center;width:160px;color:black;">
             <h4 style="margin:0 0 8px 0;font-weight:bold;">Livreur</h4>
             <select id="tourneeSelect" style="width:100%;margin-bottom:6px;">${tourneeOptions}</select>
             <button id="btnStartStop" style="background:#b2d1d2;border:none;padding:5px 8px;
@@ -383,7 +475,11 @@ function addAnimationButton() {
         const select = div.querySelector('#tourneeSelect');
         let selectedIndex = 0;
 
-        select.onchange = e => { selectedIndex = parseInt(e.target.value); };
+        select.onchange = e => {
+            selectedIndex = parseInt(e.target.value);
+            const tournee = window.toutesLesTournees[selectedIndex];
+            drawTourneeTable(tournee);
+        };
 
         start.onclick = e => {
             e.stopPropagation();
@@ -434,8 +530,8 @@ async function updateUIFromEtat() {
         document.getElementById('carte-chargee-message').style.display = "none";
         document.getElementById('livraisons').style.display = "none";
         document.getElementById('tableauDemandes').style.display = "none";
-        document.getElementById('tableauDemandes').innerHTML = "";
         document.getElementById('tournee-chargee').style.display = "none";
+        document.getElementById('tableauTournees').style.display = "none";
         document.getElementById('calcul-tournee').style.display = "none";
         document.getElementById('fileNameCarte').style.display = "none";
         document.getElementById('fileNameDemande').style.display = "none";
@@ -451,12 +547,16 @@ async function updateUIFromEtat() {
             document.querySelector('.navbar-item img[alt="Ajouter une demande de livraison"]').src = "tools/colis-logo-gray.png";
             document.querySelector('.navbar-item img[alt="Ajouter une demande de livraison"]').style.cursor = "not-allowed";
             document.getElementById('xmlDemande').disabled = true;
+            document.getElementById('tableauDemandes').innerHTML = "";
+            document.getElementById('tableauTournees').innerHTML = "";
         } else if(data.tourneeChargee) {
             document.getElementById('tournee-chargee').style.display = "inline";
+            document.getElementById('tableauTournees').style.display = "inline";
         } else if(data.demandeChargee) {
             document.getElementById('livraisons').style.display = "inline";
             document.getElementById('fileNameDemande').style.display = "inline";
             document.getElementById('calcul-tournee').style.display = "flex";
+            document.getElementById('tableauDemandes').style.display = "inline";
         } else if (data.carteChargee) {
             document.getElementById('carte-chargee-message').style.display = "flex";
             document.getElementById('fileNameCarte').style.display = "inline";
@@ -507,8 +607,6 @@ document.addEventListener('DOMContentLoaded',async () => {
             fetch("http://localhost:8080/api/reset", {method: "POST"})
                 .then(response => response.json())
                 .then(async data => {
-                    console.log(data.message || "Application réinitialisée.");
-
                     carteData = null;
                     demandeData = null;
                     livraisonsLayer = null;
@@ -564,6 +662,7 @@ document.addEventListener('DOMContentLoaded',async () => {
 
             if (response.ok && data.status === "ok") {
                 const tournees = data.tournees || [];
+                window.toutesLesTournees = tournees.tournees;
                 tournees.forEach((t, i) => {
                     const color = colors[i % colors.length];
                     drawTournee(t, color);
