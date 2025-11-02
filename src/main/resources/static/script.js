@@ -69,15 +69,19 @@ async function uploadCarte(file){
     const formData=new FormData();
     formData.append("file",file);
     try{
-        const response=await fetch("http://localhost:8080/api/upload-carte",{method:"POST",body:formData});
+        const response= await fetch(`http://localhost:8080/api/upload-carte`,{method:"POST",body:formData});
         if(!response.ok){alert(await response.text());return;}
         const res=await response.json();
         carteData = res.carte;
+        resetCarte();
         resetLivraisons();
         drawCarte(carteData);
         await updateUIFromEtat();
     }catch(err){
         alert(err.message);
+    }
+    finally{
+        document.getElementById('xmlCarte').value = '';
     }
 }
 
@@ -102,10 +106,31 @@ async function uploadDemande(file){
         await updateUIFromEtat();
     }catch(err){
         alert(err.message);
+    }finally{
+        document.getElementById('xmlDemande').value = '';
     }
 }
 
 // AFFICHAGE CARTE ET DEMANDES
+
+function resetCarte() {
+    if (map) {
+        try { map.remove(); } catch (e) {}
+        map = null;
+    }
+    const mapDiv = document.getElementById('map');
+    if (mapDiv) {
+        mapDiv._leaflet_id = null;
+        mapDiv.innerHTML = "";
+        mapDiv.style.display = "block";
+    }
+    livraisonsLayer = null;
+    entrepotLayer = null;
+    window.tronconsLayer = null;
+    window.tourneeLayer = null;
+    window.directionNumbersLayer = null;
+    window.animPaths = {};
+}
 
 function resetLivraisons(){
     demandeData = null;
@@ -543,6 +568,7 @@ async function updateUIFromEtat() {
         document.querySelector('.navbar-item img[alt="Ajouter une demande de livraison"]').style.cursor = "pointer";
         document.querySelector('.navbar-item img[alt="Charger une tournée"]').src = "tools/open-logo.png";
         document.querySelector('.navbar-item img[alt="Charger une tournée"]').style.cursor = "pointer";
+        document.getElementById('map').style.display = "block";
         if(data.etat === "Etat Initial") {
             document.getElementById('welcome-message').style.display = "flex";
             document.querySelector('.navbar-item img[alt="Ajouter une carte"]').style.filter = "drop-shadow(0 0 10px rgba(225,225,0,1))";
@@ -554,6 +580,7 @@ async function updateUIFromEtat() {
             document.getElementById('inputTournee').disabled = true;
             document.getElementById('tableauDemandes').innerHTML = "";
             document.getElementById('tableauTournees').innerHTML = "";
+            document.getElementById('map').style.display = "none";
         } else if(data.tourneeChargee) {
             document.getElementById('tournee-chargee').style.display = "inline";
             document.getElementById('tableauTournees').style.display = "inline";
@@ -612,6 +639,12 @@ document.addEventListener('DOMContentLoaded',async () => {
             fetch("http://localhost:8080/api/reset", {method: "POST"})
                 .then(response => response.json())
                 .then(async data => {
+                    if (map) {
+                        map.eachLayer(l => map.removeLayer(l));
+                        map.remove();
+                        map = null;
+                    }
+
                     carteData = null;
                     demandeData = null;
                     livraisonsLayer = null;
@@ -619,11 +652,8 @@ document.addEventListener('DOMContentLoaded',async () => {
                     window.tronconsLayer = null;
                     window.tourneeLayer = null;
                     window.directionNumbersLayer = null;
-
-                    if (map) {
-                        map.remove();
-                        map = null;
-                    }
+                    window.animPaths = {};
+                    window.toutesLesTournees = [];
 
                     await updateUIFromEtat();
                 })
@@ -682,6 +712,8 @@ document.addEventListener('DOMContentLoaded',async () => {
         } catch (err) {
             console.error("Erreur fetch :", err);
             alert("Erreur réseau lors du chargement de la tournée");
+        } finally {
+            document.getElementById('inputTournee').value = '';
         }
     });
 });
