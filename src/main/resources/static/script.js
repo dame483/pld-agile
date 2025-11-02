@@ -536,17 +536,22 @@ async function updateUIFromEtat() {
         document.getElementById('fileNameCarte').style.display = "none";
         document.getElementById('fileNameDemande').style.display = "none";
         document.getElementById('xmlDemande').disabled = false;
+        document.getElementById('inputTournee').disabled = false;
         document.querySelector('.navbar-item img[alt="Ajouter une demande de livraison"]').style.filter = "";
         document.querySelector('.navbar-item img[alt="Ajouter une carte"]').style.filter = "";
         document.querySelector('.navbar-item img[alt="Ajouter une demande de livraison"]').src = "tools/colis-logo-white.png";
         document.querySelector('.navbar-item img[alt="Ajouter une demande de livraison"]').style.cursor = "pointer";
-
+        document.querySelector('.navbar-item img[alt="Charger une tournée"]').src = "tools/open-logo.png";
+        document.querySelector('.navbar-item img[alt="Charger une tournée"]').style.cursor = "pointer";
         if(data.etat === "Etat Initial") {
             document.getElementById('welcome-message').style.display = "flex";
             document.querySelector('.navbar-item img[alt="Ajouter une carte"]').style.filter = "drop-shadow(0 0 10px rgba(225,225,0,1))";
             document.querySelector('.navbar-item img[alt="Ajouter une demande de livraison"]').src = "tools/colis-logo-gray.png";
             document.querySelector('.navbar-item img[alt="Ajouter une demande de livraison"]').style.cursor = "not-allowed";
+            document.querySelector('.navbar-item img[alt="Charger une tournée"]').style.cursor = "not-allowed";
+            document.querySelector('.navbar-item img[alt="Charger une tournée"]').src = "tools/open-logo-gray.png";
             document.getElementById('xmlDemande').disabled = true;
+            document.getElementById('inputTournee').disabled = true;
             document.getElementById('tableauDemandes').innerHTML = "";
             document.getElementById('tableauTournees').innerHTML = "";
         } else if(data.tourneeChargee) {
