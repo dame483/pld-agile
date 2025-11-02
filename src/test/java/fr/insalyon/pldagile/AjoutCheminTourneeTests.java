@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -57,7 +58,7 @@ public class AjoutCheminTourneeTests {
     }
 
     @Test
-    void testAjoutLivraison() throws Exception {
+    void testAjoutPickup() throws Exception {
         File fichierCarte = new File("src/main/resources/donnees/plans/petitPlan.xml");
         Carte ville = CarteParseurXML.loadFromFile(fichierCarte);
         assertNotNull(ville, "La carte doit être chargée");
@@ -78,23 +79,82 @@ public class AjoutCheminTourneeTests {
         assertFalse(toutesLesTournees.isEmpty(), "Au moins une tournée doit être calculée");
 
         Tournee tournee = toutesLesTournees.get(0);
-        // Vérifier que le noeud à ajouter n'existe pas dans la tournée
-        long idNoeudAAjouter = 1957527553;
-        long idNoeudPrecedent = 208769457;
+
+        long idNoeudAAjouter = 459797860;
+        long idNoeudPrecedent = tournee.getChemins().get(3).getNoeudDePassageDepart().getId();
+
         NoeudDePassage noeudPrecedent = tournee.getNoeudParId(idNoeudPrecedent);
         NoeudDePassage n = tournee.getNoeudParId(idNoeudAAjouter);
         assertNull(n, "Le noeud à ajouter ne doit pas exister dans la tournée");
         assertNotNull(noeudPrecedent, "Le noeud precedent le noeud à ajouter ne doit pas être null ");
 
         CalculChemins calculChemins = new CalculChemins(ville);
+        System.out.println(calculChemins.getCarte().getNoeuds());
         ModificationTournee modificationTournee = new ModificationTournee(calculChemins, vitesse);
-        // ajouter le noeud
+
         double dureeEnlevement = 300.0;
         Tournee tourneeModifiee = modificationTournee.ajouterNoeudPickup(tournee, idNoeudAAjouter, idNoeudPrecedent,dureeEnlevement);
-        assertNotEquals(tourneeModifiee, tournee, "La tournée doit etre modifiée");
+
+        List listIDDepart = new ArrayList();
+        List listIDArrivee = new ArrayList();
+        for (Chemin chemin : tourneeModifiee.getChemins()) {
+            listIDDepart.add(chemin.getNoeudDePassageDepart().getId());
+            listIDArrivee.add(chemin.getNoeudDePassageArrivee().getId());
+        }
+        assert(listIDDepart.contains(idNoeudAAjouter));
+        assert(listIDArrivee.contains(idNoeudAAjouter));
+
+    }
+    @Test
+    void testAjoutDelivery() throws Exception {
+        File fichierCarte = new File("src/main/resources/donnees/plans/petitPlan.xml");
+        Carte ville = CarteParseurXML.loadFromFile(fichierCarte);
+        assertNotNull(ville, "La carte doit être chargée");
+
+        File fichierDemande = new File("src/main/resources/donnees/demandes/demandePetit2.xml");
+        DemandeDeLivraison demande = DemandeDeLivraisonParseurXML.loadFromFile(fichierDemande, ville);
+        assertNotNull(demande, "La demande doit être chargée");
+
+        LocalTime heureDepart = (demande.getEntrepot() != null && demande.getEntrepot().getHoraireDepart() != null)
+                ? demande.getEntrepot().getHoraireDepart()
+                : LocalTime.of(8, 0);
+
+        double vitesse = 4.16;
+        int nombreLivreurs = 1;
+
+        CalculTournees calculTournees = new CalculTournees(ville, demande, vitesse, nombreLivreurs, heureDepart);
+        List<Tournee> toutesLesTournees = calculTournees.calculerTournees();
+        assertFalse(toutesLesTournees.isEmpty(), "Au moins une tournée doit être calculée");
+
+        Tournee tournee = toutesLesTournees.get(0);
+
+        long idNoeudAAjouter = 55475018;
+        long idNoeudPrecedent = tournee.getChemins().get(3).getNoeudDePassageDepart().getId();
+
+        NoeudDePassage noeudPrecedent = tournee.getNoeudParId(idNoeudPrecedent);
+        NoeudDePassage n = tournee.getNoeudParId(idNoeudAAjouter);
+        assertNull(n, "Le noeud à ajouter ne doit pas exister dans la tournée");
+        assertNotNull(noeudPrecedent, "Le noeud precedent le noeud à ajouter ne doit pas être null ");
+
+        CalculChemins calculChemins = new CalculChemins(ville);
+        System.out.println(calculChemins.getCarte().getNoeuds());
+        ModificationTournee modificationTournee = new ModificationTournee(calculChemins, vitesse);
+
+        double dureeLivraison = 300.0;
+        Tournee tourneeModifiee = modificationTournee.ajouterNoeudDelivery(tournee, idNoeudAAjouter, idNoeudPrecedent,dureeLivraison);
+
+        List listIDDepart = new ArrayList();
+        List listIDArrivee = new ArrayList();
+        for (Chemin chemin : tourneeModifiee.getChemins()) {
+            listIDDepart.add(chemin.getNoeudDePassageDepart().getId());
+            listIDArrivee.add(chemin.getNoeudDePassageArrivee().getId());
+        }
+        assertTrue(listIDDepart.contains(idNoeudAAjouter), "Le noeud de Passage est bien le noeud de départ d'un chemin");
+        assertTrue(listIDArrivee.contains(idNoeudAAjouter), "le noeud de passage est bien le noeud d'arrivée d'un chemin");
 
 
 
     }
+
 
 }

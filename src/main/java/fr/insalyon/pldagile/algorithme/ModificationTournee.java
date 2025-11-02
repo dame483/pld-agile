@@ -16,21 +16,6 @@ public class ModificationTournee {
         this.vitesse = vitesse;
     }
 
-
-    // CODER METHODE AJOUTERNOEUD :
-    // transformer les noeuds en noeud de passage
-    //  suppression du chemin qui a pour départ noeudPrécédent mon nouveau noeud ajouté  -> supprimerChemin(Tournee tournee, Chemin chemin)
-    //  ajout du nouveau chemin entre noeudPrécédent et noeud ajouté -> recalculerChemin(Tournee tournee, NoeudDePassage precedent, NoeudDePassage suivant, int index)
-    // ajout nouveau chemin entre noeud ajouté et le suivant du noeudPrécédent -> same
-    // mettreAJourTotaux(tournee);
-    // mettreAJourHoraires(tournee, vitesse);
-    // créer un MaintestAjoutNoeud pour verifier -> attention contrainte de précédence normalement géré par IHM
-
-
-
-    /**
-     * Supprime un noeud de la tournée et recalcule le chemin minimal entre le précédent et le suivant.
-     */
     public Tournee ajouterNoeudPickup(Tournee tournee, long idNoeudAjoute, long idNoeudPrecedentNoeudAjoute, double dureeEnlevement) {
         NoeudDePassage noeudAjoute = creerNoeudDePassagePickup(idNoeudAjoute, dureeEnlevement);
         NoeudDePassage noeudPrecedentNoeudAjoute = recupererNoeud(tournee, idNoeudPrecedentNoeudAjoute);
@@ -62,6 +47,39 @@ public class ModificationTournee {
         return tournee;
 
     }
+
+    public Tournee ajouterNoeudDelivery(Tournee tournee, long idNoeudAjoute, long idNoeudPrecedentNoeudAjoute, double dureeLivraison) {
+        NoeudDePassage noeudAjoute = creerNoeudDePassageDelevery(idNoeudAjoute, dureeLivraison);
+        NoeudDePassage noeudPrecedentNoeudAjoute = recupererNoeud(tournee, idNoeudPrecedentNoeudAjoute);
+
+
+        if ( noeudPrecedentNoeudAjoute == null) {
+            System.out.println("les noeuds ajoutés ne sont pas récupérer correctement");
+            return tournee;
+        }
+
+        Chemin cheminAutourNoeudPrecedentNoeudAjoute[] = trouverCheminsAutourNoeud(tournee, noeudPrecedentNoeudAjoute);
+
+        Chemin apres = cheminAutourNoeudPrecedentNoeudAjoute[1];
+        Chemin avant = cheminAutourNoeudPrecedentNoeudAjoute[0];
+
+        int indexAvant = (avant != null) ? tournee.getChemins().indexOf(avant) : 0;
+        int indexApres = (apres != null) ? tournee.getChemins().indexOf(apres) : 0;
+
+        NoeudDePassage noeudSuivantNoeudPrecedent = (apres !=null ) ? apres.getNoeudDePassageArrivee() : null;
+
+        supprimerChemin(tournee, apres);
+
+        recalculerChemin(tournee, noeudPrecedentNoeudAjoute, noeudAjoute, indexAvant);
+        recalculerChemin(tournee, noeudAjoute, noeudSuivantNoeudPrecedent, indexApres);
+
+        mettreAJourTotaux(tournee);
+        mettreAJourHoraires(tournee, vitesse);
+
+        return tournee;
+
+    }
+
 
 
     public Tournee supprimerNoeud(Tournee tournee, long idNoeud) {
@@ -153,22 +171,22 @@ public class ModificationTournee {
         }
     }
 
-    private NoeudDePassage creerNoeudDePassagePickup(long idNoeud, double duree) {
+    private NoeudDePassage creerNoeudDePassagePickup(long idNoeud, double dureeEnlevement) {
         Noeud noeudAAjouter = calculChemins.getCarte().getNoeudParId(idNoeud);
 
         long id = noeudAAjouter.getId();
         double latitude = noeudAAjouter.getLatitude();
         double longitude = noeudAAjouter.getLongitude();
-        NoeudDePassage noeudDePassagePickupAAjouter = new NoeudDePassage(id, latitude, longitude, NoeudDePassage.TypeNoeud.PICKUP, duree);
+        NoeudDePassage noeudDePassagePickupAAjouter = new NoeudDePassage(id, latitude, longitude, NoeudDePassage.TypeNoeud.PICKUP, dureeEnlevement);
         return noeudDePassagePickupAAjouter;
     }
 
-    private NoeudDePassage creerNoeudDePassageDelevery(long idNoeud, double duree) {
+    private NoeudDePassage creerNoeudDePassageDelevery(long idNoeud, double dureeLivraison) {
         Noeud noeudAAjouter = calculChemins.getCarte().getNoeudParId(idNoeud);
         long id = noeudAAjouter.getId();
         double latitude = noeudAAjouter.getLatitude();
         double longitude = noeudAAjouter.getLongitude();
-        NoeudDePassage noeudDePassageDeliveryAAjouter = new NoeudDePassage(id, latitude, longitude, NoeudDePassage.TypeNoeud.DELIVERY, duree);
+        NoeudDePassage noeudDePassageDeliveryAAjouter = new NoeudDePassage(id, latitude, longitude, NoeudDePassage.TypeNoeud.DELIVERY, dureeLivraison);
         return noeudDePassageDeliveryAAjouter;
     }
 
