@@ -12,11 +12,12 @@ public class CommandeAjoutLivraison implements Commande {
     private final Carte carte;
     private final double vitesse;
     private final long idPickup, idDelivery, idPrecedentPickup, idPrecedentDelivery;
+    private double duree;
     private List<Chemin> anciensChemins;
 
     public CommandeAjoutLivraison(Tournee tournee, Carte carte, double vitesse,
                                   long idPickup, long idDelivery,
-                                  long idPrecedentPickup, long idPrecedentDelivery) {
+                                  long idPrecedentPickup, long idPrecedentDelivery, double duree) {
         this.tournee = tournee;
         this.carte = carte;
         this.vitesse = vitesse;
@@ -25,12 +26,13 @@ public class CommandeAjoutLivraison implements Commande {
         this.idPrecedentPickup = idPrecedentPickup;
         this.idPrecedentDelivery = idPrecedentDelivery;
         this.anciensChemins = new ArrayList<>(tournee.getChemins());
+        this.duree = duree;
     }
 
     @Override
     public void executer() {
         ModificationTournee modif = new ModificationTournee(new CalculChemins(carte), vitesse);
-       // modif.ajouterLivraison(tournee, idPrecedent, idNoeud)
+        modif.ajouterNoeudPickup(tournee, idPickup, idPrecedentPickup, duree);
     }
 
     @Override

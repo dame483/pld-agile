@@ -2,6 +2,7 @@ package fr.insalyon.pldagile.algorithme;
 
 import fr.insalyon.pldagile.modele.*;
 
+import java.lang.reflect.Type;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -30,6 +31,38 @@ public class ModificationTournee {
     /**
      * Supprime un noeud de la tournée et recalcule le chemin minimal entre le précédent et le suivant.
      */
+    public Tournee ajouterNoeudPickup(Tournee tournee, long idNoeudAjoute, long idNoeudPrecedentNoeudAjoute, double dureeEnlevement) {
+        NoeudDePassage noeudAjoute = creerNoeudDePassagePickup(idNoeudAjoute, dureeEnlevement);
+        NoeudDePassage noeudPrecedentNoeudAjoute = recupererNoeud(tournee, idNoeudPrecedentNoeudAjoute);
+
+
+        if ( noeudPrecedentNoeudAjoute == null) {
+            System.out.println("les noeuds ajoutés ne sont pas récupérer correctement");
+            return tournee;
+        }
+
+        Chemin cheminAutourNoeudPrecedentNoeudAjoute[] = trouverCheminsAutourNoeud(tournee, noeudPrecedentNoeudAjoute);
+
+        Chemin apres = cheminAutourNoeudPrecedentNoeudAjoute[1];
+        Chemin avant = cheminAutourNoeudPrecedentNoeudAjoute[0];
+
+        int indexAvant = (avant != null) ? tournee.getChemins().indexOf(avant) : 0;
+        int indexApres = (apres != null) ? tournee.getChemins().indexOf(apres) : 0;
+
+        NoeudDePassage noeudSuivantNoeudPrecedent = (apres !=null ) ? apres.getNoeudDePassageArrivee() : null;
+
+        supprimerChemin(tournee, apres);
+
+        recalculerChemin(tournee, noeudPrecedentNoeudAjoute, noeudAjoute, indexAvant);
+        recalculerChemin(tournee, noeudAjoute, noeudSuivantNoeudPrecedent, indexApres);
+
+        mettreAJourTotaux(tournee);
+        mettreAJourHoraires(tournee, vitesse);
+
+        return tournee;
+
+    }
+
 
     public Tournee supprimerNoeud(Tournee tournee, long idNoeud) {
         NoeudDePassage n = recupererNoeud(tournee, idNoeud);
@@ -118,6 +151,25 @@ public class ModificationTournee {
                 c.getNoeudDePassageArrivee().setHoraireDepart(heureCourante);
             }
         }
+    }
+
+    private NoeudDePassage creerNoeudDePassagePickup(long idNoeud, double duree) {
+        Noeud noeudAAjouter = calculChemins.getCarte().getNoeudParId(idNoeud);
+
+        long id = noeudAAjouter.getId();
+        double latitude = noeudAAjouter.getLatitude();
+        double longitude = noeudAAjouter.getLongitude();
+        NoeudDePassage noeudDePassagePickupAAjouter = new NoeudDePassage(id, latitude, longitude, NoeudDePassage.TypeNoeud.PICKUP, duree);
+        return noeudDePassagePickupAAjouter;
+    }
+
+    private NoeudDePassage creerNoeudDePassageDelevery(long idNoeud, double duree) {
+        Noeud noeudAAjouter = calculChemins.getCarte().getNoeudParId(idNoeud);
+        long id = noeudAAjouter.getId();
+        double latitude = noeudAAjouter.getLatitude();
+        double longitude = noeudAAjouter.getLongitude();
+        NoeudDePassage noeudDePassageDeliveryAAjouter = new NoeudDePassage(id, latitude, longitude, NoeudDePassage.TypeNoeud.DELIVERY, duree);
+        return noeudDePassageDeliveryAAjouter;
     }
 
 }

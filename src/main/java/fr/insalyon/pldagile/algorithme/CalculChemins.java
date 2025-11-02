@@ -131,4 +131,7 @@ public class CalculChemins {
         return new Chemin(troncons, longueurTotale, depart, arrivee);
     }
 
+    public Carte getCarte() {
+        return carte;
+    }
 }

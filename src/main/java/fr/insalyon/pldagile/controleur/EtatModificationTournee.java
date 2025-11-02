@@ -158,7 +158,7 @@ public class EtatModificationTournee implements Etat {
                     Long idDelivery = ((Number) body.get("idNoeudDelivery")).longValue();
                     Long idPrecedentPickup = ((Number) body.get("idPrecedentPickup")).longValue();
                     Long idPrecedentDelivery = ((Number) body.get("idPrecedentDelivery")).longValue();
-
+                    double duree = (double) body.get("duree");
                     commande = new CommandeAjoutLivraison(
                             tournee,
                             carte,
@@ -166,7 +166,8 @@ public class EtatModificationTournee implements Etat {
                             idPickup,
                             idDelivery,
                             idPrecedentPickup,
-                            idPrecedentDelivery
+                            idPrecedentDelivery,
+                            duree
                     );
                 }
 
