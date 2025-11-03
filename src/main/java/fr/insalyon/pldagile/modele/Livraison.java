@@ -6,8 +6,6 @@ public class Livraison {
 
     public Livraison() {}
 
-    public Livraison() {}
-
     public Livraison(NoeudDePassage adresseEnlevement, NoeudDePassage adresseLivraison) {
         this.noeudEnlevement = adresseEnlevement;
         this.noeudLivraison = adresseLivraison;
