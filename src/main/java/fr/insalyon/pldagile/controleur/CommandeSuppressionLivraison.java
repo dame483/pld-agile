@@ -25,7 +25,9 @@ public class CommandeSuppressionLivraison implements Commande {
         this.idNoeudAssocie = idNoeudAssocie;
         this.carte = carte;
         this.vitesse = vitesse;
-        this.anciensChemins= new ArrayList<>(tournee.getChemins());
+        this.anciensChemins = tournee.getChemins().stream()
+                .map(Chemin::copieProfonde)
+                .toList();
     }
 
     @Override

@@ -65,6 +65,20 @@ public class NoeudDePassage extends Noeud {
         this.horaireDepart = horaireDepart;
     }
 
+    public NoeudDePassage copieProfonde() {
+        NoeudDePassage copie = new NoeudDePassage(
+                this.getId(),
+                this.getLatitude(),
+                this.getLongitude(),
+                this.getType(),
+                this.getDuree()
+        );
+        copie.setHoraireDepart(this.getHoraireDepart());
+        copie.setHoraireArrivee(this.getHoraireArrivee());
+        return copie;
+    }
+
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

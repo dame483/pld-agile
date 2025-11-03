@@ -71,15 +71,16 @@ public class Tournee {
      */
     public NoeudDePassage getNoeudParId(long idNoeud) {
         for (Chemin c : chemins) {
-            if (c.getNoeudDePassageDepart().getId() == idNoeud) {
+            if (Objects.equals(c.getNoeudDePassageDepart().getId(), idNoeud)) {
                 return c.getNoeudDePassageDepart();
             }
-            if (c.getNoeudDePassageArrivee().getId() == idNoeud) {
+            if (Objects.equals(c.getNoeudDePassageArrivee().getId(), idNoeud)) {
                 return c.getNoeudDePassageArrivee();
             }
         }
         return null; // noeud non trouvé
     }
+
 
 
     @Override

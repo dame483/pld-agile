@@ -26,7 +26,9 @@ public class CommandeAjoutLivraison implements Commande {
         this.idDelivery = idDelivery;
         this.idPrecedentPickup = idPrecedentPickup;
         this.idPrecedentDelivery = idPrecedentDelivery;
-        this.anciensChemins = new ArrayList<>(tournee.getChemins());
+        this.anciensChemins = tournee.getChemins().stream()
+                .map(Chemin::copieProfonde)
+                .toList();
         this.dureeEnlevement = dureeEnlevement;
         this.dureeLivraison = dureeLivraison;
     }
@@ -40,6 +42,8 @@ public class CommandeAjoutLivraison implements Commande {
 
     @Override
     public void annuler() {
-        tournee.setChemins(new ArrayList<>(anciensChemins));
+        if (anciensChemins != null) {
+            tournee.setChemins(new ArrayList<>(anciensChemins));
+        }
     }
 }

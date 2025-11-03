@@ -152,8 +152,6 @@ public class AjoutCheminTourneeTests {
         assertTrue(listIDDepart.contains(idNoeudAAjouter), "Le noeud de Passage est bien le noeud de départ d'un chemin");
         assertTrue(listIDArrivee.contains(idNoeudAAjouter), "le noeud de passage est bien le noeud d'arrivée d'un chemin");
 
-
-
     }
 
 
