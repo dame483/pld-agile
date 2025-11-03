@@ -143,7 +143,7 @@ function resetLivraisons(){
     if (window.directionNumbersLayer) window.directionNumbersLayer.clearLayers();
 
     stopAnimation();
-    if (animControl) { map.removeControl(animControl); animControl = null; }
+    if (animControl && map) { map.removeControl(animControl); animControl = null; }
     animPath = []; isAnimating = false; isPaused = false;
 }
 
@@ -290,7 +290,7 @@ function resetTournee(){
     if(window.tourneeLayer) window.tourneeLayer.clearLayers();
     if(window.directionNumbersLayer) window.directionNumbersLayer.clearLayers();
     stopAnimation();
-    if(animControl){ map.removeControl(animControl); animControl=null; }
+    if(map && animControl){ map.removeControl(animControl); animControl=null; }
     window.animPaths = {}; isAnimating=false; isPaused=false;
 }
 
