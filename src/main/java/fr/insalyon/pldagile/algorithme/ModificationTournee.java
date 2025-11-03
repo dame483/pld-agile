@@ -40,6 +40,12 @@ public class ModificationTournee {
 
         recalculerChemin(tournee, noeudPrecedentNoeudAjoute, noeudAjoute, indexAvant);
         recalculerChemin(tournee, noeudAjoute, noeudSuivantNoeudPrecedent, indexApres);
+        Chemin newCheminAutourNoeudPrecedent[] = trouverCheminsAutourNoeud(tournee, noeudPrecedentNoeudAjoute);
+        Chemin newApres = newCheminAutourNoeudPrecedent[1];
+        LocalTime horaireArriveeNoeudAjoute = noeudPrecedentNoeudAjoute.getHoraireDepart().plusSeconds((long) (newApres.getLongueurTotal() / vitesse));
+        LocalTime horaireDepartNoeudAjoute = horaireArriveeNoeudAjoute.plusSeconds((long) dureeEnlevement);
+        noeudAjoute.setHoraireArrivee(horaireArriveeNoeudAjoute);
+        noeudAjoute.setHoraireDepart(horaireDepartNoeudAjoute);
 
         mettreAJourTotaux(tournee);
         mettreAJourHoraires(tournee, vitesse);
@@ -67,11 +73,16 @@ public class ModificationTournee {
         int indexApres = (apres != null) ? tournee.getChemins().indexOf(apres) : 0;
 
         NoeudDePassage noeudSuivantNoeudPrecedent = (apres !=null ) ? apres.getNoeudDePassageArrivee() : null;
-
         supprimerChemin(tournee, apres);
 
         recalculerChemin(tournee, noeudPrecedentNoeudAjoute, noeudAjoute, indexAvant);
         recalculerChemin(tournee, noeudAjoute, noeudSuivantNoeudPrecedent, indexApres);
+        Chemin newCheminAutourNoeudPrecedent[] = trouverCheminsAutourNoeud(tournee, noeudPrecedentNoeudAjoute);
+        Chemin newApres = newCheminAutourNoeudPrecedent[1];
+        LocalTime horaireArriveeNoeudAjoute = noeudPrecedentNoeudAjoute.getHoraireDepart().plusSeconds((long) (newApres.getLongueurTotal() / vitesse));
+        LocalTime horaireDepartNoeudAjoute = horaireArriveeNoeudAjoute.plusSeconds((long) dureeLivraison);
+        noeudAjoute.setHoraireArrivee(horaireArriveeNoeudAjoute);
+        noeudAjoute.setHoraireDepart(horaireDepartNoeudAjoute);
 
         mettreAJourTotaux(tournee);
         mettreAJourHoraires(tournee, vitesse);
