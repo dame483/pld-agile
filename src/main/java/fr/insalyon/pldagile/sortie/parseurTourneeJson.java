@@ -28,8 +28,6 @@ public class parseurTourneeJson {
             String contenu = new String(Files.readAllBytes(Paths.get(cheminFichier)));
             JSONObject tournee = new JSONObject(contenu);
             JSONArray tournees = tournee.getJSONArray("tournees");
-            String carte = tournee.getString("Carte");
-            System.out.println("carte chargée auparavant : " + carte);
             for (int k = 0; k < tournees.length(); k++) {
                 JSONObject tourneeObject = tournees.getJSONObject(k);
                 JSONArray cheminsArray = tourneeObject.getJSONArray("chemins");

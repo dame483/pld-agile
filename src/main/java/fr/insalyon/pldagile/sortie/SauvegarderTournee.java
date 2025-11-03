@@ -73,7 +73,6 @@ public class SauvegarderTournee {
 
             try (FileWriter fileWriter = new FileWriter(jsonFile)) {
                 JSONObject root = new JSONObject();
-                root.put("Carte", carte);
                 root.put("tournees", tourneesArray);
                 fileWriter.write(root.toString(4));
                 System.out.println("Sauvegarde terminée : " + jsonFile.getAbsolutePath());
