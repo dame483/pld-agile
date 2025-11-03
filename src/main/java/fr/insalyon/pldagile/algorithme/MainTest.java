@@ -2,6 +2,7 @@ package fr.insalyon.pldagile.algorithme;
 
 import fr.insalyon.pldagile.modele.*;
 import fr.insalyon.pldagile.sortie.FeuilleDeRoute;
+import fr.insalyon.pldagile.sortie.parseurTourneeJson;
 
 import java.io.File;
 import java.time.LocalTime;
@@ -45,8 +46,11 @@ public class MainTest {
                 // Génération de la feuille de route
                 FeuilleDeRoute feuille = new FeuilleDeRoute(tournee);
                 feuille.genererFeuilleDeRoute(1);
-                //feuille.sauvegarderTournee(1);
-
+                parseurTourneeJson parseurTourneeJson = new parseurTourneeJson();
+                DemandeDeLivraison demandeDeLivraison = parseurTourneeJson.parseurDemandeDeLivraison("src/main/java/fr/insalyon/pldagile/sortie/tourneeJson/sauvegardeTourne.json");
+                System.out.println(demandeDeLivraison);
+                System.out.println("affichage dmande initiale");
+                System.out.println(demande);
                 double distanceTotale = 0;
                 List<Chemin> chemins = tournee.getChemins();
                 for (int j = 0; j < chemins.size(); j++) {

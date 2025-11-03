@@ -12,6 +12,9 @@ public class DemandeDeLivraison {
         this.livraisons = livraisons;
     }
 
+    public DemandeDeLivraison() {
+    }
+
     public NoeudDePassage getEntrepot() {
         return this.entrepot;
     }

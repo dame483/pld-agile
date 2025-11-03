@@ -16,6 +16,11 @@ public class NoeudDePassage extends Noeud {
         this.horaireDepart = null;
     }
 
+    public NoeudDePassage(long id, double latitude, double longitude, TypeNoeud type) {
+        super(id, latitude, longitude);
+        this.type = type;
+    }
+
     public NoeudDePassage(long id, double latitude, double longitude, TypeNoeud type, double duree) {
         super(id, latitude, longitude);
         this.type = type;

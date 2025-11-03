@@ -1,32 +1,35 @@
 package fr.insalyon.pldagile.modele;
 
 public class Livraison {
-    private NoeudDePassage adresseEnlevement;
-    private NoeudDePassage adresseLivraison;
+    private NoeudDePassage noeudEnlevement;
+    private NoeudDePassage noeudLivraison;
 
     public Livraison(NoeudDePassage adresseEnlevement, NoeudDePassage adresseLivraison) {
-        this.adresseEnlevement = adresseEnlevement;
-        this.adresseLivraison = adresseLivraison;
+        this.noeudEnlevement = adresseEnlevement;
+        this.noeudLivraison = adresseLivraison;
+    }
+
+    public Livraison() {
     }
 
     public NoeudDePassage getAdresseEnlevement() {
-        return this.adresseEnlevement;
+        return this.noeudEnlevement;
     }
 
     public NoeudDePassage getAdresseLivraison() {
-        return this.adresseLivraison;
+        return this.noeudLivraison;
     }
 
     public void setAdresseEnlevement(NoeudDePassage adresseEnlevement) {
-        this.adresseEnlevement = adresseEnlevement;
+        this.noeudEnlevement = adresseEnlevement;
     }
 
     public void setAdresseLivraison(NoeudDePassage adresseLivraison) {
-        this.adresseLivraison = adresseLivraison;
+        this.noeudLivraison = adresseLivraison;
     }
 
     public String toString() {
-        String var10000 = String.valueOf(this.adresseEnlevement);
-        return "Livraison {adresseEnlevement=" + var10000 + ", adresseLivraison=" + String.valueOf(this.adresseLivraison) + "}";
+        String var10000 = String.valueOf(this.noeudEnlevement);
+        return "Livraison {adresseEnlevement=" + var10000 + ", adresseLivraison=" + String.valueOf(this.noeudLivraison) + "}";
     }
 }
