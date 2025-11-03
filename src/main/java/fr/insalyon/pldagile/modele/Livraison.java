@@ -11,9 +11,6 @@ public class Livraison {
         this.noeudLivraison = adresseLivraison;
     }
 
-    public Livraison() {
-    }
-
     public NoeudDePassage getAdresseEnlevement() {
         return this.noeudEnlevement;
     }

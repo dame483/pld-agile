@@ -731,4 +731,12 @@ document.addEventListener('DOMContentLoaded',async () => {
             document.getElementById('inputTournee').value = '';
         }
     });
+
+    window.addEventListener("beforeunload", () => {
+        fetch("http://localhost:8080/api/reset", { method: "POST" });
+    });
+
+    window.addEventListener("load", async () => {
+        await updateUIFromEtat();
+    });
 });
