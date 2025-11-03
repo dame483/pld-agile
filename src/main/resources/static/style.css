@@ -255,7 +255,7 @@ body, h1 {
     flex-wrap: wrap;
 }
 
-#modifierTournee, #sauvegarderTournee, #creerFeuillesDeRoute, #modeAjout, #modeSupression, #annulerModification, #sauvegarderModification {
+#modifierTournee, #sauvegarderTournee, #creerFeuillesDeRoute, #modeAjout, #modeSupression, #annulerModification, #sauvegarderModification, #retablirModification {
      height:140px;
      width:100px;
      background-color: #3D38F5;
@@ -282,7 +282,7 @@ body, h1 {
     height:40%;
 }
 
-#annulerModification img, #sauvegarderModification img {
+#annulerModification img, #sauvegarderModification img, #retablirModification img {
     margin-top : 20px;
     height:40%;
 }
