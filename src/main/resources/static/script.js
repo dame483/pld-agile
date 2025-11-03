@@ -743,4 +743,20 @@ document.addEventListener('DOMContentLoaded',async () => {
     window.addEventListener("load", async () => {
         await updateUIFromEtat();
     });
+
+    document.getElementById('modeSupression').addEventListener("click", async () => {
+        const formData = new FormData();
+        formData.append("idNoeudPickup", idNoeudPickup);
+        formData.append("idNoeudDelivery", idNoeudDelivery);
+        formData.append("mode", "supprimer");
+        const response = await fetch("http://localhost:8080/api/tournee/mode-modification", {
+            method: "POST",
+            body: formData
+        });
+        const data = await response.json();
+        if (response.ok && data.status === "ok") {
+            console.log(data);
+            // TRAITEMENT DE LA SUPPRESSION
+        }
+    });
 });
