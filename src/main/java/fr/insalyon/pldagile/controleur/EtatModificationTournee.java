@@ -136,46 +136,52 @@ public class EtatModificationTournee implements Etat {
 
 
 
-        public void modifierTournee(Controlleur c, String mode, Map<String, Object> body, double vitesse) {
-            Commande commande;
+    public void modifierTournee(Controlleur c, String mode, Map<String, Object> body, double vitesse) {
+        Commande commande;
 
-            switch (mode.toLowerCase()) {
-                case "supprimer" -> {
-                    Long idNoeudPickup = ((Number) body.get("idNoeudPickup")).longValue();
-                    Long idNoeudDelivery = ((Number) body.get("idNoeudDelivery")).longValue();
+        switch (mode.toLowerCase()) {
+            case "supprimer" -> {
+                long idNoeudPickup = ((Number) body.get("idNoeudPickup")).longValue();
+                long idNoeudDelivery = ((Number) body.get("idNoeudDelivery")).longValue();
 
-                    commande = new CommandeSuppressionLivraison(
-                            tournee,
-                            carte,
-                            vitesse,
-                            idNoeudPickup,
-                            idNoeudDelivery
-                    );
-                }
-
-                case "ajouter" -> {
-                    Long idPickup = ((Number) body.get("idNoeudPickup")).longValue();
-                    Long idDelivery = ((Number) body.get("idNoeudDelivery")).longValue();
-                    Long idPrecedentPickup = ((Number) body.get("idPrecedentPickup")).longValue();
-                    Long idPrecedentDelivery = ((Number) body.get("idPrecedentDelivery")).longValue();
-
-                    commande = new CommandeAjoutLivraison(
-                            tournee,
-                            carte,
-                            vitesse,
-                            idPickup,
-                            idDelivery,
-                            idPrecedentPickup,
-                            idPrecedentDelivery
-                    );
-                }
-
-                default -> throw new IllegalArgumentException("Mode de modification inconnu : " + mode);
+                commande = new CommandeSuppressionLivraison(
+                        tournee,
+                        carte,
+                        vitesse,
+                        idNoeudPickup,
+                        idNoeudDelivery
+                );
             }
 
-            // Exécution de la commande
-            c.executerCommande(commande);
+            case "ajouter" -> {
+                long idPickup = ((Number) body.get("idNoeudPickup")).longValue();
+                long idDelivery = ((Number) body.get("idNoeudDelivery")).longValue();
+                long idPrecedentPickup = ((Number) body.get("idPrecedentPickup")).longValue();
+                long idPrecedentDelivery = ((Number) body.get("idPrecedentDelivery")).longValue();
+                double dureeEnlevement = ((Number) body.get("dureeEnlevement")).doubleValue();
+                double dureeLivraison = ((Number) body.get("dureeLivraison")).doubleValue();
+
+                commande = new CommandeAjoutLivraison(
+                        tournee,
+                        carte,
+                        vitesse,
+                        idPickup,
+                        idDelivery,
+                        idPrecedentPickup,
+                        idPrecedentDelivery,
+                        dureeEnlevement,
+                        dureeLivraison
+                );
+            }
+
+            default -> throw new IllegalArgumentException("Mode de modification inconnu : " + mode);
         }
+
+        // Exécution de la commande
+        c.executerCommande(commande);
+    }
+
+
 
 
 

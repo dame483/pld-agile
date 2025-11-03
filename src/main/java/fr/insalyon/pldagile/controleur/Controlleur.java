@@ -252,41 +252,28 @@ public class Controlleur {
         try {
             String mode = (String) body.get("mode"); // "ajouter" ou "supprimer"
 
-            if (mode == null)
+            if (mode == null) {
                 return ResponseEntity.badRequest().body(Map.of("message", "Le mode doit être précisé (ajouter/supprimer)."));
+            }
 
-            if (!(etatActuelle instanceof EtatModificationTournee etatModif))
+            if (!(etatActuelle instanceof EtatModificationTournee etatModif)) {
                 return ResponseEntity.badRequest().body(Map.of("message", "L'application n'est pas en mode modification."));
+            }
 
+            Map<String, Object> params = new HashMap<>();
+            params.put("idNoeudPickup", ((Number) body.get("idNoeudPickup")).longValue());
+            params.put("idNoeudDelivery", ((Number) body.get("idNoeudDelivery")).longValue());
 
-            if (mode.equalsIgnoreCase("supprimer")) {
-
-                Long idPickup = ((Number) body.get("idNoeudPickup")).longValue();
-                Long idDelivery = ((Number) body.get("idNoeudDelivery")).longValue();
-
-                etatModif.modifierTournee(this, mode, Map.of(
-                        "idNoeudPickup", idPickup,
-                        "idNoeudDelivery", idDelivery
-                ), vitesse);
-
-            } else if (mode.equalsIgnoreCase("ajouter")) {
-
-                Long idPickup = ((Number) body.get("idNoeudPickup")).longValue();
-                Long idDelivery = ((Number) body.get("idNoeudDelivery")).longValue();
-                Long idPrecedentPickup = ((Number) body.get("idPrecedentPickup")).longValue();
-                Long idPrecedentDelivery = ((Number) body.get("idPrecedentDelivery")).longValue();
-
-                etatModif.modifierTournee(this, mode, Map.of(
-                        "idNoeudPickup", idPickup,
-                        "idNoeudDelivery", idDelivery,
-                        "idPrecedentPickup", idPrecedentPickup,
-                        "idPrecedentDelivery", idPrecedentDelivery
-                ), vitesse);
-
-            } else {
+            if (mode.equalsIgnoreCase("ajouter")) {
+                params.put("idPrecedentPickup", ((Number) body.get("idPrecedentPickup")).longValue());
+                params.put("idPrecedentDelivery", ((Number) body.get("idPrecedentDelivery")).longValue());
+                params.put("dureeEnlevement", ((Number) body.get("dureeEnlevement")).doubleValue());
+                params.put("dureeLivraison", ((Number) body.get("dureeLivraison")).doubleValue());
+            } else if (!mode.equalsIgnoreCase("supprimer")) {
                 return ResponseEntity.badRequest().body(Map.of("message", "Mode inconnu : " + mode));
             }
 
+            etatModif.modifierTournee(this, mode, params, vitesse);
 
             return ResponseEntity.ok(Map.of(
                     "message", "Opération effectuée : " + mode,
@@ -298,6 +285,8 @@ public class Controlleur {
             return ResponseEntity.badRequest().body(Map.of("message", e.getMessage()));
         }
     }
+
+
 
 
 

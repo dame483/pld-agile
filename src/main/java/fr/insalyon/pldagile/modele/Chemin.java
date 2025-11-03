@@ -49,6 +49,14 @@ public class Chemin {
         this.NoeudDePassageArrivee = noeudDePassageArrivee;
     }
 
+    public Chemin copieProfonde() {
+        List<Troncon> tronconsCopie = new ArrayList<>(this.troncons); // si Troncon est immutable
+        NoeudDePassage departCopie = this.NoeudDePassageDepart.copieProfonde();
+        NoeudDePassage arriveeCopie = this.NoeudDePassageArrivee.copieProfonde();
+        return new Chemin(tronconsCopie, this.longueurTotal, departCopie, arriveeCopie);
+    }
+
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -71,8 +79,12 @@ public class Chemin {
 
     @Override
     public boolean equals(Object o) {
+        if (this == o) return true;
         if (!(o instanceof Chemin chemin)) return false;
-        return Double.compare(longueurTotal, chemin.longueurTotal) == 0 && Objects.equals(troncons, chemin.troncons) && Objects.equals(NoeudDePassageDepart, chemin.NoeudDePassageDepart) && Objects.equals(NoeudDePassageArrivee, chemin.NoeudDePassageArrivee);
+        return Double.compare(longueurTotal, chemin.longueurTotal) == 0
+                && Objects.equals(troncons, chemin.troncons)
+                && Objects.equals(NoeudDePassageDepart, chemin.NoeudDePassageDepart)
+                && Objects.equals(NoeudDePassageArrivee, chemin.NoeudDePassageArrivee);
     }
 
     @Override

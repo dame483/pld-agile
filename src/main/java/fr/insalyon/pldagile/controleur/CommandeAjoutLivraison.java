@@ -12,11 +12,13 @@ public class CommandeAjoutLivraison implements Commande {
     private final Carte carte;
     private final double vitesse;
     private final long idPickup, idDelivery, idPrecedentPickup, idPrecedentDelivery;
+    private double dureeEnlevement;
+    private double dureeLivraison;
     private List<Chemin> anciensChemins;
 
     public CommandeAjoutLivraison(Tournee tournee, Carte carte, double vitesse,
                                   long idPickup, long idDelivery,
-                                  long idPrecedentPickup, long idPrecedentDelivery) {
+                                  long idPrecedentPickup, long idPrecedentDelivery, double dureeEnlevement, double dureeLivraison) {
         this.tournee = tournee;
         this.carte = carte;
         this.vitesse = vitesse;
@@ -24,17 +26,24 @@ public class CommandeAjoutLivraison implements Commande {
         this.idDelivery = idDelivery;
         this.idPrecedentPickup = idPrecedentPickup;
         this.idPrecedentDelivery = idPrecedentDelivery;
-        this.anciensChemins = new ArrayList<>(tournee.getChemins());
+        this.anciensChemins = tournee.getChemins().stream()
+                .map(Chemin::copieProfonde)
+                .toList();
+        this.dureeEnlevement = dureeEnlevement;
+        this.dureeLivraison = dureeLivraison;
     }
 
     @Override
     public void executer() {
         ModificationTournee modif = new ModificationTournee(new CalculChemins(carte), vitesse);
-       // modif.ajouterLivraison(tournee, idPrecedent, idNoeud)
+        modif.ajouterNoeudPickup(tournee, idPickup, idPrecedentPickup, dureeEnlevement);
+        modif.ajouterNoeudDelivery(tournee, idDelivery, idPrecedentDelivery, dureeLivraison);
     }
 
     @Override
     public void annuler() {
-        tournee.setChemins(new ArrayList<>(anciensChemins));
+        if (anciensChemins != null) {
+            tournee.setChemins(new ArrayList<>(anciensChemins));
+        }
     }
 }

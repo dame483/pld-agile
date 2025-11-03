@@ -145,7 +145,7 @@ public class EtatTourneeCalcule implements Etat {
             if (toutesLesTournees == null || toutesLesTournees.isEmpty()) {
                 return "Aucune tournée à sauvegarder.";
             }
-            SauvegarderTournee sauvegarderTournee = new SauvegarderTournee(toutesLesTournees, c.getCarte());
+            SauvegarderTournee sauvegarderTournee = new SauvegarderTournee(toutesLesTournees, c.getDemande());
             sauvegarderTournee.sauvegarderTournee();
             System.out.println("Tournées sauvegardées avec succès !");
 

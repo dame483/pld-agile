@@ -16,6 +16,19 @@ public class NoeudDePassage extends Noeud {
         this.horaireDepart = null;
     }
 
+    public NoeudDePassage(long id, double latitude, double longitude, TypeNoeud type) {
+        super(id, latitude, longitude);
+        this.type = type;
+    }
+
+    public NoeudDePassage(long id, double latitude, double longitude, TypeNoeud type, double duree) {
+        super(id, latitude, longitude);
+        this.type = type;
+        this.duree = duree;
+        this.horaireArrivee = null;
+        this.horaireDepart = null;
+    }
+
     // Constructeur pour l'entrepôt
     public NoeudDePassage(long id, double latitude, double longitude, TypeNoeud type, double duree, LocalTime horaireArrivee, LocalTime horaireDepart) {
         super(id, latitude, longitude);
@@ -56,6 +69,20 @@ public class NoeudDePassage extends Noeud {
     public void setHoraireDepart(LocalTime horaireDepart) {
         this.horaireDepart = horaireDepart;
     }
+
+    public NoeudDePassage copieProfonde() {
+        NoeudDePassage copie = new NoeudDePassage(
+                this.getId(),
+                this.getLatitude(),
+                this.getLongitude(),
+                this.getType(),
+                this.getDuree()
+        );
+        copie.setHoraireDepart(this.getHoraireDepart());
+        copie.setHoraireArrivee(this.getHoraireArrivee());
+        return copie;
+    }
+
 
     @Override
     public boolean equals(Object o) {
