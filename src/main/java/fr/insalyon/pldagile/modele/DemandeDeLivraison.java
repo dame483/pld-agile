@@ -7,6 +7,8 @@ public class DemandeDeLivraison {
     private NoeudDePassage entrepot;
     private List<Livraison> livraisons;
 
+    public DemandeDeLivraison() {}
+
     public DemandeDeLivraison(NoeudDePassage entrepot, List<Livraison> livraisons) {
         this.entrepot = entrepot;
         this.livraisons = livraisons;

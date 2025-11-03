@@ -10,6 +10,8 @@ public class Chemin {
     private NoeudDePassage NoeudDePassageDepart;
     private NoeudDePassage NoeudDePassageArrivee;
 
+    public Chemin(){}
+
     public Chemin(List<Troncon> troncons, double longueurTotal, NoeudDePassage noeudDePassageDepart, NoeudDePassage noeudDePassageArrivee) {
         this.troncons = troncons;
         this.longueurTotal = longueurTotal;

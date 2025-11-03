@@ -4,6 +4,8 @@ public class Livraison {
     private NoeudDePassage adresseEnlevement;
     private NoeudDePassage adresseLivraison;
 
+    public Livraison() {}
+
     public Livraison(NoeudDePassage adresseEnlevement, NoeudDePassage adresseLivraison) {
         this.adresseEnlevement = adresseEnlevement;
         this.adresseLivraison = adresseLivraison;
