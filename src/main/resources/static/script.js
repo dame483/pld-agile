@@ -711,14 +711,18 @@ document.addEventListener('DOMContentLoaded',async () => {
             const data = await response.json();
 
             if (response.ok && data.status === "ok") {
-                const tournees = data.tournees || [];
-                window.toutesLesTournees = tournees.tournees;
-                tournees.forEach((t, i) => {
+                window.toutesLesTournees = data.tournees || [];
+                demandeData = data.demande ||[];
+                resetLivraisons();
+                resetTournee();
+
+                drawLivraisons(data.demande);
+                window.toutesLesTournees.forEach((t, i) => {
                     const color = colors[i % colors.length];
                     drawTournee(t, color, i);
                 });
-
-                demandeData = null;
+                drawTourneeTable(window.toutesLesTournees[0])
+                addAnimationButton();
                 await updateUIFromEtat();
             } else {
                 console.error("Erreur serveur :", data.message);

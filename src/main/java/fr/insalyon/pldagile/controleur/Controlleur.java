@@ -7,6 +7,7 @@ import fr.insalyon.pldagile.modele.Tournee;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import fr.insalyon.pldagile.sortie.TourneeUpload;
 
 import java.util.HashMap;
 import java.util.List;
@@ -154,48 +155,35 @@ public class Controlleur {
     }
 
     @PostMapping("/upload-tournee")
-    public ResponseEntity<?> loadTournee(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<?> uploadTournee(@RequestParam("file") MultipartFile file) {
         try {
-            if (this.carte == null) {
-                return ResponseEntity.badRequest().body(Map.of(
-                        "status", "error",
-                        "message", "Veuillez d'abord charger une carte avant la tournée !"
-                ));
-            }
-
             Object result = etatActuelle.loadTournee(this, file, this.carte);
 
-            if (result instanceof List<?> liste && !liste.isEmpty() && liste.get(0) instanceof Tournee) {
-                List<Tournee> toutesLesTournees = (List<Tournee>) liste;
+            if (result instanceof Exception e) {
+                return ResponseEntity.badRequest().body(Map.of(
+                        "status", "error",
+                        "message", e.getMessage()
+                ));
+            }
 
-                this.etatActuelle = new EtatTourneeCalcule(this.carte, this.demande, toutesLesTournees);
-
+            if (result instanceof TourneeUpload upload) {
                 return ResponseEntity.ok(Map.of(
                         "status", "ok",
-                        "message", "Tournées chargées avec succès",
-                        "etatCourant", getCurrentState().getName(),
-                        "tournees", toutesLesTournees
+                        "tournees", upload.getTournee(),
+                        "demande", upload.getDemande()
                 ));
             }
 
-            else if (result instanceof Exception e) {
-                return ResponseEntity.badRequest().body(Map.of(
-                        "status", "error",
-                        "message", "Erreur : " + e.getMessage()
-                ));
-            }
-            else {
-                return ResponseEntity.badRequest().body(Map.of(
-                        "status", "error",
-                        "message", "Erreur inconnue lors du chargement des tournées"
-                ));
-            }
+            return ResponseEntity.badRequest().body(Map.of(
+                    "status", "error",
+                    "message", "Erreur inconnue lors du chargement des tournées"
+            ));
 
         } catch (Exception e) {
             e.printStackTrace();
-            return ResponseEntity.badRequest().body(Map.of(
+            return ResponseEntity.internalServerError().body(Map.of(
                     "status", "error",
-                    "message", "Exception inattendue : " + e.getMessage()
+                    "message", "Erreur serveur : " + e.getMessage()
             ));
         }
     }

@@ -4,6 +4,7 @@ import fr.insalyon.pldagile.algorithme.CalculTournees;
 import fr.insalyon.pldagile.exception.XMLFormatException;
 import fr.insalyon.pldagile.modele.*;
 import fr.insalyon.pldagile.sortie.SauvegarderTournee;
+import fr.insalyon.pldagile.sortie.TourneeUpload;
 import fr.insalyon.pldagile.sortie.parseurTourneeJson;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -94,7 +95,9 @@ public class EtatTourneeCalcule implements Etat {
                     break;
 
                 case "tournee":
-                    result = parseurTourneeJson.parseurTournee(tempFile.getAbsolutePath());
+                    Object tournee = parseurTourneeJson.parseurTournee(tempFile.getAbsolutePath());
+                    Object demande = parseurTourneeJson.parseurDemandeDeLivraison(tempFile.getAbsolutePath());
+                    result = new TourneeUpload(tournee, demande);
                     break;
 
                 default:
@@ -165,19 +168,32 @@ public class EtatTourneeCalcule implements Etat {
             return e;
         }
 
-        List<Tournee> toutesLesTournees;
+        if (!(result instanceof TourneeUpload upload)) {
+            return new Exception("Résultat inattendu lors du chargement de la tournée");
+        }
 
-        if (result instanceof Tournee tournee) {
+        Object tourneeObj = upload.getTournee();
+        Object demandeObj = upload.getDemande();
+
+        DemandeDeLivraison demande;
+        if (demandeObj instanceof DemandeDeLivraison d) {
+            demande = d;
+        } else {
+            return new Exception("Objet de demande invalide");
+        }
+
+        List<Tournee> toutesLesTournees;
+        if (tourneeObj instanceof Tournee tournee) {
             toutesLesTournees = List.of(tournee);
-        } else if (result instanceof List<?> liste && !liste.isEmpty() && liste.get(0) instanceof Tournee) {
+        } else if (tourneeObj instanceof List<?> liste && !liste.isEmpty() && liste.get(0) instanceof Tournee) {
             toutesLesTournees = (List<Tournee>) liste;
         } else {
             return new Exception("Fichier JSON invalide ou format incorrect");
         }
 
-        c.setCurrentState(new EtatTourneeCalcule(carte, null, toutesLesTournees));
+        c.setCurrentState(new EtatTourneeCalcule(carte, demande, toutesLesTournees));
 
-        return toutesLesTournees;
+        return new TourneeUpload(toutesLesTournees, demande);
     }
 
     @Override
