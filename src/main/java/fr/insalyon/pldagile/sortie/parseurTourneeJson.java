@@ -71,7 +71,7 @@ public class parseurTourneeJson {
                     LocalTime horaireArriveeArrivee = LocalTime.parse(noeudDePassageArriveeJson.getString("horaireArrivee"));
 
                     if (noeudDePassageArriveeJson.getString("typeNoeud").equalsIgnoreCase("ENTREPOT")) {
-                        heureArriveeFinale = horaireArriveeArrivee; //récupération de l'horaire de départ
+                        heureArriveeFinale = horaireArriveeArrivee;
                     }
                     NoeudDePassage noeudDePassageArrivee = new NoeudDePassage(idArrivee, latitudeArrivee, longitudeArrivee, typeNoeudArrivee, dureeArrivee, horaireArriveeArrivee);
                     noeudDePassageArrivee.setHoraireDepart(horaireDepartArrivee);
@@ -108,7 +108,6 @@ public class parseurTourneeJson {
             JSONObject root = new JSONObject(contenu);
             JSONArray tournees = root.getJSONArray("tournees");
 
-            // Parcours des tournées
             for (int k = 0; k < tournees.length(); k++) {
                 JSONObject tourneeObject = tournees.getJSONObject(k);
                 JSONArray cheminsArray = tourneeObject.getJSONArray("chemins");
@@ -122,13 +121,10 @@ public class parseurTourneeJson {
                     NoeudDePassage depart = getOrCreateNoeud(departJson, noeudsExistants);
                     NoeudDePassage arrivee = getOrCreateNoeud(arriveeJson, noeudsExistants);
 
-                    // Identifier l'entrepôt (unique)
                     if (depart.getType() == NoeudDePassage.TypeNoeud.ENTREPOT && entrepot == null) {
                         entrepot = depart;
                     }
 
-
-                    // Associer les couples pickup / delivery via leurs IDs liés
                     if (departJson.has("idDeliveryAssocie")) {
                         long idDelivery = departJson.getLong("idDeliveryAssocie");
                         pickups.put(idDelivery, depart);
@@ -140,7 +136,6 @@ public class parseurTourneeJson {
                 }
             }
 
-            // Reconstruction des livraisons uniques
             List<Livraison> livraisons = new ArrayList<>();
             for (Map.Entry<Long, NoeudDePassage> entry : pickups.entrySet()) {
                 long idDelivery = entry.getKey();
