@@ -8,6 +8,8 @@ public class NoeudDePassage extends Noeud {
     private LocalTime horaireArrivee;
     private LocalTime horaireDepart;
 
+    public NoeudDePassage() {}
+
     public NoeudDePassage(long id, double latitude, double longitude, TypeNoeud type, double duree, LocalTime horaireArrivee) {
         super(id, latitude, longitude);
         this.type = type;
