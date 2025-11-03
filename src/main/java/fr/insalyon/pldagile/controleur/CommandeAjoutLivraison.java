@@ -18,7 +18,7 @@ public class CommandeAjoutLivraison implements Commande {
 
     public CommandeAjoutLivraison(Tournee tournee, Carte carte, double vitesse,
                                   long idPickup, long idDelivery,
-                                  long idPrecedentPickup, long idPrecedentDelivery, double duree) {
+                                  long idPrecedentPickup, long idPrecedentDelivery, double dureeEnlevement, double dureeLivraison) {
         this.tournee = tournee;
         this.carte = carte;
         this.vitesse = vitesse;
