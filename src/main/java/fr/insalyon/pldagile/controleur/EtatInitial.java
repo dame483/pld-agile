@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.List;
 
 @Component
@@ -69,7 +70,7 @@ public class EtatInitial implements Etat {
 
 
     @Override
-    public Object creerFeuillesDeRoute(Controlleur c) {
+    public List<Path> creerFeuillesDeRoute(Controlleur c) {
         throw new IllegalStateException("Erreur : impossible de créer une feuille de route avant le calcul de la tournée.");
     }
 
@@ -77,6 +78,7 @@ public class EtatInitial implements Etat {
     public Object saveTournee(Controlleur c) {
         throw new IllegalStateException("Impossible de sauvegarder une tournée qui n'a pas été calculé.");
     }
+
 
     @Override
     public Object loadTournee(Controlleur c, MultipartFile file, Carte carte) {

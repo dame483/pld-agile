@@ -597,9 +597,6 @@ async function creerFeuillesDeRoute() {
     try {
         const response = await fetch("http://localhost:8080/api/tournee/feuille-de-route", {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            }
         });
 
         if (!response.ok) {
@@ -607,9 +604,16 @@ async function creerFeuillesDeRoute() {
             envoyerNotification("Erreur lors de la création de la feuille de route : " + errText, "error");
             return;
         }
-
-        const res = await response.json();
-        envoyerNotification(res.message);
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "feuilles_de_route.zip";
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        window.URL.revokeObjectURL(url);
+        envoyerNotification("Feuilles de route téléchargées avec succès !");
     } catch (error) {
         console.error(error);
         envoyerNotification("Erreur réseau ou serveur : " + error.message, "error");
