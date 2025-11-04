@@ -298,20 +298,20 @@ body, h1 {
     font-weight: bold;
     font-size: 1.2rem;
     color: #fff;
-    background-color: rgba(0, 0, 0, 0.75); /* fond sombre semi-transparent */
+    background-color: rgba(0, 0, 0, 0.75);
     box-shadow: 0 4px 12px rgba(0,0,0,0.5);
     max-width: 90%;
     text-align: center;
-    text-shadow: 1px 1px 2px #000; /* contour léger pour le texte */
+    text-shadow: 1px 1px 2px #000;
     animation: slideDown 0.3s ease-out;
 }
 
 #notification.success {
-    background-color: rgba(76, 175, 80, 0.9); /* vert plus sombre et lisible */
+    background-color: rgba(76, 175, 80, 0.9);
 }
 
 #notification.error {
-    background-color: rgba(244, 67, 54, 0.9); /* rouge plus sombre et lisible */
+    background-color: rgba(244, 67, 54, 0.9);
 }
 
 @keyframes slideDown {
