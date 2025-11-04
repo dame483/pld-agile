@@ -438,39 +438,62 @@ function drawTourneeTable(tournee){
     let ordre = 1;
 
     const chemins = tournee.chemins;
-    const firstNode = chemins[0]?.noeudDePassageDepart;
-    const lastNode = chemins[chemins.length-1]?.noeudDePassageArrivee;
+    const premierNoeud = chemins[0]?.noeudDePassageDepart;
 
     chemins.forEach(c => {
-        const noeudsChemin = [(c.noeudDePassageDepart && c.noeudDePassageDepart.type === "ENTREPOT") ? c.noeudDePassageDepart : null, c.noeudDePassageArrivee];
+        const noeudsChemin = [
+            (c.noeudDePassageDepart && c.noeudDePassageDepart.type === "ENTREPOT") ? c.noeudDePassageDepart : null,
+            c.noeudDePassageArrivee
+        ];
+
         noeudsChemin.forEach(noeud => {
             if (!noeud) return;
-            if (["ENTREPOT","PICKUP","DELIVERY"].includes(noeud.type)) {
+            if (["ENTREPOT", "PICKUP", "DELIVERY"].includes(noeud.type)) {
 
                 const color = window.colorByNodeId?.[noeud.id] || "#000000";
-                const bordercolor = color !== "#000000"? "solid black":"white";
+                const bordercolor = color !== "#000000" ? "solid black" : "white";
 
                 let horaire = "";
-                if (noeud === firstNode && noeud.type === "ENTREPOT") {
+                if (noeud === premierNoeud && noeud.type === "ENTREPOT") {
                     horaire = noeud.horaireDepart || "-";
-                } else if (noeud === lastNode && noeud.type === "ENTREPOT") {
-                    horaire = formatHoraireFourchette(noeud.horaireArrivee) || "-";
                 } else {
                     horaire = formatHoraireFourchette(noeud.horaireArrivee) || "-";
                 }
-
-                const row = document.createElement("tr");
-                row.innerHTML = `
-              <td style="padding:4px;text-align:center;">
-                <div style="width:18px;height:18px;background:${color};
-                    border:1px solid ${bordercolor};border-radius:3px;margin:auto;"></div>
-              </td>
+                
+                let formeHTML = "";
+                if (noeud.type === "PICKUP") {
+                    formeHTML = `<div style="
+                    width:18px;height:18px;
+                    background:${color};
+                    border:1px ${bordercolor};
+                    border-radius:3px;
+                    margin:auto;"></div>`;
+                } else if (noeud.type === "DELIVERY") {
+                    formeHTML = `<div style="
+                    width:18px;height:18px;
+                    background:${color};
+                    border:1px ${bordercolor};
+                    border-radius:50%;
+                    margin:auto;"></div>`;
+                } else if (noeud.type === "ENTREPOT") {
+                    const strokeColor = (color.toLowerCase() === "#000000" || color.toLowerCase() === "black") ? "white" : "black";
+                    formeHTML = `
+                        <svg width="18" height="18" viewBox="0 0 24 24" style="display:block;margin:auto;">
+                            <polygon points="12,3 21,21 3,21"
+                                fill="${color}"
+                                stroke="${strokeColor}"
+                                stroke-width="1.5"/>
+                        </svg>`;
+                }
+                const ligne = document.createElement("tr");
+                ligne.innerHTML = `
+              <td style="padding:4px;text-align:center;">${formeHTML}</td>
               <td style="border-left:1px solid #ccc;padding:4px;text-align:center;">${ordre++}</td>
               <td style="border-left:1px solid #ccc;padding:4px;text-align:center;">${noeud.type}</td>
               <td style="border-left:1px solid #ccc;padding:4px;text-align:center;">${noeud.id}</td>
               <td style="border-left:1px solid #ccc;padding:4px;text-align:center;">${horaire}</td>
             `;
-                tbody.appendChild(row);
+                tbody.appendChild(ligne);
             }
         });
     });
@@ -632,72 +655,67 @@ function resumeAnimation(){ if(!animTimer) runAnimation(); }
 function stopAnimation(){ if(animTimer){ clearInterval(animTimer); animTimer=null; } if(courierMarker){ map.removeLayer(courierMarker); courierMarker=null; } }
 
 function addAnimationButton() {
-    if (animControl) { map.removeControl(animControl); animControl = null; }
+    const elementDroite = document.querySelector('.elementDroite');
+    const oldControl = document.getElementById("animationControl");
+    if (oldControl) oldControl.remove();
+    const div = document.createElement('div');
+    div.id = "animationControl";
 
-    animControl = L.control({ position: 'topleft' });
-    animControl.onAdd = function () {
-        const div = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
-        const tourneeOptions = Object.keys(window.animPaths)
-            .map(i => `<option value="${i}">Tournée ${parseInt(i) + 1}</option>`)
-            .join('');
+    const tourneeOptions = Object.keys(window.animPaths || {})
+        .map(i => `<option value="${i}">Tournée ${parseInt(i) + 1}</option>`)
+        .join('') || `<option disabled>Aucune tournée</option>`;
 
-        div.innerHTML = `
-          <div style="background:rgba(255,255,255,0.85);border-radius:10px;
-                      box-shadow:0 0 5px rgba(0,0,0,0.3);padding:8px;
-                      font-size:13px;text-align:center;width:160px;color:black;">
-            <h4 style="margin:0 0 8px 0;font-weight:bold;">Livreur</h4>
-            <select id="tourneeSelect" style="width:100%;margin-bottom:6px;">${tourneeOptions}</select>
-            <button id="btnStartStop" style="background:#b2d1d2;border:none;padding:5px 8px;
-                     border-radius:6px;cursor:pointer;width:100%;margin-bottom:5px;">Lancer l’animation</button>
-            <button id="btnPause" style="background:#ddd;border:none;padding:5px 8px;
-                     border-radius:6px;cursor:pointer;width:100%;">Pause</button>
-          </div>`;
+    div.innerHTML = `
+        <h4>Tournée sélectionnée</h4>
+        <select id="tourneeSelect">${tourneeOptions}</select>
+        <button id="btnStartStop">Lancer l’animation</button>
+        <button id="btnPause">Pause</button>
+    `;
 
-        const start = div.querySelector('#btnStartStop');
-        const pause = div.querySelector('#btnPause');
-        const select = div.querySelector('#tourneeSelect');
+    elementDroite.insertBefore(div, elementDroite.firstChild);
 
-        select.onchange = e => {
-            selectedIndex = parseInt(e.target.value);
-            const tournee = window.toutesLesTournees[selectedIndex];
-            drawTourneeTable(tournee);
-        };
+    const start = div.querySelector('#btnStartStop');
+    const pause = div.querySelector('#btnPause');
+    const select = div.querySelector('#tourneeSelect');
 
-        start.onclick = e => {
-            e.stopPropagation();
-            if (!isAnimating) {
-                start.textContent = 'Arrêter l’animation';
-                startAnimation(selectedIndex);
-                isAnimating = true;
-                pause.disabled = false;
-            } else {
-                start.textContent = 'Lancer l’animation';
-                stopAnimation();
-                isAnimating = false;
-                isPaused = false;
-                pause.textContent = 'Pause';
-                pause.disabled = true;
-            }
-        };
-
-        pause.onclick = e => {
-            e.stopPropagation();
-            if (!isAnimating) return;
-            if (!isPaused) {
-                pauseAnimation();
-                isPaused = true;
-                pause.textContent = 'Reprendre';
-            } else {
-                resumeAnimation();
-                isPaused = false;
-                pause.textContent = 'Pause';
-            }
-        };
-
-        pause.disabled = true;
-        return div;
+    select.onchange = e => {
+        selectedIndex = parseInt(e.target.value);
+        const tournee = window.toutesLesTournees[selectedIndex];
+        drawTourneeTable(tournee);
     };
-    animControl.addTo(map);
+
+    start.onclick = e => {
+        e.stopPropagation();
+        if (!isAnimating) {
+            start.textContent = 'Arrêter l’animation';
+            startAnimation(selectedIndex);
+            isAnimating = true;
+            pause.disabled = false;
+        } else {
+            start.textContent = 'Lancer l’animation';
+            stopAnimation();
+            isAnimating = false;
+            isPaused = false;
+            pause.textContent = 'Pause';
+            pause.disabled = true;
+        }
+    };
+
+    pause.onclick = e => {
+        e.stopPropagation();
+        if (!isAnimating) return;
+        if (!isPaused) {
+            pauseAnimation();
+            isPaused = true;
+            pause.textContent = 'Reprendre';
+        } else {
+            resumeAnimation();
+            isPaused = false;
+            pause.textContent = 'Pause';
+        }
+    };
+
+    pause.disabled = true;
 }
 
 // AFFICHAGE GLOBAL
@@ -727,6 +745,9 @@ async function updateUIFromEtat() {
         document.querySelector('.navbar-item img[alt="Charger une tournée"]').style.cursor = "pointer";
         document.getElementById('map').style.display = "block";
         document.getElementById('tournee-modifier').style.display = "none";
+        if (document.getElementById('animationControl')) {
+            document.getElementById('animationControl').style.display = "none";
+        }
         if(data.etat === "Etat Initial") {
             document.getElementById('welcome-message').style.display = "flex";
             document.querySelector('.navbar-item img[alt="Ajouter une carte"]').style.filter = "drop-shadow(0 0 10px rgba(225,225,0,1))";
@@ -745,6 +766,7 @@ async function updateUIFromEtat() {
         } else if(data.tourneeChargee) {
             document.getElementById('tournee-chargee').style.display = "inline";
             document.getElementById('tableauTournees').style.display = "inline";
+            document.getElementById('animationControl').style.display = "block";
         } else if(data.demandeChargee) {
             document.getElementById('livraisons').style.display = "inline";
             document.getElementById('fileNameDemande').style.display = "inline";
@@ -860,6 +882,10 @@ document.addEventListener('DOMContentLoaded',async () => {
         img.title = img.alt;
     });
 
+    document.querySelectorAll('.boutonModif img').forEach(img => {
+        img.title = img.alt;
+    });
+
     document.getElementById("inputTournee").addEventListener("change", async (event) => {
         const file = event.target.files[0];
         if (!file) return;
@@ -918,48 +944,3 @@ document.addEventListener('DOMContentLoaded',async () => {
         }
     });
 });
-
-async function checkEtSupprimer() {
-    if (!modeSuppressionActif) return;
-    if (!idNoeudPickup && !idNoeudDelivery) return;
-
-    const livraisons = demandeData?.livraisons || [];
-    if (idNoeudPickup && !idNoeudDelivery) {
-        const lAssocie = livraisons.find(l => l.adresseEnlevement.id === idNoeudPickup);
-        if (lAssocie) idNoeudDelivery = lAssocie.adresseLivraison.id;
-    } else if (idNoeudDelivery && !idNoeudPickup) {
-        const lAssocie = livraisons.find(l => l.adresseLivraison.id === idNoeudDelivery);
-        if (lAssocie) idNoeudPickup = lAssocie.adresseEnlevement.id;
-    }
-
-    if (!idNoeudPickup || !idNoeudDelivery) return;
-
-    const body = {idNoeudPickup, idNoeudDelivery, mode:"supprimer"};
-    try {
-        const response = await fetch("http://localhost:8080/api/tournee/modifier", {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify(body)
-        });
-        const data = await response.json();
-        if (response.ok && data.message === "Opération effectuée : supprimer") {
-            const nouvelleTournee = data.tournee;
-            resetTournee();
-
-            drawTourneeNodes(nouvelleTournee);
-            drawTournee(nouvelleTournee, colors[0], 0);
-            //MAJ tableau
-            window.toutesLesTournees[selectedIndex] = nouvelleTournee;
-            await updateUIFromEtat();
-        } else {
-            alert("Erreur : " + (data.message || "Impossible de supprimer le point."));
-        }
-    } catch (err) {
-        console.error(err);
-        alert("Erreur réseau : " + err.message);
-    } finally {
-        modeSuppressionActif = false;
-        idNoeudPickup = null;
-        idNoeudDelivery = null;
-    }
-}

@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="style.css" />
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <script src="script.js"></script>
+    <script src="script/modification.js"></script>
 </head>
 <body>
 <div class="navbar">
@@ -97,32 +98,29 @@
         <span>Modification de tournée</span>
     </div>
     <div id="boutons-edit-mode">
-        <button id="modeAjout">
-            <img src="tools/pluslogo.png" alt="Icône ajout livraison">
-            <p>Ajouter une livraison</p>
+        <button id="modeAjout" class="boutonModif">
+            <img src="tools/pluslogo.png" alt="Ajouter une livraison">
         </button>
-        <button id="modeSupression">
-            <img src="tools/moins-logo.png" alt="Icône supression livraison">
-            <p>Supprimer une livraison</p>
+        <button id="modeSupression" class="boutonModif">
+            <img src="tools/moins-logo.png" alt="Supprimer une livraison">
         </button>
-        <button id="annulerModification">
-            <img src="tools/undo-logo.png" alt="Icône revenir en arrière">
-            <p>Annuler dernière modification</p>
+        <button id="annulerModification" class="boutonModif">
+            <img src="tools/undo-logo.png" alt="Annuler dernière modification">
         </button>
-        <button id="retablirModification">
-            <img src="tools/redo-logo.png" alt="Icône rétablir la dernière modification">
-            <p>Rétablir dernière modification</p>
+        <button id="retablirModification" class="boutonModif">
+            <img src="tools/redo-logo.png" alt="Rétablir dernière modification">
         </button>
-        <button id="sauvegarderModification">
-            <img src="tools/save-logo.png" alt="Icône sauvegarder modifications">
-            <p>Sauvegarder les modifications</p>
+        <button id="sauvegarderModification" class="boutonModif">
+            <img src="tools/save-logo.png" alt="Sauvegarder les modifications">
         </button>
     </div>
 </div>
 <div id="map-container">
     <div id="map"></div>
-    <div class="tableau" id="tableauDemandes" style="display:none;"></div>
-    <div class="tableau" id="tableauTournees" style="display:none; flex-basis:30%;"></div>
+    <div class="elementDroite">
+        <div class="tableau" id="tableauDemandes" style="display:none;"></div>
+        <div class="tableau" id="tableauTournees" style="display:none; flex-basis:30%;"></div>
+    </div>
 </div>
 </body>
 </html>
