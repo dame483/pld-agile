@@ -102,7 +102,6 @@ async function uploadCarte(file) {
     }
 }
 
-
 async function uploadDemande(file){
     if(!carteData){
         envoyerNotification("Charger le plan XML d'abord.", "error");
@@ -686,7 +685,6 @@ document.addEventListener('DOMContentLoaded',async () => {
 
     document.getElementById('calculerTournee').addEventListener('click', async () => {
         let nbLivreurs = parseInt(document.getElementById('nbLivreurs').value);
-
         if (isNaN(nbLivreurs) || nbLivreurs < 1) nbLivreurs = 1;
         const max = demandeData?.livraisons?.length || 1;
         if (nbLivreurs > max) nbLivreurs = max;
@@ -817,6 +815,8 @@ document.addEventListener('DOMContentLoaded',async () => {
     });
 
     document.getElementById('modeSupression').addEventListener("click", async () => {
+        // RECUPERER ID NOEUD SELECTIONNE (PICKUP & DELIVERY)
+        // RECUPERER NOEUD ASSOCIE CORRESPONDANT
         const formData = new FormData();
         formData.append("idNoeudPickup", idNoeudPickup);
         formData.append("idNoeudDelivery", idNoeudDelivery);
@@ -827,8 +827,16 @@ document.addEventListener('DOMContentLoaded',async () => {
         });
         const data = await response.json();
         if (data.success) {
-            console.log(data.data);
-            // TRAITEMENT DE LA SUPPRESSION
+            const nouvelleTournee = data.data.tournee;
+            if (!nouvelleTournee) {
+                alert("Oups : Il est impossible de supprimer ce point !");
+                return;
+            }
+            resetTournee();
+            drawTournee(nouvelleTournee, colors[0], 0)
+            //Afficher tableau drawTourneeTable(window.toutesLesTournees[selectedIndex]) et rajouter colonne avec les nouveaux horaires exacts (en rouge si pas dans la plage horaire)
+            window.toutesLesTournees[selectedIndex] = nouvelleTournee;
+            await updateUIFromEtat();
         }
     });
 });
