@@ -57,20 +57,6 @@ public class Tournee {
         this.longueurTotale = longueurTotale;
     }
 
-    public void ajouterChemin(Chemin c, double vitesse) {
-        this.chemins.add(c);
-        double dureeTrajet = c.getLongueurTotal() / vitesse;
-        double dureeService = c.getNoeudDePassageArrivee().getDuree();
-        this.dureeTotale += dureeTrajet + dureeService;
-    }
-
-    /**
-     * Renvoie le NoeudDePassage correspondant à l'ID passé en paramètre.
-     * Parcourt tous les chemins de la tournée.
-     *
-     * @param idNoeud l'identifiant du noeud recherché
-     * @return le NoeudDePassage correspondant, ou null si introuvable
-     */
     public NoeudDePassage getNoeudParId(long idNoeud) {
         for (Chemin c : chemins) {
             if (Objects.equals(c.getNoeudDePassageDepart().getId(), idNoeud)) {
@@ -80,7 +66,7 @@ public class Tournee {
                 return c.getNoeudDePassageArrivee();
             }
         }
-        return null; // noeud non trouvé
+        return null;
     }
 
 

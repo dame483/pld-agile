@@ -136,18 +136,6 @@ public class CalculTourneeTests {
         double[][] distances = fw.getDistances();
         Chemin[][] chemins = fw.getMatriceChemins();
 
-        System.out.println("=== Matrice des distances ===");
-        for (int i = 0; i < distances.length; i++) {
-            for (int j = 0; j < distances[i].length; j++) {
-                if (distances[i][j] == Double.POSITIVE_INFINITY) {
-                    System.out.print("INF\t"); // nœud inatteignable
-                } else {
-                    System.out.print(distances[i][j] + "\t");
-                }
-            }
-            System.out.println();
-        }
-
         //Vérifier distances
         assertEquals(0.0, distances[0][0], 1e-6);
         assertEquals(10.0, distances[0][1], 1e-6);
@@ -156,25 +144,6 @@ public class CalculTourneeTests {
         assertEquals(5.0, distances[1][2], 1e-6);
         assertTrue(distances[2][0] == Double.POSITIVE_INFINITY);
         assertTrue(distances[2][1] == Double.POSITIVE_INFINITY);
-
-
-        System.out.println("=== Matrice des chemins ===");
-
-        for (int i = 0; i < chemins.length; i++) {
-            for (int j = 0; j < chemins[i].length; j++) {
-                Chemin c = chemins[i][j];
-                if (c == null || c.getLongueurTotal() == Double.POSITIVE_INFINITY) {
-                    System.out.print("[]\t");  // Chemin inatteignable
-                } else {
-                    String tronconsStr = c.getTroncons().stream()
-                            .map(t -> t.getIdOrigine() + "-" + t.getIdDestination())
-                            .reduce((a, b) -> a + "," + b)
-                            .orElse("");
-                    System.out.print("[" + tronconsStr + "]\t");
-                }
-            }
-            System.out.println();
-        }
 
 
         //Vérifier cohérence des chemins

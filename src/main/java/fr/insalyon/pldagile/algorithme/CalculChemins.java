@@ -14,20 +14,14 @@ public class CalculChemins {
         this.carte = carte;
     }
 
-    /**
-     * Calcule pour chaque paire (i,j) la distance minimale (en mètres)
-     * et le chemin (liste de tronçons).
-     */
     public void calculerMatrice(List<NoeudDePassage> noeuds) {
         int n = noeuds.size();
         distances = new double[n][n];
         matriceChemins = new Chemin[n][n];
 
-        // Pour chaque noeud de passage comme source
         for (int i = 0; i < n; i++) {
             NoeudDePassage depart = noeuds.get(i);
 
-            // Dijkstra -> map idNoeudDestination -> liste de tronçons
             Map<Long, List<Troncon>> chemins = dijkstra(depart);
 
             for (int j = 0; j < n; j++) {
@@ -58,16 +52,11 @@ public class CalculChemins {
         return matriceChemins;
     }
 
-    /**
-     * Dijkstra modifié : construit directement la liste des tronçons du plus court chemin
-     * vers chaque nœud (identifié par son id).
-     */
     private Map<Long, List<Troncon>> dijkstra(NoeudDePassage depart) {
         Map<Long, Double> dist = new HashMap<>();
         Map<Long, List<Troncon>> chemins = new HashMap<>();
         Set<Long> visited = new HashSet<>();
 
-        // Initialisation
         for (Long id : carte.getNoeuds().keySet()) {
             dist.put(id, Double.POSITIVE_INFINITY);
         }
@@ -83,7 +72,6 @@ public class CalculChemins {
             long idCourant = current[0];
             if (!visited.add(idCourant)) continue;
 
-            // Parcourt tous les tronçons sortants de la carte
             for (Troncon t : carte.getTroncons()) {
                 if (t.getIdOrigine() != idCourant) continue;
 
@@ -106,21 +94,15 @@ public class CalculChemins {
         return chemins;
     }
 
-    /**
-     * Calcule le plus court chemin entre deux nœuds précis à partir de la carte.
-     * Utilise Dijkstra et retourne directement le Chemin correspondant.
-     */
     public Chemin calculerCheminPlusCourt(NoeudDePassage depart, NoeudDePassage arrivee) {
         if (depart == null || arrivee == null) {
             throw new IllegalArgumentException("Les nœuds de départ et d'arrivée ne peuvent pas être nuls.");
         }
 
-        // Exécute Dijkstra depuis le nœud de départ
         Map<Long, List<Troncon>> chemins = dijkstra(depart);
         List<Troncon> troncons = chemins.get(arrivee.getId());
 
         if (troncons == null) {
-            // Aucun chemin trouvé
             return null;
         }
 

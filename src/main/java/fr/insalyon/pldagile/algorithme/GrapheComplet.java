@@ -5,12 +5,9 @@ import fr.insalyon.pldagile.modele.Chemin;
 public class GrapheComplet implements Graphe {
 
     private int nbSommets;
-    private double[][] cout; // coûts en double
+    private double[][] cout;
 
-    /**
-     * Crée un graphe complet dont les arcs ont un coût initialisé à 0
-     * @param nbSommets nombre de sommets
-     */
+
     public GrapheComplet(int nbSommets) {
         this.nbSommets = nbSommets;
         cout = new double[nbSommets][nbSommets];
@@ -21,10 +18,6 @@ public class GrapheComplet implements Graphe {
         }
     }
 
-    /**
-     * Crée un graphe complet dont les arcs ont un coût initialisé à 0
-     * @param nbSommets nombre de sommets
-     */
     public GrapheComplet(int nbSommets, Chemin[][] matriceChemins) {
         this.nbSommets=nbSommets;
         cout=new double [nbSommets][nbSommets];
@@ -43,7 +36,6 @@ public class GrapheComplet implements Graphe {
         return nbSommets;
     }
 
-    // Retourne le coût arrondi en int pour compatibilité interface Graphe
     @Override
     public double getCout(int i, int j) {
         if (i < 0 || i >= nbSommets || j < 0 || j >= nbSommets) return -1;
