@@ -508,10 +508,6 @@ function drawTourneeNodes(tourneeData) {
         if (c.noeudDePassageArrivee?.id) idsDansTournee.add(c.noeudDePassageArrivee.id);
     });
 
-    console.log(idsDansTournee);
-
-    console.log(tourneeData);
-
     window.colorByNodeId = {};
 
     livraisons.forEach((l, i) => {
@@ -534,9 +530,10 @@ function drawTourneeNodes(tourneeData) {
             id: en.id
         }).addTo(livraisonsLayer)
             .on('click', e => {
-                const nodeId = e.target.options.id;
+                idNoeudPickup = e.target.options.id;
+                checkEtSupprimer();
                 L.popup().setLatLng(e.latlng)
-                    .setContent(`<b>Pickup ID ${nodeId}</b>`)
+                    .setContent(`<b>Pickup ID ${idNoeudPickup}</b>`)
                     .openOn(map);
             });
 
@@ -549,9 +546,10 @@ function drawTourneeNodes(tourneeData) {
             id: lv.id
         }).addTo(livraisonsLayer)
             .on('click', e => {
-                const nodeId = e.target.options.id;
+                idNoeudDelivery = e.target.options.id;
+                checkEtSupprimer();
                 L.popup().setLatLng(e.latlng)
-                    .setContent(`<b>Livraison ID ${nodeId}</b>`)
+                    .setContent(`<b>Livraison ID ${idNoeudDelivery}</b>`)
                     .openOn(map);
             });
     });
@@ -963,7 +961,6 @@ async function checkEtSupprimer() {
             //MAJ tableau
             window.toutesLesTournees[selectedIndex] = nouvelleTournee;
             await updateUIFromEtat();
-            console.log("suppression OK")
         } else {
             alert("Erreur : " + (data.message || "Impossible de supprimer le point."));
         }
