@@ -264,6 +264,48 @@ public class CalculTourneeTests {
         assertTrue(sol.containsAll(List.of(0, 1, 2)));
     }
 
+    @Test
+    void testTSPHeuristiquePrecedence_ordreRespecte() {
+        // Création d’un graphe complet à 3 nœuds
+        GrapheComplet g = new GrapheComplet(3);
+        g.setCout(0, 1, 10);
+        g.setCout(1, 2, 5);
+        g.setCout(0, 2, 20);
+        g.setCout(1, 0, 10);
+        g.setCout(2, 1, 5);
+        g.setCout(2, 0, 20);
+
+        // Création des nœuds
+        List<NoeudDePassage> noeuds = new ArrayList<>();
+        noeuds.add(new NoeudDePassage(1L, 0, 0, null, 0, null)); // index 0
+        noeuds.add(new NoeudDePassage(2L, 1, 1, null, 0, null)); // index 1
+        noeuds.add(new NoeudDePassage(3L, 2, 2, null, 0, null)); // index 2
+
+        // Livraison : pickup = noeud 0, livraison = noeud 1
+        List<Livraison> livraisons = new ArrayList<>();
+        livraisons.add(new Livraison(noeuds.get(0), noeuds.get(1)));
+
+        // Création et résolution du TSP
+        TSPHeuristiquePrecedence tsp = new TSPHeuristiquePrecedence(noeuds, livraisons, g);
+        tsp.resoudre(0);
+
+        // Récupération de la solution
+        List<Integer> solution = tsp.getSolution();
+
+        // Vérifications
+        assertNotNull(solution, "La solution ne doit pas être nulle");
+        assertFalse(solution.isEmpty(), "La solution ne doit pas être vide");
+        assertTrue(solution.containsAll(List.of(0, 1, 2)), "La tournée doit contenir tous les nœuds");
+
+        // Vérifie que la livraison (1) est après l’enlèvement (0)
+        int pickupIndex = solution.indexOf(0);
+        int deliveryIndex = solution.indexOf(1);
+        assertTrue(pickupIndex < deliveryIndex, "Le pickup doit précéder la livraison");
+
+        // Vérifie que la tournée commence et finit au même endroit (retour à l'entrepôt)
+        assertEquals(solution.get(0), solution.get(solution.size() - 1),
+                "La tournée doit commencer et finir au même sommet");
+    }
 
 
     /**
@@ -387,8 +429,65 @@ public class CalculTourneeTests {
         assertTrue(ex.getMessage().contains("connexe"));
     }
 
+    @Test
+    void testKMeans_simple() {
+        // Création de livraisons avec positions connues
+        NoeudDePassage n1 = new NoeudDePassage(1L, 0, 0, null, 0, null);
+        NoeudDePassage n2 = new NoeudDePassage(2L, 0, 1, null, 0, null);
+        NoeudDePassage n3 = new NoeudDePassage(3L, 10, 10, null, 0, null);
+        NoeudDePassage n4 = new NoeudDePassage(4L, 10, 11, null, 0, null);
+        NoeudDePassage n5 = new NoeudDePassage(5L, 5, 5, null, 0, null);
 
-    // KMeans
+        Livraison l1 = new Livraison(n1, n1);
+        Livraison l2 = new Livraison(n2, n2);
+        Livraison l3 = new Livraison(n3, n3);
+        Livraison l4 = new Livraison(n4, n4);
+        Livraison l5 = new Livraison(n5, n5);
+
+        List<Livraison> livraisons = List.of(l1, l2, l3, l4, l5);
+
+        int k = 2;
+        KMeans kMeans = new KMeans(livraisons, k);
+        List<List<Livraison>> clusters = kMeans.cluster();
+
+        // Vérifications basiques
+        assertEquals(k, clusters.size(), "Le nombre de clusters doit être égal à k");
+
+        // Toutes les livraisons sont présentes et aucune dupliquée
+        Set<Livraison> toutes = new HashSet<>();
+        for (List<Livraison> cluster : clusters) {
+            toutes.addAll(cluster);
+            assertTrue(cluster.size() <= Math.ceil((double) livraisons.size() / k), "Cluster trop grand");
+        }
+        assertEquals(livraisons.size(), toutes.size(), "Toutes les livraisons doivent être présentes");
+        assertTrue(toutes.containsAll(livraisons), "Aucune livraison ne doit manquer");
+
+        // Optionnel : vérifier que les livraisons proches sont regroupées
+        boolean cluster1ContientL1L2 = clusters.get(0).contains(l1) && clusters.get(0).contains(l2)
+                || clusters.get(1).contains(l1) && clusters.get(1).contains(l2);
+        boolean cluster1ContientL3L4 = clusters.get(0).contains(l3) && clusters.get(0).contains(l4)
+                || clusters.get(1).contains(l3) && clusters.get(1).contains(l4);
+        assertTrue(cluster1ContientL1L2, "Livraisons proches doivent être regroupées");
+        assertTrue(cluster1ContientL3L4, "Livraisons proches doivent être regroupées");
+    }
+
+    @Test
+    void testKMeans_vide() {
+        KMeans kMeans = new KMeans(Collections.emptyList(), 3);
+        List<List<Livraison>> clusters = kMeans.cluster();
+        assertTrue(clusters.isEmpty(), "Si la liste est vide, on retourne une liste vide");
+    }
+
+    @Test
+    void testKMeans_kZero() {
+        NoeudDePassage n1 = new NoeudDePassage(1L, 0, 0, null, 0, null);
+        Livraison l1 = new Livraison(n1, n1);
+        KMeans kMeans = new KMeans(List.of(l1), 0);
+        List<List<Livraison>> clusters = kMeans.cluster();
+        assertTrue(clusters.isEmpty(), "Si k <= 0, le résultat est vide");
+    }
+
+
 
 }
 

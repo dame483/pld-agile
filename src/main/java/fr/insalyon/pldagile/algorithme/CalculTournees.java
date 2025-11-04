@@ -147,7 +147,12 @@ public class CalculTournees {
             arrivee.setHoraireArrivee(heureArrivee);
 
             heureCourante = heureArrivee.plusSeconds(Math.round(arrivee.getDuree()));
-            arrivee.setHoraireDepart(heureCourante);
+
+            int dernierIdx = solution.get(solution.size() - 1);
+            int entrepotIdx = solution.get(0);
+            if (dernierIdx != entrepotIdx) {arrivee.setHoraireDepart(heureCourante);}
+
+
 
             longueurTotale += chemin.getLongueurTotal();
             dureeTotale += dureeTrajetSec + arrivee.getDuree();
