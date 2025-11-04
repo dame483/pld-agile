@@ -1,30 +1,32 @@
 // DECLARATIONS
 
-let map=null;
-let carteData=null;
-let demandeData=null;
-let livraisonsLayer=null, entrepotLayer=null;
-let animTimer=null, courierMarker=null, animPath= {};
-let animControl=null, isAnimating=false, isPaused=false;
-let animSpeed=8, animSamples=[], animIndex=0;
+let map = null;
+let carteData = null;
+let demandeData = null;
+let livraisonsLayer = null, entrepotLayer = null;
+let animTimer = null, courierMarker = null, animPath = {};
+let animControl = null, isAnimating = false, isPaused = false;
+let animSpeed = 8, animSamples = [], animIndex = 0;
 window.toutesLesTournees = [];
-var selectedIndex = 0;
 
-const colors=[
+const colors = [
     '#e6194b','#3cb44b','#ffe119','#4363d8','#f58231','#911eb4','#46f0f0',
     '#f032e6','#bcf60c','#fabebe','#008080','#e6beff','#9a6324','#fffac8',
     '#800000','#aaffc3','#808000','#ffd8b1','#000075','#808080','#000000'
 ];
-const STEP_M=10;
+const STEP_M = 10;
 
-// OUTILS
+
+// ======================================================
+// ===================   OUTILS   =======================
+// ======================================================
 
 function makeStepNumberIcon(n,color){
-    const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="34" height="18" viewBox="0 0 34 18">
+    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="34" height="18" viewBox="0 0 34 18">
                     <text x="17" y="14" font-size="12" font-weight="bold" text-anchor="middle"
                           fill="${color}" stroke="white" stroke-width="3" paint-order="stroke">${n}</text>
                  </svg>`;
-    return L.divIcon({className:'',html:svg,iconSize:[34,18]});
+    return L.divIcon({className:'', html:svg, iconSize:[34,18]});
 }
 
 function midPoint(a,b){ return [(a[0]+b[0])/2,(a[1]+b[1])/2]; }
@@ -64,10 +66,12 @@ function formatHoraireFourchette(horaire, deltaMinutes = 30) {
 }
 
 
-// CHARGEMENT
+// ======================================================
+// ====================   CHARGEMENT   ===================
+// ======================================================
 
 async function uploadCarte(file){
-    const formData=new FormData();
+    const formData = new FormData();
     formData.append("file",file);
     try{
         const response= await fetch(`http://localhost:8080/api/upload-carte`,{method:"POST",body:formData});
@@ -78,47 +82,53 @@ async function uploadCarte(file){
         resetLivraisons();
         drawCarte(carteData);
         await updateUIFromEtat();
-    }catch(err){
-        alert(err.message);
-    }
-    finally{
-        document.getElementById('xmlCarte').value = '';
-    }
+    }catch(err){ alert(err.message); }
+    finally{ document.getElementById('xmlCarte').value = ''; }
 }
 
-async function uploadDemande(file){
-    if(!carteData){
+async function uploadDemande(file) {
+    if (!carteData) {
         alert("Charger le plan XML d'abord.");
         return;
     }
-    const formData=new FormData();
-    formData.append("file",file);
-    try{
-        const response=await fetch("http://localhost:8080/api/upload-demande",{method:"POST",body:formData});
-        if(!response.ok){
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+        const response = await fetch("http://localhost:8080/api/upload-demande", { method: "POST", body: formData });
+        if (!response.ok) {
             alert(await response.text());
             return;
         }
-        const res=await response.json();
+
+        const res = await response.json();
         demandeData = res.demande;
-        document.getElementById('nbLivreurs').max = demandeData.livraisons.length || 1;
+
+        const input = document.getElementById('nbLivreurs');
+        input.min = 1;
+        input.step = 1;
+        input.required = true;
+        input.max = demandeData.livraisons.length || 1;
+        input.value = 1;
+        input.addEventListener('keydown', e => e.preventDefault());
+
         drawLivraisons(demandeData);
         drawEntrepot(demandeData.entrepot);
         await updateUIFromEtat();
-    }catch(err){
+    } catch (err) {
         alert(err.message);
-    }finally{
+    } finally {
         document.getElementById('xmlDemande').value = '';
     }
 }
 
-// AFFICHAGE CARTE ET DEMANDES
+// ======================================================
+// ============   AFFICHAGE CARTE ET DONNÉES   ==========
+// ======================================================
 
 function resetCarte() {
-    if (map) {
-        try { map.remove(); } catch (e) {}
-        map = null;
-    }
+    if (map) { try { map.remove(); } catch (e) {} map = null; }
     const mapDiv = document.getElementById('map');
     if (mapDiv) {
         mapDiv._leaflet_id = null;
@@ -143,7 +153,7 @@ function resetLivraisons(){
     if (window.directionNumbersLayer) window.directionNumbersLayer.clearLayers();
 
     stopAnimation();
-    if (animControl && map) { map.removeControl(animControl); animControl = null; }
+    if (animControl) { map.removeControl(animControl); animControl = null; }
     animPath = []; isAnimating = false; isPaused = false;
 }
 
@@ -155,17 +165,13 @@ function drawCarte(carte) {
 
     if (!map) {
         map = L.map('map');
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap'
-        }).addTo(map);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(map);
 
-        // créer les layers **une seule fois**
         livraisonsLayer = L.layerGroup().addTo(map);
         entrepotLayer = L.layerGroup().addTo(map);
         addLegend();
     }
 
-    // Supprimer uniquement les tronçons de la carte précédente
     if (window.tronconsLayer) window.tronconsLayer.clearLayers();
     else window.tronconsLayer = L.layerGroup().addTo(map);
 
@@ -179,8 +185,33 @@ function drawCarte(carte) {
 
     const all = Object.values(n).map(x => [x.latitude, x.longitude]);
     if (all.length > 0) map.fitBounds(L.latLngBounds(all).pad(0.1));
+
+    // 🔹 CLIC GLOBAL SUR LA CARTE — récupérer l'id du nœud le plus proche
+    map.on('click', function(e) {
+        if (!carteData || !carteData.noeuds) return;
+        let closest = null, minDist = Infinity;
+
+        for (const node of Object.values(carteData.noeuds)) {
+            const d = map.distance(e.latlng, L.latLng(node.latitude, node.longitude));
+            if (d < minDist) { minDist = d; closest = node; }
+        }
+
+        if (closest && minDist < 50) {
+            L.popup()
+                .setLatLng([closest.latitude, closest.longitude])
+                .setContent(`<b>Nœud ${closest.id}</b><br>Lat: ${closest.latitude.toFixed(6)}<br>Lng: ${closest.longitude.toFixed(6)}`)
+                .openOn(map);
+            console.log("Nœud proche cliqué :", closest.id);
+        } else {
+            console.log("Aucun nœud proche du clic.");
+        }
+    });
 }
 
+
+// ======================================================
+// ============   LIVRAISONS + ENTREPOS   ===============
+// ======================================================
 
 function drawLivraisons(d){
     if(!map||!carteData) return;
@@ -189,20 +220,11 @@ function drawLivraisons(d){
     const n=carteData.noeuds;
 
     const tableau = document.getElementById("tableauDemandes");
-    tableau.innerHTML = "";
-    const header = `
+    tableau.innerHTML = `
     <table style="border-collapse:collapse;">
-      <thead>
-        <tr>
-          <th style="border-bottom:1px solid #ccc;padding:4px;">Couleur</th>
-          <th style="border-bottom:1px solid #ccc;border-left:1px solid #ccc;padding:4px;">N° d'enlèvement</th>
-          <th style="border-bottom:1px solid #ccc;border-left:1px solid #ccc;padding:4px;">N° de livraison</th>
-        </tr>
-      </thead>
-      <tbody id="livraisonBody"></tbody>
-    </table>
-  `;
-    tableau.innerHTML = header;
+      <thead><tr>
+        <th>Couleur</th><th>N° d'enlèvement</th><th>N° de livraison</th>
+      </tr></thead><tbody id="livraisonBody"></tbody></table>`;
     const tbody = document.getElementById("livraisonBody");
     window.colorByNodeId = {};
 
@@ -211,25 +233,35 @@ function drawLivraisons(d){
         const en=n[l.adresseEnlevement.id];
         const lv=n[l.adresseLivraison.id];
         if(!en||!lv) return;
-        window.colorByNodeId[en.id] = color;
-        window.colorByNodeId[lv.id] = color;
+        window.colorByNodeId[en.id]=color; window.colorByNodeId[lv.id]=color;
+
+        // --- Pickup
         L.marker([en.latitude,en.longitude],{
             icon:L.divIcon({className:'',iconSize:[18,18],
-                html:`<div style="width:18px;height:18px;background:${color};border:2px solid black;border-radius:3px;"></div>`})
-        }).addTo(livraisonsLayer);
+                html:`<div style="width:18px;height:18px;background:${color};border:2px solid black;border-radius:3px;"></div>`}),
+            id: en.id
+        }).addTo(livraisonsLayer)
+          .on('click', e => {
+              const nodeId = e.target.options.id;
+              L.popup().setLatLng(e.latlng)
+                       .setContent(`<b>Pickup ID ${nodeId}</b>`)
+                       .openOn(map);
+              console.log("Pickup cliqué :", nodeId);
+          });
+
+        // --- Livraison
         L.marker([lv.latitude,lv.longitude],{
             icon:L.divIcon({className:'',iconSize:[18,18],
-                html:`<div style="width:18px;height:18px;background:${color};border:2px solid black;border-radius:50%;"></div>`})
-        }).addTo(livraisonsLayer);
-        const row = document.createElement("tr");
-        row.innerHTML = `
-      <td style="padding:4px;text-align:center;">
-        <div style="width:18px;height:18px;background:${color};border:1px solid black;border-radius:3px;margin:auto;"></div>
-      </td>
-      <td style="border-left:1px solid #ccc;padding:4px;text-align:center;">${l.adresseEnlevement.id}</td>
-      <td style="border-left:1px solid #ccc;padding:4px;text-align:center;">${l.adresseLivraison.id}</td>
-    `;
-        tbody.appendChild(row);
+                html:`<div style="width:18px;height:18px;background:${color};border:2px solid black;border-radius:50%;"></div>`}),
+            id: lv.id
+        }).addTo(livraisonsLayer)
+          .on('click', e => {
+              const nodeId = e.target.options.id;
+              L.popup().setLatLng(e.latlng)
+                       .setContent(`<b>Livraison ID ${nodeId}</b>`)
+                       .openOn(map);
+              console.log("Livraison cliquée :", nodeId);
+          });
     });
 }
 
@@ -239,9 +271,17 @@ function drawEntrepot(e){
     L.marker([e.latitude,e.longitude],{
         icon:L.divIcon({className:'',iconSize:[24,24],
             html:`<svg width="24" height="24" viewBox="0 0 26 26">
-                  <polygon points="13,3 23,23 3,23" fill="#000" stroke="black" stroke-width="2"/>
-                </svg>`})
-    }).addTo(entrepotLayer);
+                    <polygon points="13,3 23,23 3,23" fill="#000" stroke="black" stroke-width="2"/>
+                  </svg>`}),
+        id: e.id
+    }).addTo(entrepotLayer)
+      .on('click', ev => {
+          const nodeId = ev.target.options.id;
+          L.popup().setLatLng(ev.latlng)
+                   .setContent(`<b>Entrepôt ID ${nodeId}</b>`)
+                   .openOn(map);
+          console.log("Entrepôt cliqué :", nodeId);
+      });
 }
 
 function addLegend(){
@@ -620,7 +660,15 @@ document.addEventListener('DOMContentLoaded',async () => {
     });
 
     document.getElementById('calculerTournee').addEventListener('click', async () => {
-        const nbLivreurs = parseInt(document.getElementById('nbLivreurs').value) || 1;
+        let nbLivreurs = parseInt(document.getElementById('nbLivreurs').value);
+
+        // Sécurisation minimale
+        if (isNaN(nbLivreurs) || nbLivreurs < 1) nbLivreurs = 1;
+        const max = demandeData?.livraisons?.length || 1;
+        if (nbLivreurs > max) nbLivreurs = max;
+
+        document.getElementById('nbLivreurs').value = nbLivreurs;
+
         await calculTournee(nbLivreurs);
     });
 
