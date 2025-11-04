@@ -9,6 +9,10 @@ let animControl=null, isAnimating=false, isPaused=false;
 let animSpeed=8, animSamples=[], animIndex=0;
 window.toutesLesTournees = [];
 var selectedIndex = 0;
+let modeSuppressionActif = false;
+let idNoeudPickup = null;
+let idNoeudDelivery = null;
+
 
 const colors=[
     '#e6194b','#3cb44b','#ffe119','#4363d8','#f58231','#911eb4','#46f0f0',
@@ -256,13 +260,21 @@ function drawLivraisons(d){
                 html:`<div style="width:18px;height:18px;background:${color};border:2px solid black;border-radius:3px;"></div>`}),
             id: en.id
         }).addTo(livraisonsLayer)
-          .on('click', e => {
-              const nodeId = e.target.options.id;
-              L.popup().setLatLng(e.latlng)
-                       .setContent(`<b>Pickup ID ${nodeId}</b>`)
-                       .openOn(map);
-              console.log("Pickup cliqué :", nodeId);
-          });
+            .on('click', e => {
+                const nodeId = e.target.options.id;
+                if (modeSuppressionActif) {
+                    idNoeudPickup = nodeId;
+                    checkEtSupprimer();
+                    L.popup().setLatLng(e.latlng)
+                        .setContent(`<b>Pickup sélectionné : ${nodeId}</b>`)
+                        .openOn(map);
+                    console.log("Pickup sélectionné pour suppression :", nodeId);
+                } else {
+                    L.popup().setLatLng(e.latlng)
+                        .setContent(`<b>Pickup ID ${nodeId}</b>`)
+                        .openOn(map);
+                }
+            });
 
         // --- Livraison
         L.marker([lv.latitude,lv.longitude],{
@@ -270,13 +282,31 @@ function drawLivraisons(d){
                 html:`<div style="width:18px;height:18px;background:${color};border:2px solid black;border-radius:50%;"></div>`}),
             id: lv.id
         }).addTo(livraisonsLayer)
-          .on('click', e => {
-              const nodeId = e.target.options.id;
-              L.popup().setLatLng(e.latlng)
-                       .setContent(`<b>Livraison ID ${nodeId}</b>`)
-                       .openOn(map);
-              console.log("Livraison cliquée :", nodeId);
-          });
+            .on('click', e => {
+                const nodeId = e.target.options.id;
+                if (modeSuppressionActif) {
+                    idNoeudDelivery = nodeId;
+                    checkEtSupprimer();
+                    L.popup().setLatLng(e.latlng)
+                        .setContent(`<b>Livraison sélectionnée : ${nodeId}</b>`)
+                        .openOn(map);
+                    console.log("Livraison sélectionnée pour suppression :", nodeId);
+                } else {
+                    L.popup().setLatLng(e.latlng)
+                        .setContent(`<b>Livraison ID ${nodeId}</b>`)
+                        .openOn(map);
+                }
+            });
+
+        const row = document.createElement("tr");
+        row.innerHTML = `
+      <td style="padding:4px;text-align:center;">
+        <div style="width:18px;height:18px;background:${color};border:1px solid black;border-radius:3px;margin:auto;"></div>
+      </td>
+      <td style="border-left:1px solid #ccc;padding:4px;text-align:center;">${l.adresseEnlevement.id}</td>
+      <td style="border-left:1px solid #ccc;padding:4px;text-align:center;">${l.adresseLivraison.id}</td>
+    `;
+        tbody.appendChild(row);
     });
 }
 
@@ -805,29 +835,55 @@ document.addEventListener('DOMContentLoaded',async () => {
         await updateUIFromEtat();
     });
 
-    document.getElementById('modeSupression').addEventListener("click", async () => {
-        // RECUPERER ID NOEUD SELECTIONNE (PICKUP & DELIVERY)
-        // RECUPERER NOEUD ASSOCIE CORRESPONDANT
-        const formData = new FormData();
-        formData.append("idNoeudPickup", idNoeudPickup);
-        formData.append("idNoeudDelivery", idNoeudDelivery);
-        formData.append("mode", "supprimer");
-        const response = await fetch("http://localhost:8080/api/tournee/mode-modification", {
-            method: "POST",
-            body: formData
-        });
-        const data = await response.json();
-        if (response.ok && data.status === "ok") {
-            const nouvelleTournee = data.tournee;
-            if (!nouvelleTournee) {
-                alert("Oups : Il est impossible de supprimer ce point !");
-                return;
-            }
-            resetTournee();
-            drawTournee(nouvelleTournee, colors[0], 0)
-            //Afficher tableau drawTourneeTable(window.toutesLesTournees[selectedIndex]) et rajouter colonne avec les nouveaux horaires exacts (en rouge si pas dans la plage horaire)
-            window.toutesLesTournees[selectedIndex] = nouvelleTournee;
-            await updateUIFromEtat();
+    document.getElementById('modeSupression').addEventListener("click", () => {
+        if (!modeSuppressionActif) {
+            modeSuppressionActif = true;
+            idNoeudPickup = null;
+            idNoeudDelivery = null;
+            alert("Mode suppression activé : cliquez sur un point Pickup ou Livraison à supprimer.");
         }
     });
 });
+
+async function checkEtSupprimer() {
+    if (!modeSuppressionActif) return;
+    if (!idNoeudPickup && !idNoeudDelivery) return;
+
+    const livraisons = demandeData?.livraisons || [];
+    if (idNoeudPickup && !idNoeudDelivery) {
+        const lAssocie = livraisons.find(l => l.adresseEnlevement.id === idNoeudPickup);
+        if (lAssocie) idNoeudDelivery = lAssocie.adresseLivraison.id;
+    } else if (idNoeudDelivery && !idNoeudPickup) {
+        const lAssocie = livraisons.find(l => l.adresseLivraison.id === idNoeudDelivery);
+        if (lAssocie) idNoeudPickup = lAssocie.adresseEnlevement.id;
+    }
+
+    if (!idNoeudPickup || !idNoeudDelivery) return;
+
+    const body = {idNoeudPickup, idNoeudDelivery, mode:"supprimer"};
+    try {
+        const response = await fetch("http://localhost:8080/api/tournee/modifier", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify(body)
+        });
+        const data = await response.json();
+        if (response.ok && data.message === "Opération effectuée : supprimer") {
+            const nouvelleTournee = data.tournee;
+            resetTournee();
+            drawTournee(nouvelleTournee, colors[0], 0);
+            //MAJ tableau
+            window.toutesLesTournees[selectedIndex] = nouvelleTournee;
+            await updateUIFromEtat();
+        } else {
+            alert("Erreur : " + (data.message || "Impossible de supprimer le point."));
+        }
+    } catch (err) {
+        console.error(err);
+        alert("Erreur réseau : " + err.message);
+    } finally {
+        modeSuppressionActif = false;
+        idNoeudPickup = null;
+        idNoeudDelivery = null;
+    }
+}
