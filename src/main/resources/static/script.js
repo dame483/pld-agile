@@ -70,6 +70,17 @@ function formatHoraireFourchette(horaire, deltaMinutes = 30) {
     return `${format(min)}-${format(max)}`;
 }
 
+function envoyerNotification(message, type = "success", duration = 3000) {
+    const notification = document.getElementById("notification");
+    notification.textContent = message;
+    notification.className = "notification " + type;
+    notification.style.display = "block";
+
+    setTimeout(() => {
+        notification.style.display = "none";
+    }, duration);
+}
+
 
 // ======================================================
 // ====================   CHARGEMENT   ===================
@@ -954,3 +965,4 @@ document.addEventListener('DOMContentLoaded',async () => {
         }
     });
 });
+

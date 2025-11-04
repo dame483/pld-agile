@@ -21,8 +21,8 @@ async function checkEtSupprimer() {
             body: JSON.stringify(body)
         });
         const data = await response.json();
-        if (response.ok && data.message === "Opération effectuée : supprimer") {
-            const nouvelleTournee = data.tournee;
+        if (data.success) {
+            const nouvelleTournee = data.data.tournee;
             resetTournee();
 
             drawTourneeNodes(nouvelleTournee);
@@ -31,11 +31,11 @@ async function checkEtSupprimer() {
             window.toutesLesTournees[selectedIndex] = nouvelleTournee;
             await updateUIFromEtat();
         } else {
-            alert("Erreur : " + (data.message || "Impossible de supprimer le point."));
+            envoyerNotification("Erreur : " + (data.message || "Impossible de supprimer le point."),"error");
         }
     } catch (err) {
         console.error(err);
-        alert("Erreur réseau : " + err.message);
+        envoyerNotification("Erreur réseau : " + err.message, "error");
     } finally {
         modeSuppressionActif = false;
         idNoeudPickup = null;
