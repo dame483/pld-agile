@@ -963,7 +963,7 @@ document.addEventListener('DOMContentLoaded',async () => {
             modeSuppressionActif = true;
             idNoeudPickup = null;
             idNoeudDelivery = null;
-            alert("Mode suppression activé : cliquez sur un point Pickup ou Livraison à supprimer.");
+            envoyerNotification("Mode suppression activé : cliquez sur un point Pickup ou Livraison à supprimer.","success");
         }
     });
 
