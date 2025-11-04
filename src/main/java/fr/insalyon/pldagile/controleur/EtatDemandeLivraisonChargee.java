@@ -167,6 +167,9 @@ public class EtatDemandeLivraisonChargee implements Etat {
     @Override
     public void passerEnModeModification(Controlleur c, Tournee tournee){return;}
 
+    @Override
+    public void sauvegarderModification(Controlleur c, DemandeDeLivraison demande, List<Tournee> tournees) {
+    }
 
     @Override
     public String getName() {

@@ -138,3 +138,24 @@ function majTableauTournee(nouvelleTournee, ancienneTournee) {
         });
     });
 }
+
+function filtreDemande(tournees) {
+    if (!demandeData || !Array.isArray(tournees)) return;
+
+    const idsDansTournees = new Set();
+    tournees.forEach(tournee => {
+        tournee.chemins?.forEach(c => {
+            if (c.noeudDePassageDepart?.id) idsDansTournees.add(c.noeudDePassageDepart.id);
+            if (c.noeudDePassageArrivee?.id) idsDansTournees.add(c.noeudDePassageArrivee.id);
+        });
+    });
+
+    const anciennesLivraisons = demandeData.livraisons || [];
+    const nouvellesLivraisons = anciennesLivraisons.filter(l => {
+        const idPickup = l.adresseEnlevement?.id;
+        const idDelivery = l.adresseLivraison?.id;
+        return idsDansTournees.has(idPickup) || idsDansTournees.has(idDelivery);
+    });
+
+    demandeData.livraisons = nouvellesLivraisons;
+}

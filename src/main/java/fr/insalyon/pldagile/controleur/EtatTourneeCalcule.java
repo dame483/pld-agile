@@ -204,7 +204,9 @@ public class EtatTourneeCalcule implements Etat {
         c.setCurrentState(new EtatModificationTournee(carte, tournee));
     }
 
-
+    @Override
+    public void sauvegarderModification(Controlleur c, DemandeDeLivraison demande, List<Tournee> tournees) {
+    }
 
     @Override
     public String getName() {

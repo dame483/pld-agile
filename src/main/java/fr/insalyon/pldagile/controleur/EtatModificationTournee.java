@@ -210,10 +210,12 @@ public class EtatModificationTournee implements Etat {
         c.executerCommande(commande);
     }
 
-
-
-
-
-
+    @Override
+    public void sauvegarderModification(Controlleur c, DemandeDeLivraison demande, List<Tournee> tournees) {
+        if (tournees == null || tournees.isEmpty()) {
+            throw new IllegalArgumentException("Aucune tournée à sauvegarder.");
+        }
+        c.setCurrentState(new EtatTourneeCalcule(carte, demande, tournees));
+    }
 }
 

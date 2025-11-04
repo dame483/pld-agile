@@ -5,6 +5,7 @@ import fr.insalyon.pldagile.erreurs.exception.XMLFormatException;
 import fr.insalyon.pldagile.modele.Carte;
 import fr.insalyon.pldagile.modele.DemandeDeLivraison;
 import fr.insalyon.pldagile.modele.Tournee;
+import fr.insalyon.pldagile.sortie.ModificationsDTO;
 import fr.insalyon.pldagile.sortie.reponse.ApiReponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -303,8 +304,15 @@ public class Controlleur {
         }
     }
 
-
-
+    @PostMapping("/sauvegarder-modifications")
+    public ResponseEntity<ApiReponse> sauvegarderModifications(@RequestBody ModificationsDTO dto) {
+        try {
+            etatActuelle.sauvegarderModification(this, dto.getDemande(), dto.getTournees());
+            return ResponseEntity.ok(ApiReponse.succes("Modifications sauvegardées avec succès", null));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(ApiReponse.erreur("Erreur lors de la sauvegarde : " + e.getMessage()));
+        }
+    }
 
     public void executerCommande(Commande commande) {
         historique.executerCommande(commande);
@@ -317,7 +325,6 @@ public class Controlleur {
     public void restaurerCommande() {
         historique.restaurer();
     }
-
 
     public void setCurrentState(Etat etat) {
         this.etatActuelle = etat;

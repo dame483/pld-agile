@@ -173,7 +173,7 @@ function resetCarte() {
 }
 
 function resetLivraisons(){
-    demandeData = null;
+    demandeData = null; //utile ?
     document.getElementById('tableauDemandes').innerHTML = "";
     document.getElementById('tableauTournees').innerHTML = "";
     if (livraisonsLayer) livraisonsLayer.clearLayers();
@@ -746,6 +746,7 @@ async function updateUIFromEtat() {
         const res = await fetch("http://localhost:8080/api/etat");
         if(!res.ok) return;
         const data = await res.json();
+        console.log(data); //DEBUG
 
         document.getElementById('welcome-message').style.display = "none";
         document.getElementById('carte-chargee-message').style.display = "none";
@@ -923,12 +924,13 @@ document.addEventListener('DOMContentLoaded',async () => {
             const data = await response.json();
 
             if (data.success) {
-                window.toutesLesTournees = data.data.tournees || [];
-                demandeData = data.data.demande ||[];
                 resetLivraisons();
                 resetTournee();
 
-                drawLivraisons(data.data.demande);
+                window.toutesLesTournees = data.data.tournees || [];
+                demandeData = data.data.demande ||[];
+
+                drawLivraisons(demandeData);
                 window.toutesLesTournees.forEach((t, i) => {
                     const color = colors[i % colors.length];
                     drawTournee(t, color, i);
@@ -937,8 +939,8 @@ document.addEventListener('DOMContentLoaded',async () => {
                 addAnimationButton();
                 await updateUIFromEtat();
             } else {
-                console.error("Erreur serveur :", data.data.message);
-                envoyerNotification(data.data.message, "error");
+                console.error("Erreur serveur :", data.message);
+                envoyerNotification(data.message, "error");
             }
         } catch (err) {
             console.error("Erreur fetch :", err);
@@ -962,6 +964,43 @@ document.addEventListener('DOMContentLoaded',async () => {
             idNoeudPickup = null;
             idNoeudDelivery = null;
             alert("Mode suppression activé : cliquez sur un point Pickup ou Livraison à supprimer.");
+        }
+    });
+
+    document.getElementById('sauvegarderModification').addEventListener("click", async () => {
+        try {
+            const body = {
+                demande: demandeData,
+                tournees: window.toutesLesTournees
+            };
+            const response = await fetch("http://localhost:8080/api/sauvegarder-modifications", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(body)
+            });
+
+            const data = await response.json();
+            console.log(data); //DEBUG
+            if (data.success) {
+                console.log("Modifications sauvegardées !");
+                envoyerNotification("Modifications sauvegardées avec succès", "success");
+                resetTournee();
+                filtreDemande(window.toutesLesTournees); //actualise demandeData avec les noeuds des tournees
+                drawLivraisons(demandeData);
+                window.toutesLesTournees.forEach((t, i) => {
+                    const color = colors[i % colors.length];
+                    drawTournee(t, color, i);
+                });
+                drawTourneeTable(window.toutesLesTournees[0])
+                await updateUIFromEtat();
+            } else{
+                console.error("Erreur serveur :", data.message);
+                envoyerNotification(data.message, "error");
+            }
+        }
+        catch (err){
+            console.error("Erreur sauvegarde :", err);
+            envoyerNotification("Erreur réseau lors de la sauvegarde des modifications", "error");
         }
     });
 });
