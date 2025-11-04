@@ -49,7 +49,6 @@ public class ParsingTourneeJsonTest {
         DemandeDeLivraison demandeDeLivraison = parseurJson.parseurDemandeDeLivraison("src/main/java/fr/insalyon/pldagile/sortie/tourneeJson/sauvegardeTourne.json");
         assertNotNull(demandeDeLivraison, "la demande parsée ne doit pas etre null");
         assertEquals(demandeDeLivraison.getLivraisons().size(), demande.getLivraisons().size(), "les livraisons doivent etre égales");
-        System.out.println(demandeDeLivraison);
         for (int i = 0; i < tourneeList.size(); i++) {
             List<Tournee> tourneeParseur = parseurJson.parseurTournee("src/main/java/fr/insalyon/pldagile/sortie/tourneeJson/sauvegardeTourne.json");
             assertEquals(tourneeList.get(i).getChemins().size(), tourneeParseur.get(i).getChemins().size(), "La tournée parsée doit etre identique que la tournée initiale en chemins");

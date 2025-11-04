@@ -89,7 +89,6 @@ public class AjoutCheminTourneeTests {
         assertNotNull(noeudPrecedent, "Le noeud precedent le noeud à ajouter ne doit pas être null ");
 
         CalculChemins calculChemins = new CalculChemins(ville);
-        System.out.println(calculChemins.getCarte().getNoeuds());
         ModificationTournee modificationTournee = new ModificationTournee(calculChemins, vitesse);
 
         double dureeEnlevement = 300.0;
@@ -137,7 +136,6 @@ public class AjoutCheminTourneeTests {
         assertNotNull(noeudPrecedent, "Le noeud precedent le noeud à ajouter ne doit pas être null ");
 
         CalculChemins calculChemins = new CalculChemins(ville);
-        System.out.println(calculChemins.getCarte().getNoeuds());
         ModificationTournee modificationTournee = new ModificationTournee(calculChemins, vitesse);
 
         double dureeLivraison = 300.0;

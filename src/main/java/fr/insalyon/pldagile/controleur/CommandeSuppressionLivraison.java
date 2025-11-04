@@ -13,7 +13,6 @@ public class CommandeSuppressionLivraison implements Commande {
     private Long idNoeudClique;
     private Long idNoeudAssocie;
 
-    // Sauvegarde complète de l'état
     private List<Chemin> anciensChemins;
     private Carte carte;
     private double vitesse;
@@ -35,7 +34,6 @@ public class CommandeSuppressionLivraison implements Commande {
 
         ModificationTournee modif = new ModificationTournee(new CalculChemins(carte), vitesse);
 
-        // Suppression des deux nœuds (pickup et delivery)
         modif.supprimerNoeud(tournee, idNoeudClique);
         modif.supprimerNoeud(tournee, idNoeudAssocie);
     }
