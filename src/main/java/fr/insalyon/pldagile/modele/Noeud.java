@@ -5,6 +5,8 @@ public class Noeud {
     private double latitude;
     private double longitude;
 
+    public Noeud() {}
+
     public Noeud(long id, double latitude, double longitude) {
         this.id = id;
         this.latitude = latitude;

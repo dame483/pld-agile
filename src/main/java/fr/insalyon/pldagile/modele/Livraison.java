@@ -4,12 +4,11 @@ public class Livraison {
     private NoeudDePassage noeudEnlevement;
     private NoeudDePassage noeudLivraison;
 
+    public Livraison() {}
+
     public Livraison(NoeudDePassage adresseEnlevement, NoeudDePassage adresseLivraison) {
         this.noeudEnlevement = adresseEnlevement;
         this.noeudLivraison = adresseLivraison;
-    }
-
-    public Livraison() {
     }
 
     public NoeudDePassage getAdresseEnlevement() {

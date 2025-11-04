@@ -246,7 +246,7 @@ body, h1 {
     display:none;
 }
 
-#boutons-modifier {
+#boutons-modifier, #boutons-edit-mode {
     display:flex;
     justify-content: center;
     align-items: center;
@@ -255,7 +255,7 @@ body, h1 {
     flex-wrap: wrap;
 }
 
-#modifierTournee, #sauvegarderTournee, #creerFeuillesDeRoute {
+#modifierTournee, #sauvegarderTournee, #creerFeuillesDeRoute, #modeAjout, #modeSupression, #annulerModification, #sauvegarderModification, #retablirModification {
      height:140px;
      width:100px;
      background-color: #3D38F5;
@@ -275,6 +275,16 @@ body, h1 {
 
 #modifierTournee img, #sauvegarderTournee img, #creerFeuillesDeRoute img {
     height:60%;
+}
+
+#modeAjout img, #modeSupression img {
+    margin-top : 10px;
+    height:40%;
+}
+
+#annulerModification img, #sauvegarderModification img, #retablirModification img {
+    margin-top : 20px;
+    height:40%;
 }
 
 #modifierTournee p,

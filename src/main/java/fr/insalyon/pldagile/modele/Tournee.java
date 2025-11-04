@@ -9,6 +9,8 @@ public class Tournee {
     private double dureeTotale;
     private double longueurTotale;
 
+    public Tournee() {}
+
     public Tournee(List<Chemin> chemins, double dureeTotale, double longueurTotale) {
         this.chemins = chemins;
         this.dureeTotale = dureeTotale;

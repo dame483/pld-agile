@@ -8,6 +8,7 @@ let animTimer=null, courierMarker=null, animPath= {};
 let animControl=null, isAnimating=false, isPaused=false;
 let animSpeed=8, animSamples=[], animIndex=0;
 window.toutesLesTournees = [];
+var selectedIndex = 0;
 
 const colors=[
     '#e6194b','#3cb44b','#ffe119','#4363d8','#f58231','#911eb4','#46f0f0',
@@ -142,7 +143,7 @@ function resetLivraisons(){
     if (window.directionNumbersLayer) window.directionNumbersLayer.clearLayers();
 
     stopAnimation();
-    if (animControl) { map.removeControl(animControl); animControl = null; }
+    if (animControl && map) { map.removeControl(animControl); animControl = null; }
     animPath = []; isAnimating = false; isPaused = false;
 }
 
@@ -280,6 +281,7 @@ async function calculTournee(nombreLivreurs = 1){
         const color = colors[i % colors.length];
         drawTournee(tournee, color, i);
     });
+    drawTourneeTable(window.toutesLesTournees[0]);
     addAnimationButton();
     await updateUIFromEtat();
 }
@@ -288,7 +290,7 @@ function resetTournee(){
     if(window.tourneeLayer) window.tourneeLayer.clearLayers();
     if(window.directionNumbersLayer) window.directionNumbersLayer.clearLayers();
     stopAnimation();
-    if(animControl){ map.removeControl(animControl); animControl=null; }
+    if(map && animControl){ map.removeControl(animControl); animControl=null; }
     window.animPaths = {}; isAnimating=false; isPaused=false;
 }
 
@@ -330,7 +332,6 @@ function drawTournee(t, color='#000', index) {
     });
     if (all.length > 0) map.fitBounds(L.latLngBounds(all).pad(0.1));
     window.animPaths[index] = [...localAnimPath];
-    drawTourneeTable(window.toutesLesTournees[0]);
 }
 
 function drawTourneeTable(tournee){
@@ -498,7 +499,6 @@ function addAnimationButton() {
         const start = div.querySelector('#btnStartStop');
         const pause = div.querySelector('#btnPause');
         const select = div.querySelector('#tourneeSelect');
-        let selectedIndex = 0;
 
         select.onchange = e => {
             selectedIndex = parseInt(e.target.value);
@@ -569,6 +569,7 @@ async function updateUIFromEtat() {
         document.querySelector('.navbar-item img[alt="Charger une tournée"]').src = "tools/open-logo.png";
         document.querySelector('.navbar-item img[alt="Charger une tournée"]').style.cursor = "pointer";
         document.getElementById('map').style.display = "block";
+        document.getElementById('tournee-modifier').style.display = "none";
         if(data.etat === "Etat Initial") {
             document.getElementById('welcome-message').style.display = "flex";
             document.querySelector('.navbar-item img[alt="Ajouter une carte"]').style.filter = "drop-shadow(0 0 10px rgba(225,225,0,1))";
@@ -581,6 +582,9 @@ async function updateUIFromEtat() {
             document.getElementById('tableauDemandes').innerHTML = "";
             document.getElementById('tableauTournees').innerHTML = "";
             document.getElementById('map').style.display = "none";
+        } else if (data.etat === "ModeModificationTournee"){
+            document.getElementById('tableauTournees').style.display = "inline";
+            document.getElementById('tournee-modifier').style.display = "inline";
         } else if(data.tourneeChargee) {
             document.getElementById('tournee-chargee').style.display = "inline";
             document.getElementById('tableauTournees').style.display = "inline";
@@ -672,6 +676,17 @@ document.addEventListener('DOMContentLoaded',async () => {
         sauvegarderTournee();
     });
 
+    document.getElementById('modifierTournee').addEventListener('click', () => {
+        const tournee = window.toutesLesTournees[selectedIndex];
+        fetch("http://localhost:8080/api/tournee/mode-modification", {method: "POST", headers: {"Content-Type": "application/json"},body: JSON.stringify(tournee)})
+            .then(response => response.json())
+            .then(async data => {
+                resetTournee();
+                drawTournee(tournee, colors[0], 0)
+                await updateUIFromEtat();
+            });
+    });
+
     document.querySelector('.navbar-item img[alt="Charger une tournée"]').addEventListener("click", () => {
         document.getElementById("inputTournee").click();
     });
@@ -696,14 +711,18 @@ document.addEventListener('DOMContentLoaded',async () => {
             const data = await response.json();
 
             if (response.ok && data.status === "ok") {
-                const tournees = data.tournees || [];
-                window.toutesLesTournees = tournees.tournees;
-                tournees.forEach((t, i) => {
-                    const color = colors[i % colors.length];
-                    drawTournee(t, color);
-                });
+                window.toutesLesTournees = data.tournees || [];
+                demandeData = data.demande ||[];
+                resetLivraisons();
+                resetTournee();
 
-                demandeData = null;
+                drawLivraisons(data.demande);
+                window.toutesLesTournees.forEach((t, i) => {
+                    const color = colors[i % colors.length];
+                    drawTournee(t, color, i);
+                });
+                drawTourneeTable(window.toutesLesTournees[0])
+                addAnimationButton();
                 await updateUIFromEtat();
             } else {
                 console.error("Erreur serveur :", data.message);
@@ -714,6 +733,30 @@ document.addEventListener('DOMContentLoaded',async () => {
             alert("Erreur réseau lors du chargement de la tournée");
         } finally {
             document.getElementById('inputTournee').value = '';
+        }
+    });
+
+    window.addEventListener("beforeunload", () => {
+        fetch("http://localhost:8080/api/reset", { method: "POST" });
+    });
+
+    window.addEventListener("load", async () => {
+        await updateUIFromEtat();
+    });
+
+    document.getElementById('modeSupression').addEventListener("click", async () => {
+        const formData = new FormData();
+        formData.append("idNoeudPickup", idNoeudPickup);
+        formData.append("idNoeudDelivery", idNoeudDelivery);
+        formData.append("mode", "supprimer");
+        const response = await fetch("http://localhost:8080/api/tournee/mode-modification", {
+            method: "POST",
+            body: formData
+        });
+        const data = await response.json();
+        if (response.ok && data.status === "ok") {
+            console.log(data);
+            // TRAITEMENT DE LA SUPPRESSION
         }
     });
 });

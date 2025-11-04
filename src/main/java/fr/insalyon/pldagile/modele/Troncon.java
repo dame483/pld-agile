@@ -8,6 +8,8 @@ public class Troncon {
     private double longueur;
     private String nomRue;
 
+    public Troncon() {}
+
     public Troncon(long idOrigine, long idDestination, double longueur, String nomRue) {
         this.idOrigine = idOrigine;
         this.idDestination = idDestination;
