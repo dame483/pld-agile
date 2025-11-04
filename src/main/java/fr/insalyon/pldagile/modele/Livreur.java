@@ -8,8 +8,6 @@ public class Livreur {
     @JsonIgnore
     private Tournee tournee; // <-- nouvelle référence à sa tournée
 
-    public Livreur() {}
-
     public Livreur(long id) {
         this.id = id;
     }

@@ -25,14 +25,7 @@ public class Carte {
         return this.troncons;
     }
 
-    public Troncon getTronconEntre(long idOrigine, long idDestination) {
-        for (Troncon t : troncons) {
-            if (t.getIdOrigine() == idOrigine && t.getIdDestination() == idDestination) {
-                return t; // renvoie le premier tronçon trouvé
-            }
-        }
-        return null; // aucun tronçon direct trouvé
-    }
+
     public Noeud getNoeudParId(long id) {
         return noeuds.get(id); // renvoie null si l'ID n'existe pas
     }

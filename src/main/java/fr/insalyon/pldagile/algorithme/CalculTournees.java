@@ -29,12 +29,8 @@ public class CalculTournees {
         this.heureDepart = heureDepart;
     }
 
-    /**
-     * Calcule toutes les tournées pour tous les livreurs en utilisant K-Means + TSP
-     */
     public List<Tournee> calculerTournees() throws TourneeNonConnexeException {
 
-        // Création automatique des livreurs avec IDs 0..n-1
         List<Livreur> livreurs = new ArrayList<>();
         for (int i = 0; i < nombreLivreurs; i++) {
             livreurs.add(new Livreur(i)); // IDs 0..n-1
@@ -79,7 +75,6 @@ public class CalculTournees {
             livreurs.get(i).setTournee(tournee);           // livreur → tournée
             toutesLesTournees.add(tournee);
 
-            // Réinitialiser les compteurs pour le prochain cluster
             longueurTotale = 0;
             dureeTotale = 0;
         }
@@ -88,8 +83,6 @@ public class CalculTournees {
     }
 
 
-
-    // Méthodes internes
 
     private List<Integer> resoudreTSP(List<NoeudDePassage> noeuds, List<Livraison> livraisons, GrapheComplet g) {
         TSPAvecPrecedence tsp = new TSPAvecPrecedence(noeuds, livraisons, g);
