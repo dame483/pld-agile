@@ -1,20 +1,21 @@
 // DECLARATIONS
 
-let map = null;
-let carteData = null;
-let demandeData = null;
-let livraisonsLayer = null, entrepotLayer = null;
-let animTimer = null, courierMarker = null, animPath = {};
-let animControl = null, isAnimating = false, isPaused = false;
-let animSpeed = 8, animSamples = [], animIndex = 0;
+let map=null;
+let carteData=null;
+let demandeData=null;
+let livraisonsLayer=null, entrepotLayer=null;
+let animTimer=null, courierMarker=null, animPath= {};
+let animControl=null, isAnimating=false, isPaused=false;
+let animSpeed=8, animSamples=[], animIndex=0;
 window.toutesLesTournees = [];
+var selectedIndex = 0;
 
-const colors = [
+const colors=[
     '#e6194b','#3cb44b','#ffe119','#4363d8','#f58231','#911eb4','#46f0f0',
     '#f032e6','#bcf60c','#fabebe','#008080','#e6beff','#9a6324','#fffac8',
     '#800000','#aaffc3','#808000','#ffd8b1','#000075','#808080','#000000'
 ];
-const STEP_M = 10;
+const STEP_M=10;
 
 
 // ======================================================
@@ -22,11 +23,11 @@ const STEP_M = 10;
 // ======================================================
 
 function makeStepNumberIcon(n,color){
-    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="34" height="18" viewBox="0 0 34 18">
+    const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="34" height="18" viewBox="0 0 34 18">
                     <text x="17" y="14" font-size="12" font-weight="bold" text-anchor="middle"
                           fill="${color}" stroke="white" stroke-width="3" paint-order="stroke">${n}</text>
                  </svg>`;
-    return L.divIcon({className:'', html:svg, iconSize:[34,18]});
+    return L.divIcon({className:'',html:svg,iconSize:[34,18]});
 }
 
 function midPoint(a,b){ return [(a[0]+b[0])/2,(a[1]+b[1])/2]; }
@@ -71,7 +72,7 @@ function formatHoraireFourchette(horaire, deltaMinutes = 30) {
 // ======================================================
 
 async function uploadCarte(file){
-    const formData = new FormData();
+    const formData=new FormData();
     formData.append("file",file);
     try{
         const response= await fetch(`http://localhost:8080/api/upload-carte`,{method:"POST",body:formData});
@@ -82,27 +83,28 @@ async function uploadCarte(file){
         resetLivraisons();
         drawCarte(carteData);
         await updateUIFromEtat();
-    }catch(err){ alert(err.message); }
-    finally{ document.getElementById('xmlCarte').value = ''; }
+    }catch(err){
+        alert(err.message);
+    }
+    finally{
+        document.getElementById('xmlCarte').value = '';
+    }
 }
 
-async function uploadDemande(file) {
-    if (!carteData) {
+async function uploadDemande(file){
+    if(!carteData){
         alert("Charger le plan XML d'abord.");
         return;
     }
-
-    const formData = new FormData();
-    formData.append("file", file);
-
-    try {
-        const response = await fetch("http://localhost:8080/api/upload-demande", { method: "POST", body: formData });
-        if (!response.ok) {
+    const formData=new FormData();
+    formData.append("file",file);
+    try{
+        const response=await fetch("http://localhost:8080/api/upload-demande",{method:"POST",body:formData});
+        if(!response.ok){
             alert(await response.text());
             return;
         }
-
-        const res = await response.json();
+        const res=await response.json();
         demandeData = res.demande;
 
         const input = document.getElementById('nbLivreurs');
@@ -116,9 +118,9 @@ async function uploadDemande(file) {
         drawLivraisons(demandeData);
         drawEntrepot(demandeData.entrepot);
         await updateUIFromEtat();
-    } catch (err) {
+    }catch(err){
         alert(err.message);
-    } finally {
+    }finally{
         document.getElementById('xmlDemande').value = '';
     }
 }
@@ -128,7 +130,10 @@ async function uploadDemande(file) {
 // ======================================================
 
 function resetCarte() {
-    if (map) { try { map.remove(); } catch (e) {} map = null; }
+    if (map) {
+        try { map.remove(); } catch (e) {}
+        map = null;
+    }
     const mapDiv = document.getElementById('map');
     if (mapDiv) {
         mapDiv._leaflet_id = null;
@@ -153,7 +158,7 @@ function resetLivraisons(){
     if (window.directionNumbersLayer) window.directionNumbersLayer.clearLayers();
 
     stopAnimation();
-    if (animControl) { map.removeControl(animControl); animControl = null; }
+    if (animControl && map) { map.removeControl(animControl); animControl = null; }
     animPath = []; isAnimating = false; isPaused = false;
 }
 
@@ -165,7 +170,9 @@ function drawCarte(carte) {
 
     if (!map) {
         map = L.map('map');
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(map);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap'
+        }).addTo(map);
 
         livraisonsLayer = L.layerGroup().addTo(map);
         entrepotLayer = L.layerGroup().addTo(map);
@@ -220,11 +227,20 @@ function drawLivraisons(d){
     const n=carteData.noeuds;
 
     const tableau = document.getElementById("tableauDemandes");
-    tableau.innerHTML = `
+    tableau.innerHTML = "";
+    const header = `
     <table style="border-collapse:collapse;">
-      <thead><tr>
-        <th>Couleur</th><th>N° d'enlèvement</th><th>N° de livraison</th>
-      </tr></thead><tbody id="livraisonBody"></tbody></table>`;
+      <thead>
+        <tr>
+          <th style="border-bottom:1px solid #ccc;padding:4px;">Couleur</th>
+          <th style="border-bottom:1px solid #ccc;border-left:1px solid #ccc;padding:4px;">N° d'enlèvement</th>
+          <th style="border-bottom:1px solid #ccc;border-left:1px solid #ccc;padding:4px;">N° de livraison</th>
+        </tr>
+      </thead>
+      <tbody id="livraisonBody"></tbody>
+    </table>
+  `;
+    tableau.innerHTML = header;
     const tbody = document.getElementById("livraisonBody");
     window.colorByNodeId = {};
 
@@ -233,9 +249,8 @@ function drawLivraisons(d){
         const en=n[l.adresseEnlevement.id];
         const lv=n[l.adresseLivraison.id];
         if(!en||!lv) return;
-        window.colorByNodeId[en.id]=color; window.colorByNodeId[lv.id]=color;
-
-        // --- Pickup
+        window.colorByNodeId[en.id] = color;
+        window.colorByNodeId[lv.id] = color;
         L.marker([en.latitude,en.longitude],{
             icon:L.divIcon({className:'',iconSize:[18,18],
                 html:`<div style="width:18px;height:18px;background:${color};border:2px solid black;border-radius:3px;"></div>`}),
@@ -661,8 +676,6 @@ document.addEventListener('DOMContentLoaded',async () => {
 
     document.getElementById('calculerTournee').addEventListener('click', async () => {
         let nbLivreurs = parseInt(document.getElementById('nbLivreurs').value);
-
-        // Sécurisation minimale
         if (isNaN(nbLivreurs) || nbLivreurs < 1) nbLivreurs = 1;
         const max = demandeData?.livraisons?.length || 1;
         if (nbLivreurs > max) nbLivreurs = max;
@@ -793,6 +806,8 @@ document.addEventListener('DOMContentLoaded',async () => {
     });
 
     document.getElementById('modeSupression').addEventListener("click", async () => {
+        // RECUPERER ID NOEUD SELECTIONNE (PICKUP & DELIVERY)
+        // RECUPERER NOEUD ASSOCIE CORRESPONDANT
         const formData = new FormData();
         formData.append("idNoeudPickup", idNoeudPickup);
         formData.append("idNoeudDelivery", idNoeudDelivery);
@@ -803,8 +818,16 @@ document.addEventListener('DOMContentLoaded',async () => {
         });
         const data = await response.json();
         if (response.ok && data.status === "ok") {
-            console.log(data);
-            // TRAITEMENT DE LA SUPPRESSION
+            const nouvelleTournee = data.tournee;
+            if (!nouvelleTournee) {
+                alert("Oups : Il est impossible de supprimer ce point !");
+                return;
+            }
+            resetTournee();
+            drawTournee(nouvelleTournee, colors[0], 0)
+            //Afficher tableau drawTourneeTable(window.toutesLesTournees[selectedIndex]) et rajouter colonne avec les nouveaux horaires exacts (en rouge si pas dans la plage horaire)
+            window.toutesLesTournees[selectedIndex] = nouvelleTournee;
+            await updateUIFromEtat();
         }
     });
 });
