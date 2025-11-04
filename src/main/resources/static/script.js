@@ -486,6 +486,81 @@ function drawTourneeTable(tournee){
     });
 }
 
+function drawTourneeNodes(tourneeData) {
+    if (!map || !carteData || !demandeData) return;
+
+    if (livraisonsLayer) livraisonsLayer.clearLayers();
+    if (entrepotLayer) entrepotLayer.clearLayers();
+    if (window.tourneeLayer) window.tourneeLayer.clearLayers();
+    if (window.directionNumbersLayer) window.directionNumbersLayer.clearLayers();
+
+    stopAnimation();
+    if (animControl && map) { map.removeControl(animControl); animControl = null; }
+    animPath = []; isAnimating = false; isPaused = false;
+
+    const n = carteData.noeuds;
+    const livraisons = demandeData.livraisons || [];
+    const entrepot = demandeData.entrepot;
+
+    const idsDansTournee = new Set();
+    tourneeData.chemins?.forEach(c => {
+        if (c.noeudDePassageDepart?.id) idsDansTournee.add(c.noeudDePassageDepart.id);
+        if (c.noeudDePassageArrivee?.id) idsDansTournee.add(c.noeudDePassageArrivee.id);
+    });
+
+    console.log(idsDansTournee);
+
+    console.log(tourneeData);
+
+    window.colorByNodeId = {};
+
+    livraisons.forEach((l, i) => {
+        const color = colors[i % colors.length];
+        const en = n[l.adresseEnlevement.id];
+        const lv = n[l.adresseLivraison.id];
+        if (!en || !lv) return;
+
+        if (!idsDansTournee.has(en.id) && !idsDansTournee.has(lv.id)) return;
+
+        window.colorByNodeId[en.id] = color;
+        window.colorByNodeId[lv.id] = color;
+
+        L.marker([en.latitude, en.longitude], {
+            icon: L.divIcon({
+                className: '',
+                iconSize: [18, 18],
+                html: `<div style="width:18px;height:18px;background:${color};border:2px solid black;border-radius:3px;"></div>`
+            }),
+            id: en.id
+        }).addTo(livraisonsLayer)
+            .on('click', e => {
+                const nodeId = e.target.options.id;
+                L.popup().setLatLng(e.latlng)
+                    .setContent(`<b>Pickup ID ${nodeId}</b>`)
+                    .openOn(map);
+            });
+
+        L.marker([lv.latitude, lv.longitude], {
+            icon: L.divIcon({
+                className: '',
+                iconSize: [18, 18],
+                html: `<div style="width:18px;height:18px;background:${color};border:2px solid black;border-radius:50%;"></div>`
+            }),
+            id: lv.id
+        }).addTo(livraisonsLayer)
+            .on('click', e => {
+                const nodeId = e.target.options.id;
+                L.popup().setLatLng(e.latlng)
+                    .setContent(`<b>Livraison ID ${nodeId}</b>`)
+                    .openOn(map);
+            });
+    });
+
+    if (entrepot) {
+        drawEntrepot(entrepot);
+    }
+}
+
 async function creerFeuillesDeRoute() {
     try {
         const response = await fetch("http://localhost:8080/api/tournee/feuille-de-route", {
@@ -782,7 +857,9 @@ document.addEventListener('DOMContentLoaded',async () => {
             .then(response => response.json())
             .then(async data => {
                 resetTournee();
+                drawTourneeNodes(tournee);
                 drawTournee(tournee, colors[0], 0)
+
                 await updateUIFromEtat();
             });
     });
@@ -880,10 +957,13 @@ async function checkEtSupprimer() {
         if (data.success()) {
             const nouvelleTournee = data.tournee;
             resetTournee();
+
+            drawTourneeNodes(nouvelleTournee);
             drawTournee(nouvelleTournee, colors[0], 0);
             //MAJ tableau
             window.toutesLesTournees[selectedIndex] = nouvelleTournee;
             await updateUIFromEtat();
+            console.log("suppression OK")
         } else {
             alert("Erreur : " + (data.message || "Impossible de supprimer le point."));
         }
