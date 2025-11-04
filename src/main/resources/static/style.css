@@ -296,7 +296,8 @@ body, h1 {
 }
 
 #modifierTournee img, #sauvegarderTournee img, #creerFeuillesDeRoute img {
-    height:60%;
+    height:50%;
+    margin-top:20px;
 }
 
 .boutonModif img {
