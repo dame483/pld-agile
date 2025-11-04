@@ -204,7 +204,9 @@ public class EtatTourneeCalcule implements Etat {
         c.setCurrentState(new EtatModificationTournee(carte, tournee));
     }
 
-
+    public List<Tournee> getToutesLesTournees() {
+        return toutesLesTournees;
+    }
 
     @Override
     public String getName() {

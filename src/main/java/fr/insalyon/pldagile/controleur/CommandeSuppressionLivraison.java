@@ -6,6 +6,7 @@ import fr.insalyon.pldagile.modele.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class CommandeSuppressionLivraison implements Commande {
 
@@ -25,8 +26,15 @@ public class CommandeSuppressionLivraison implements Commande {
         this.carte = carte;
         this.vitesse = vitesse;
         this.anciensChemins = tournee.getChemins().stream()
-                .map(Chemin::copieProfonde)
+                .map(c -> {
+                    if (c.getNoeudDePassageDepart() == null || c.getNoeudDePassageArrivee() == null) {
+                        return null;
+                    }
+                    return c.copieProfonde();
+                })
+                .filter(Objects::nonNull)
                 .toList();
+
     }
 
     @Override

@@ -12,8 +12,13 @@ async function checkEtSupprimer() {
     }
 
     if (!idNoeudPickup || !idNoeudDelivery) return;
-
     const body = {idNoeudPickup, idNoeudDelivery, mode:"supprimer"};
+    console.log(body);
+    const response = await fetch("http://localhost:8080/api/tournee/current");
+    const data = await response.json();
+    console.log("Tournée côté back :", data.data.tournee); //debug
+    console.log("Tournée côté front :", window.toutesLesTournees[selectedIndex]); //debug
+
     try {
         const response = await fetch("http://localhost:8080/api/tournee/modifier", {
             method: "POST",
@@ -21,8 +26,9 @@ async function checkEtSupprimer() {
             body: JSON.stringify(body)
         });
         const data = await response.json();
-        if (response.ok && data.message === "Opération effectuée : supprimer") {
-            const nouvelleTournee = data.tournee;
+        console.log(data);
+        if (data.success) {
+            const nouvelleTournee = data.data.tournee;
             resetTournee();
 
             drawTourneeNodes(nouvelleTournee);

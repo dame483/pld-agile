@@ -262,10 +262,6 @@ public class Controlleur {
         }
     }
 
-
-
-
-
     @PostMapping("/annuler")
     public ResponseEntity<ApiReponse> annuler() {
         try {
@@ -303,6 +299,33 @@ public class Controlleur {
         }
     }
 
+    //DEBUG
+    @GetMapping("/tournee/current")
+    public ResponseEntity<ApiReponse> getTourneeCourante() {
+        try {
+            if (etatActuelle instanceof EtatModificationTournee etatModificationTournee) {
+                Tournee tournee = etatModificationTournee.getTournee();
+                if (tournee == null) {
+                    return ResponseEntity.badRequest().body(ApiReponse.erreur("Pas de tournée disponible"));
+                }
+                return ResponseEntity.ok(ApiReponse.succes("Tournée actuelle", Map.of(
+                        "tournee", tournee
+                )));
+            } else if (etatActuelle instanceof EtatTourneeCalcule etatTourneeCalcule) {
+                List<Tournee> toutesLesTournees = etatTourneeCalcule.getToutesLesTournees();
+                if (toutesLesTournees == null || toutesLesTournees.isEmpty()) {
+                    return ResponseEntity.badRequest().body(ApiReponse.erreur("Aucune tournée calculée"));
+                }
+                return ResponseEntity.ok(ApiReponse.succes("Liste des tournées calculées", Map.of(
+                        "toutesLesTournees", toutesLesTournees
+                )));
+            } else {
+                return ResponseEntity.badRequest().body(ApiReponse.erreur("Impossible depuis l'état actuel : " + getCurrentState()));
+            }
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(ApiReponse.erreur("Erreur : " + e.getMessage()));
+        }
+    }
 
 
 

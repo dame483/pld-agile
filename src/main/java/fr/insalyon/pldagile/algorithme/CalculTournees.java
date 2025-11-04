@@ -145,8 +145,6 @@ public class CalculTournees {
             int entrepotIdx = solution.get(0);
             if (dernierIdx != entrepotIdx) {arrivee.setHoraireDepart(heureCourante);}
 
-
-
             longueurTotale += chemin.getLongueurTotal();
             dureeTotale += dureeTrajetSec + arrivee.getDuree();
             cheminsTournee.add(chemin);

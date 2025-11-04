@@ -70,6 +70,16 @@ function formatHoraireFourchette(horaire, deltaMinutes = 30) {
     return `${format(min)}-${format(max)}`;
 }
 
+function envoyerNotification(message, type = "success", duration = 3000) {
+    const notification = document.getElementById("notification");
+    notification.textContent = message;
+    notification.className = "notification " + type;
+    notification.style.display = "block";
+
+    setTimeout(() => {
+        notification.style.display = "none";
+    }, duration);
+}
 
 // ======================================================
 // ====================   CHARGEMENT   ===================
@@ -378,6 +388,11 @@ async function calculTournee(nombreLivreurs = 1){
     drawTourneeTable(window.toutesLesTournees[0]);
     addAnimationButton();
     await updateUIFromEtat();
+
+    //debug
+    const response = await fetch("http://localhost:8080/api/tournee/current");
+    const data = await response.json();
+    console.log("Tournées côté back :", data.data);
 }
 
 function resetTournee(){
