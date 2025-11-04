@@ -1,6 +1,6 @@
 package fr.insalyon.pldagile;
 
-import fr.insalyon.pldagile.exception.TourneeNonConnexeException;
+import fr.insalyon.pldagile.erreurs.exception.TourneeNonConnexeException;
 import fr.insalyon.pldagile.modele.*;
 import fr.insalyon.pldagile.algorithme.*;
 import org.junit.jupiter.api.Test;

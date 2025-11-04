@@ -1,7 +1,7 @@
 package fr.insalyon.pldagile.controleur;
 
 import fr.insalyon.pldagile.algorithme.CalculTournees;
-import fr.insalyon.pldagile.exception.XMLFormatException;
+import fr.insalyon.pldagile.erreurs.exception.XMLFormatException;
 import fr.insalyon.pldagile.modele.*;
 import fr.insalyon.pldagile.sortie.TourneeUpload;
 import fr.insalyon.pldagile.sortie.parseurTourneeJson;

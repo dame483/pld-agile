@@ -66,29 +66,41 @@ function formatHoraireFourchette(horaire, deltaMinutes = 30) {
 
 // CHARGEMENT
 
-async function uploadCarte(file){
-    const formData=new FormData();
-    formData.append("file",file);
-    try{
-        const response= await fetch(`http://localhost:8080/api/upload-carte`,{method:"POST",body:formData});
-        if(!response.ok){alert(await response.text());return;}
-        const res=await response.json();
-        carteData = res.carte;
+async function uploadCarte(file) {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+        const response = await fetch(`http://localhost:8080/api/upload-carte`, {
+            method: "POST",
+            body: formData
+        });
+
+        const res = await response.json(); // lire le JSON **avant** de traiter success/error
+
+        if (!res.success) {
+            envoyerNotification(res.message || "Erreur lors du chargement de la carte", "error");
+            return;
+        }
+
+        // succès
+        carteData = res.data.carte;
         resetCarte();
         resetLivraisons();
         drawCarte(carteData);
         await updateUIFromEtat();
-    }catch(err){
-        alert(err.message);
-    }
-    finally{
+
+    } catch (err) {
+        envoyerNotification("Erreur : " + err.message, "error");
+    } finally {
         document.getElementById('xmlCarte').value = '';
     }
 }
 
+
 async function uploadDemande(file){
     if(!carteData){
-        alert("Charger le plan XML d'abord.");
+        envoyerNotification("Charger le plan XML d'abord.", "error");
         return;
     }
     const formData=new FormData();
@@ -96,17 +108,17 @@ async function uploadDemande(file){
     try{
         const response=await fetch("http://localhost:8080/api/upload-demande",{method:"POST",body:formData});
         if(!response.ok){
-            alert(await response.text());
+            envoyerNotification(await response.text(), "error");
             return;
         }
         const res=await response.json();
-        demandeData = res.demande;
+        demandeData = res.data.demande;
         document.getElementById('nbLivreurs').max = demandeData.livraisons.length || 1;
         drawLivraisons(demandeData);
         drawEntrepot(demandeData.entrepot);
         await updateUIFromEtat();
     }catch(err){
-        alert(err.message);
+        envoyerNotification(err.message, "error");
     }finally{
         document.getElementById('xmlDemande').value = '';
     }
@@ -265,19 +277,20 @@ function addLegend(){
 
 async function calculTournee(nombreLivreurs = 1){
     if(!carteData || !demandeData){
-        alert("Charger la carte et la demande d'abord.");
+        envoyerNotification("Charger la carte et la demande d'abord.", "error");
         return;
     }
     const r = await fetch(`http://localhost:8080/api/tournee/calculer?nombreLivreurs=${nombreLivreurs}`, { method:"POST" });
     if(!r.ok){
-        alert(await r.text());
+        envoyerNotification(await r.text(), "error");
         return;
     }
+    envoyerNotification("Toutes les tournées ont été calculées avec succès");
     const toutesLesTournees = await r.json();
-    window.toutesLesTournees = toutesLesTournees.tournees;
+    window.toutesLesTournees = toutesLesTournees.data.tournees;
 
     resetTournee();
-    toutesLesTournees.tournees.forEach((tournee, i) => {
+    window.toutesLesTournees.forEach((tournee, i) => {
         const color = colors[i % colors.length];
         drawTournee(tournee, color, i);
     });
@@ -403,15 +416,15 @@ async function creerFeuillesDeRoute() {
 
         if (!response.ok) {
             const errText = await response.text();
-            alert("Erreur lors de la création de la feuille de route : " + errText);
+            envoyerNotification("Erreur lors de la création de la feuille de route : " + errText, "error");
             return;
         }
 
         const res = await response.json();
-        alert(res.message);
+        envoyerNotification(res.message);
     } catch (error) {
         console.error(error);
-        alert("Erreur réseau ou serveur : " + error.message);
+        envoyerNotification("Erreur réseau ou serveur : " + error.message, "error");
     }
 }
 
@@ -426,15 +439,15 @@ async function sauvegarderTournee() {
 
         if (!response.ok) {
             const errText = await response.text();
-            alert("Erreur lors de la sauvegarde de la tournée : " + errText);
+            envoyerNotification("Erreur lors de la sauvegarde de la tournée : " + errText, "error");
             return;
         }
 
         const res = await response.json();
-        alert(res.message);
+        envoyerNotification(res.message);
     } catch (error) {
         console.error(error);
-        alert("Erreur réseau ou serveur : " + error.message);
+        envoyerNotification("Erreur réseau ou serveur : " + error.message, "error");
     }
 }
 
@@ -570,7 +583,7 @@ async function updateUIFromEtat() {
         document.querySelector('.navbar-item img[alt="Charger une tournée"]').style.cursor = "pointer";
         document.getElementById('map').style.display = "block";
         document.getElementById('tournee-modifier').style.display = "none";
-        if(data.etat === "Etat Initial") {
+        if(data.data.etat === "Etat Initial") {
             document.getElementById('welcome-message').style.display = "flex";
             document.querySelector('.navbar-item img[alt="Ajouter une carte"]').style.filter = "drop-shadow(0 0 10px rgba(225,225,0,1))";
             document.querySelector('.navbar-item img[alt="Ajouter une demande de livraison"]').src = "tools/colis-logo-gray.png";
@@ -582,18 +595,18 @@ async function updateUIFromEtat() {
             document.getElementById('tableauDemandes').innerHTML = "";
             document.getElementById('tableauTournees').innerHTML = "";
             document.getElementById('map').style.display = "none";
-        } else if (data.etat === "ModeModificationTournee"){
+        } else if (data.data.etat === "ModeModificationTournee"){
             document.getElementById('tableauTournees').style.display = "inline";
             document.getElementById('tournee-modifier').style.display = "inline";
-        } else if(data.tourneeChargee) {
+        } else if(data.data.tourneeChargee) {
             document.getElementById('tournee-chargee').style.display = "inline";
             document.getElementById('tableauTournees').style.display = "inline";
-        } else if(data.demandeChargee) {
+        } else if(data.data.demandeChargee) {
             document.getElementById('livraisons').style.display = "inline";
             document.getElementById('fileNameDemande').style.display = "inline";
             document.getElementById('calcul-tournee').style.display = "flex";
             document.getElementById('tableauDemandes').style.display = "inline";
-        } else if (data.carteChargee) {
+        } else if (data.data.carteChargee) {
             document.getElementById('carte-chargee-message').style.display = "flex";
             document.getElementById('fileNameCarte').style.display = "inline";
             document.querySelector('.navbar-item img[alt="Ajouter une demande de livraison"]').style.filter = "drop-shadow(0 0 10px rgba(225,225,0,1))";
@@ -663,7 +676,7 @@ document.addEventListener('DOMContentLoaded',async () => {
                 })
                 .catch(err => {
                     console.error("Erreur lors de la réinitialisation :", err);
-                    alert("Erreur lors de la réinitialisation du serveur.");
+                    envoyerNotification("Erreur lors de la réinitialisation du serveur: " + err.message, "error");
                 });
         }
     });
@@ -710,13 +723,13 @@ document.addEventListener('DOMContentLoaded',async () => {
 
             const data = await response.json();
 
-            if (response.ok && data.status === "ok") {
-                window.toutesLesTournees = data.tournees || [];
-                demandeData = data.demande ||[];
+            if (data.success) {
+                window.toutesLesTournees = data.data.tournees || [];
+                demandeData = data.data.demande ||[];
                 resetLivraisons();
                 resetTournee();
 
-                drawLivraisons(data.demande);
+                drawLivraisons(data.data.demande);
                 window.toutesLesTournees.forEach((t, i) => {
                     const color = colors[i % colors.length];
                     drawTournee(t, color, i);
@@ -725,12 +738,12 @@ document.addEventListener('DOMContentLoaded',async () => {
                 addAnimationButton();
                 await updateUIFromEtat();
             } else {
-                console.error("Erreur serveur :", data.message);
-                alert(data.message);
+                console.error("Erreur serveur :", data.data.message);
+                envoyerNotification(data.data.message, "error");
             }
         } catch (err) {
             console.error("Erreur fetch :", err);
-            alert("Erreur réseau lors du chargement de la tournée");
+            envoyerNotification("Erreur réseau lors du chargement de la tournée", "error");
         } finally {
             document.getElementById('inputTournee').value = '';
         }
@@ -754,9 +767,20 @@ document.addEventListener('DOMContentLoaded',async () => {
             body: formData
         });
         const data = await response.json();
-        if (response.ok && data.status === "ok") {
-            console.log(data);
+        if (data.success) {
+            console.log(data.data);
             // TRAITEMENT DE LA SUPPRESSION
         }
     });
 });
+
+function envoyerNotification(message, type = "success", duration = 3000) {
+    const notification = document.getElementById("notification");
+    notification.textContent = message;
+    notification.className = "notification " + type;
+    notification.style.display = "block";
+
+    setTimeout(() => {
+        notification.style.display = "none";
+    }, duration);
+}
