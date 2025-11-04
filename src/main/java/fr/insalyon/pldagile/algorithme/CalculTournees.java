@@ -1,6 +1,6 @@
 package fr.insalyon.pldagile.algorithme;
 
-import fr.insalyon.pldagile.exception.TourneeNonConnexeException;
+import fr.insalyon.pldagile.erreurs.exception.TourneeNonConnexeException;
 import fr.insalyon.pldagile.modele.*;
 
 import java.time.LocalTime;

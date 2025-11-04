@@ -286,9 +286,36 @@ body, h1 {
     margin-top : 20px;
     height:40%;
 }
-
-#modifierTournee p,
-#sauvegarderTournee p,
-#creerFeuillesDeRoute p {
-    margin: 0;
+#notification {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 16px 24px;
+    border-radius: 8px;
+    display: none;
+    z-index: 10000;
+    font-weight: bold;
+    font-size: 1.2rem;
+    color: #fff;
+    background-color: rgba(0, 0, 0, 0.75); /* fond sombre semi-transparent */
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    max-width: 90%;
+    text-align: center;
+    text-shadow: 1px 1px 2px #000; /* contour léger pour le texte */
+    animation: slideDown 0.3s ease-out;
 }
+
+#notification.success {
+    background-color: rgba(76, 175, 80, 0.9); /* vert plus sombre et lisible */
+}
+
+#notification.error {
+    background-color: rgba(244, 67, 54, 0.9); /* rouge plus sombre et lisible */
+}
+
+@keyframes slideDown {
+    from { transform: translateX(-50%) translateY(-20px); opacity: 0; }
+    to { transform: translateX(-50%) translateY(0); opacity: 0.95; }
+}
+

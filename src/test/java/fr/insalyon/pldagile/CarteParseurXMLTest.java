@@ -2,9 +2,7 @@ package fr.insalyon.pldagile;
 
 import fr.insalyon.pldagile.modele.Carte;
 import fr.insalyon.pldagile.modele.CarteParseurXML;
-import fr.insalyon.pldagile.modele.Noeud;
-import fr.insalyon.pldagile.modele.Troncon;
-import fr.insalyon.pldagile.exception.XMLFormatException;
+import fr.insalyon.pldagile.erreurs.exception.XMLFormatException;
 
 
 import static org.junit.jupiter.api.Assertions.*;

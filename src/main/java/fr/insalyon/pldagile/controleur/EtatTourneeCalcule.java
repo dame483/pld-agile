@@ -1,12 +1,11 @@
 package fr.insalyon.pldagile.controleur;
 
 import fr.insalyon.pldagile.algorithme.CalculTournees;
-import fr.insalyon.pldagile.exception.XMLFormatException;
+import fr.insalyon.pldagile.erreurs.exception.XMLFormatException;
 import fr.insalyon.pldagile.modele.*;
 import fr.insalyon.pldagile.sortie.SauvegarderTournee;
 import fr.insalyon.pldagile.sortie.TourneeUpload;
 import fr.insalyon.pldagile.sortie.parseurTourneeJson;
-import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import fr.insalyon.pldagile.sortie.FeuilleDeRoute;

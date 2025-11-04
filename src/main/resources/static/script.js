@@ -66,25 +66,39 @@ function formatHoraireFourchette(horaire, deltaMinutes = 30) {
 
 // CHARGEMENT
 
-async function uploadCarte(file){
-    const formData=new FormData();
-    formData.append("file",file);
-    try{
-        const response= await fetch(`http://localhost:8080/api/upload-carte`,{method:"POST",body:formData});
-        if(!response.ok){alert(await response.text());return;}
-        const res=await response.json();
-        carteData = res.carte;
+async function uploadCarte(file) {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+        const response = await fetch(`http://localhost:8080/api/upload-carte`, {
+            method: "POST",
+            body: formData
+        });
+
+        const res = await response.json(); // lire le JSON **avant** de traiter success/error
+
+        if (!res.success) {
+            envoyerNotification(res.message || "Erreur lors du chargement de la carte", "error");
+            return;
+        }
+
+        // succès
+        carteData = res.data.carte;
         resetCarte();
         resetLivraisons();
         drawCarte(carteData);
         await updateUIFromEtat();
-    }catch(err){
-        alert(err.message);
-    }
-    finally{
+
+        envoyerNotification("Carte chargée avec succès", "success");
+
+    } catch (err) {
+        envoyerNotification("Erreur : " + err.message, "error");
+    } finally {
         document.getElementById('xmlCarte').value = '';
     }
 }
+
 
 async function uploadDemande(file){
     if(!carteData){
@@ -760,3 +774,14 @@ document.addEventListener('DOMContentLoaded',async () => {
         }
     });
 });
+
+function envoyerNotification(message, type = "success", duration = 3000) {
+    const notification = document.getElementById("notification");
+    notification.textContent = message;
+    notification.className = "notification " + type;
+    notification.style.display = "block";
+
+    setTimeout(() => {
+        notification.style.display = "none";
+    }, duration);
+}
