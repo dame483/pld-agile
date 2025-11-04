@@ -90,8 +90,6 @@ async function uploadCarte(file) {
         drawCarte(carteData);
         await updateUIFromEtat();
 
-        envoyerNotification("Carte chargée avec succès");
-
     } catch (err) {
         envoyerNotification("Erreur : " + err.message, "error");
     } finally {
@@ -287,6 +285,7 @@ async function calculTournee(nombreLivreurs = 1){
         envoyerNotification(await r.text(), "error");
         return;
     }
+    envoyerNotification("Toutes les tournées ont été calculées avec succès");
     const toutesLesTournees = await r.json();
     window.toutesLesTournees = toutesLesTournees.data.tournees;
 

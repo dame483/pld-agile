@@ -117,7 +117,7 @@ public class Controlleur {
             Object result = etatActuelle.creerFeuillesDeRoute(this);
 
             if (result instanceof String message) {
-                return ResponseEntity.ok(ApiReponse.succes( "la feuille de route a été générée", Map.of(
+                return ResponseEntity.ok(ApiReponse.succes( "les feuilles de route ont été générées avec succès", Map.of(
                         "message", message
                 )));
             } else if (result instanceof Exception e) {

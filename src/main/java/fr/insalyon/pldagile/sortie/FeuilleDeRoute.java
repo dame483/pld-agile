@@ -41,7 +41,7 @@ public class FeuilleDeRoute {
                         writer.write("Continuez environ " +(int) Math.ceil(troncon.getLongueur()) + " m " + " sur " + troncon.getNomRue() + "\n");
                     }
                     writer.write("Tu arrives au point de livraison " + "à " + arrivee.getHoraireArrivee() + "\n");
-                    writer.write("L'adresse de livraison " + "N° " + i + " est " + arrivee.getId() + ")\n"); //pas le nom de rue je ne l'ai pas encore
+                    writer.write("L'id de l'adresse de livraison " + "N° " + (i + 1) + " est " + "(" + arrivee.getId() + "," + arrivee.getType() + ")\n");
                     writer.write("\n");
                 }
             }
