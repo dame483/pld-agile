@@ -1,6 +1,6 @@
 package fr.insalyon.pldagile.controleur;
 
-import fr.insalyon.pldagile.exception.XMLFormatException;
+import fr.insalyon.pldagile.erreurs.exception.XMLFormatException;
 import fr.insalyon.pldagile.modele.Carte;
 import fr.insalyon.pldagile.modele.CarteParseurXML;
 import fr.insalyon.pldagile.modele.Tournee;

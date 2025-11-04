@@ -1,6 +1,6 @@
 package fr.insalyon.pldagile.controleur;
 
-import fr.insalyon.pldagile.exception.XMLFormatException;
+import fr.insalyon.pldagile.erreurs.exception.XMLFormatException;
 import fr.insalyon.pldagile.modele.*;
 import fr.insalyon.pldagile.sortie.*;
 import org.springframework.stereotype.Component;

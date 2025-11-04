@@ -1,4 +1,4 @@
-package fr.insalyon.pldagile.exception;
+package fr.insalyon.pldagile.erreurs.exception;
 
 public class XMLFormatException extends RuntimeException {
 

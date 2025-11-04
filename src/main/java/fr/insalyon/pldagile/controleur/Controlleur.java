@@ -1,9 +1,11 @@
 package fr.insalyon.pldagile.controleur;
 
-import fr.insalyon.pldagile.exception.XMLFormatException;
+import fr.insalyon.pldagile.erreurs.exception.GestionnaireException;
+import fr.insalyon.pldagile.erreurs.exception.XMLFormatException;
 import fr.insalyon.pldagile.modele.Carte;
 import fr.insalyon.pldagile.modele.DemandeDeLivraison;
 import fr.insalyon.pldagile.modele.Tournee;
+import fr.insalyon.pldagile.sortie.reponse.ApiReponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -31,7 +33,7 @@ public class Controlleur {
     }
 
     @PostMapping("/upload-carte")
-    public ResponseEntity<?> loadCarte(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<ApiReponse> loadCarte(@RequestParam("file") MultipartFile file) {
         try {
             Carte newCarte = etatActuelle.loadCarte(this, file);
 
@@ -39,20 +41,22 @@ public class Controlleur {
                 this.carte = newCarte;
                 this.demande = null;
 
-                return ResponseEntity.ok(Map.of(
+                return ResponseEntity.ok(ApiReponse.succes(( "Carte chargée avec succès"), Map.of(
                         "message", " Carte chargée avec succès",
                         "etatCourant", getCurrentState().getName(),
                         "carte", newCarte
-                ));
+                )));
             } else {
-                return ResponseEntity.badRequest().body("Erreur : carte non chargée");
+                return ResponseEntity.badRequest().body(ApiReponse.erreur("Erreur : carte non chargée"));
             }
 
         }
         catch (XMLFormatException e) {
-            return ResponseEntity.badRequest().body("Erreur : fichier XML mal formaté.");
+            GestionnaireException gestionnaireException = new GestionnaireException();
+            return gestionnaireException.handleException(e);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body("Erreur inattendue : " + e.getMessage());
+            GestionnaireException gestionnaireException = new GestionnaireException();
+            return gestionnaireException.handleException(e);
         }
     }
 
