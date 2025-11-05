@@ -746,7 +746,6 @@ async function updateUIFromEtat() {
         const res = await fetch("http://localhost:8080/api/etat");
         if(!res.ok) return;
         const data = await res.json();
-        console.log(data); //DEBUG
 
         document.getElementById('welcome-message').style.display = "none";
         document.getElementById('carte-chargee-message').style.display = "none";
