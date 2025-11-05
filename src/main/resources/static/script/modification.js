@@ -27,7 +27,7 @@ async function checkEtSupprimer() {
 
             drawTourneeNodes(nouvelleTournee);
             drawTournee(nouvelleTournee, colors[0], 0);
-            majTableauTournee(nouvelleTournee, window.toutesLesTournees[selectedIndex])
+            majTableauTournee(nouvelleTournee, window.tourneeBaseline)
             window.toutesLesTournees[selectedIndex] = nouvelleTournee;
             await updateUIFromEtat();
         } else {
@@ -199,7 +199,7 @@ window.annulerModification = async function () {
             resetTournee();
             drawTourneeNodes(tournee);
             drawTournee(tournee, colors[0], 0);
-            majTableauTournee(tournee, window.toutesLesTournees[selectedIndex])
+            majTableauTournee(tournee, window.tourneeBaseline)
             window.toutesLesTournees[selectedIndex] = tournee;
             await updateUIFromEtat();
         } else{
@@ -224,7 +224,7 @@ window.retablirModification = async function () {
             resetTournee();
             drawTourneeNodes(tournee);
             drawTournee(tournee, colors[0], 0);
-            majTableauTournee(tournee, window.toutesLesTournees[selectedIndex]);
+            majTableauTournee(tournee, window.tourneeBaseline);
             window.toutesLesTournees[selectedIndex] = tournee;
 
             await updateUIFromEtat();
@@ -272,4 +272,27 @@ window.sauvegarderModification = async function () {
         console.error("Erreur sauvegarde :", err);
         envoyerNotification("Erreur réseau lors de la sauvegarde des modifications", "error");
     }
+}
+
+window.activerModeSuppression = function () {
+    if (!modeSuppressionActif) {
+        modeSuppressionActif = true;
+        idNoeudPickup = null;
+        idNoeudDelivery = null;
+        envoyerNotification("Mode suppression activé : cliquez sur un point Pickup ou Livraison à supprimer.","success");
+    }
+}
+
+window.activerModeModification = async function (){
+    const tournee = window.toutesLesTournees[selectedIndex];
+    fetch("http://localhost:8080/api/tournee/mode-modification", {method: "POST", headers: {"Content-Type": "application/json"},body: JSON.stringify(tournee)})
+        .then(response => response.json())
+        .then(async data => {
+            window.tourneeBaseline = JSON.parse(JSON.stringify(tournee));
+            resetTournee();
+            drawTourneeNodes(tournee);
+            drawTournee(tournee, colors[0], 0)
+
+            await updateUIFromEtat();
+        });
 }

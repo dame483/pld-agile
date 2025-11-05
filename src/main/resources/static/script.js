@@ -12,7 +12,7 @@ var selectedIndex = 0;
 let modeSuppressionActif = false;
 let idNoeudPickup = null;
 let idNoeudDelivery = null;
-
+window.tourneeBaseline = null;
 
 const colors=[
     '#e6194b','#3cb44b','#ffe119','#4363d8','#f58231','#911eb4','#46f0f0',
@@ -898,19 +898,6 @@ document.addEventListener('DOMContentLoaded',async () => {
         sauvegarderTournee();
     });
 
-    document.getElementById('modifierTournee').addEventListener('click', () => {
-        const tournee = window.toutesLesTournees[selectedIndex];
-        fetch("http://localhost:8080/api/tournee/mode-modification", {method: "POST", headers: {"Content-Type": "application/json"},body: JSON.stringify(tournee)})
-            .then(response => response.json())
-            .then(async data => {
-                resetTournee();
-                drawTourneeNodes(tournee);
-                drawTournee(tournee, colors[0], 0)
-
-                await updateUIFromEtat();
-            });
-    });
-
     document.querySelector('.navbar-item img[alt="Charger une tournée"]').addEventListener("click", () => {
         document.getElementById("inputTournee").click();
     });
@@ -973,14 +960,9 @@ document.addEventListener('DOMContentLoaded',async () => {
         await updateUIFromEtat();
     });
 
-    document.getElementById('modeSupression').addEventListener("click", () => {
-        if (!modeSuppressionActif) {
-            modeSuppressionActif = true;
-            idNoeudPickup = null;
-            idNoeudDelivery = null;
-            envoyerNotification("Mode suppression activé : cliquez sur un point Pickup ou Livraison à supprimer.","success");
-        }
-    });
+    document.getElementById('modifierTournee').addEventListener('click', activerModeModification);
+
+    document.getElementById('modeSupression').addEventListener("click", activerModeSuppression);
 
     document.getElementById('annulerModification').addEventListener("click", annulerModification);
 
