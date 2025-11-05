@@ -11,7 +11,9 @@ import org.springframework.web.multipart.MultipartFile;
 import fr.insalyon.pldagile.sortie.FeuilleDeRoute;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
 public class EtatTourneeCalcule implements Etat {
@@ -119,26 +121,21 @@ public class EtatTourneeCalcule implements Etat {
     }
 
     @Override
-    public Object creerFeuillesDeRoute(Controlleur c) {
+    public List<Path> creerFeuillesDeRoute(Controlleur c) {
+        List<Path> chemins = new ArrayList<>();
         try {
-            if (toutesLesTournees == null || toutesLesTournees.isEmpty()) {
-                return "Aucune tournée à générer.";
-            }
-
             for (int i = 0; i < toutesLesTournees.size(); i++) {
                 Tournee t = toutesLesTournees.get(i);
                 FeuilleDeRoute feuille = new FeuilleDeRoute(t);
-                feuille.genererFeuilleDeRoute(i);
-
+                Path chemin = feuille.genererFeuilleDeRoute(i);
+                chemins.add(chemin);
                 System.out.println("Feuille de route créée pour la tournée #" + (i + 1));
             }
 
-            return "Toutes les feuilles de route ont été générées avec succès.";
-
         } catch (Exception e) {
             e.printStackTrace();
-            return e;
         }
+        return chemins;
     }
 
     @Override

@@ -7,14 +7,22 @@ import fr.insalyon.pldagile.modele.DemandeDeLivraison;
 import fr.insalyon.pldagile.modele.Tournee;
 import fr.insalyon.pldagile.sortie.ModificationsDTO;
 import fr.insalyon.pldagile.sortie.reponse.ApiReponse;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import fr.insalyon.pldagile.sortie.TourneeUpload;
 
+import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 @RestController
 @RequestMapping("/api")
@@ -109,23 +117,32 @@ public class Controlleur {
     }
 
     @PostMapping("/tournee/feuille-de-route")
-    public ResponseEntity<ApiReponse> creerFeuilleDeRoute() {
+    public ResponseEntity<?> creerFeuilleDeRoute() {
         try {
             if (!(etatActuelle instanceof EtatTourneeCalcule)) {
                 return ResponseEntity.badRequest().body(ApiReponse.erreur("La tournée n'est pas encore calculée."));
             }
 
-            Object result = etatActuelle.creerFeuillesDeRoute(this);
-
-            if (result instanceof String message) {
-                return ResponseEntity.ok(ApiReponse.succes( "les feuilles de route ont été générées avec succès", Map.of(
-                        "message", message
-                )));
-            } else if (result instanceof Exception e) {
-                return ResponseEntity.badRequest().body(ApiReponse.erreur("Erreur : " + e.getMessage()));
-            } else {
-                return ResponseEntity.badRequest().body(ApiReponse.erreur("Erreur inconnue lors de la génération de la feuille de route."));
+            List<Path> fichiers = etatActuelle.creerFeuillesDeRoute(this);
+            Path zipPath = Files.createTempFile("feuille-de-route -", ".zip");
+            try (ZipOutputStream zos = new ZipOutputStream(Files.newOutputStream(zipPath))) {
+                for (Path fichier : fichiers) {
+                    ZipEntry entry = new ZipEntry(fichier.getFileName().toString());
+                    zos.putNextEntry(entry);
+                    Files.copy(fichier, zos);
+                    zos.closeEntry();
+                }
             }
+            ByteArrayResource resource = new ByteArrayResource(Files.readAllBytes(zipPath));
+            for (Path fichier : fichiers) {
+                Files.deleteIfExists(fichier);
+            }
+            Files.deleteIfExists(zipPath);
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"feuilles_de_route.zip\"")
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                    .contentLength(resource.contentLength())
+                    .body(resource);
 
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(ApiReponse.erreur("Exception : " + e.getMessage()));
