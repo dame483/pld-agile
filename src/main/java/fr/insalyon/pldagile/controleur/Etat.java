@@ -5,18 +5,20 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
 
 public interface Etat {
 
-    Carte loadCarte(Controlleur c, MultipartFile file);
-    Object loadDemandeLivraison(Controlleur c, MultipartFile file, Carte carte);
+    Carte loadCarte(Controleur c, MultipartFile file);
+    Object loadDemandeLivraison(Controleur c, MultipartFile file, Carte carte);
     Object uploadXML(String type, MultipartFile file, Carte carte);
     String getName();
-    Object runCalculTournee(Controlleur c, int nombreLivreurs, double vitesse);
-    List<Path> creerFeuillesDeRoute(Controlleur c);
-    Object saveTournee(Controlleur c);
-    Object loadTournee(Controlleur c, MultipartFile file, Carte carte);
-    void sauvegarderModification(Controlleur c, DemandeDeLivraison demande, List<Tournee> tournees);
-    void passerEnModeModification(Controlleur c, Tournee tournee);
+    Object runCalculTournee(Controleur c, int nombreLivreurs, double vitesse);
+    List<Path> creerFeuillesDeRoute(Controleur c);
+    Object saveTournee(Controleur c);
+    Object loadTournee(Controleur c, MultipartFile file, Carte carte);
+    void sauvegarderModification(Controleur c, DemandeDeLivraison demande, List<Tournee> tournees);
+    void passerEnModeModification(Controleur c, Tournee tournee);
+    Tournee modifierTournee(Controleur c, String mode, Map<String, Object> body, double vitesse);
 
 }

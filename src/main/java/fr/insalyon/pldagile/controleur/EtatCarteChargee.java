@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
 
 @Component
 public class EtatCarteChargee implements Etat {
@@ -21,7 +22,7 @@ public class EtatCarteChargee implements Etat {
     }
 
     @Override
-    public Carte loadCarte(Controlleur c, MultipartFile file) throws XMLFormatException {
+    public Carte loadCarte(Controleur c, MultipartFile file) throws XMLFormatException {
         Object result = uploadXML("carte", file, null);
 
         if (result instanceof Carte carte) {
@@ -39,7 +40,7 @@ public class EtatCarteChargee implements Etat {
     }
 
     @Override
-    public Object loadDemandeLivraison(Controlleur c, @RequestParam("file") MultipartFile file, Carte carte) {
+    public Object loadDemandeLivraison(Controleur c, @RequestParam("file") MultipartFile file, Carte carte) {
         Object dem = uploadXML("demande", file, this.carte);
         if (dem instanceof DemandeDeLivraison demande) {
             c.setCurrentState(new EtatDemandeLivraisonChargee(this.carte, demande));
@@ -96,22 +97,22 @@ public class EtatCarteChargee implements Etat {
     }
 
     @Override
-    public Object runCalculTournee(Controlleur c, int nombreLivreurs, double vitesse) {
+    public Object runCalculTournee(Controleur c, int nombreLivreurs, double vitesse) {
         throw new IllegalStateException("Erreur : impossible de calculer une tournée sans demande de livraison.");
     }
 
     @Override
-    public List<Path> creerFeuillesDeRoute(Controlleur c) {
+    public List<Path> creerFeuillesDeRoute(Controleur c) {
         throw new IllegalStateException("Erreur : impossible de créer une feuille de route avant le calcul de la tournée.");
     }
 
     @Override
-    public Object saveTournee(Controlleur c) {
+    public Object saveTournee(Controleur c) {
         throw new IllegalStateException("Erreur : impossible de sauvegarder une tournée avant son calcul.");
     }
 
     @Override
-    public Object loadTournee(Controlleur c, MultipartFile file, Carte carte) {
+    public Object loadTournee(Controleur c, MultipartFile file, Carte carte) {
         Object result = uploadXML("tournee", file, carte);
 
         if (result instanceof Exception e) {
@@ -147,13 +148,17 @@ public class EtatCarteChargee implements Etat {
     }
 
     @Override
-    public void passerEnModeModification(Controlleur c, Tournee tournee) {
+    public void passerEnModeModification(Controleur c, Tournee tournee) {
         throw new IllegalStateException("Erreur : impossible de passer en mode modification sans calcul de tournée.");
     }
 
     @Override
-    public void sauvegarderModification(Controlleur c, DemandeDeLivraison demande, List<Tournee> tournees) {
+    public void sauvegarderModification(Controleur c, DemandeDeLivraison demande, List<Tournee> tournees) {
         throw new IllegalStateException("Erreur : aucune modification à sauvegarder à ce stade.");
+    }
+
+    public Tournee modifierTournee(Controleur c, String mode, Map<String, Object> body, double vitesse){
+        throw new IllegalStateException("Erreur : Pas de modification de tournée possible dans l'état actuel");
     }
 
     @Override

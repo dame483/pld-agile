@@ -2,12 +2,9 @@ package fr.insalyon.pldagile.controleur;
 
 import fr.insalyon.pldagile.erreurs.exception.XMLFormatException;
 import fr.insalyon.pldagile.modele.*;
-import fr.insalyon.pldagile.sortie.TourneeUpload;
-import fr.insalyon.pldagile.sortie.parseurTourneeJson;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
@@ -24,22 +21,20 @@ public class EtatModificationTournee implements Etat {
 
 
     @Override
-    public Carte loadCarte(Controlleur c, @RequestParam("file") MultipartFile file) {
+    public Carte loadCarte(Controleur c, @RequestParam("file") MultipartFile file) {
         throw new IllegalStateException("Erreur : impossible de charger une carte en mode modification.");
     }
 
     @Override
-    public Object loadDemandeLivraison(Controlleur c, @RequestParam("file") MultipartFile file, Carte carte) {
+    public Object loadDemandeLivraison(Controleur c, @RequestParam("file") MultipartFile file, Carte carte) {
         throw new IllegalStateException("Erreur : impossible de charger une demande de livraison en mode modification.");
     }
 
 
-
     @Override
-    public Object runCalculTournee(Controlleur c, int nombreLivreurs, double vitesse) {
+    public Object runCalculTournee(Controleur c, int nombreLivreurs, double vitesse) {
         throw new IllegalStateException("Erreur : impossible de recalculer les tournées en mode modification.");
     }
-
 
 
     @Override
@@ -48,53 +43,54 @@ public class EtatModificationTournee implements Etat {
     }
 
     @Override
-    public List<Path> creerFeuillesDeRoute(Controlleur c) {
+    public List<Path> creerFeuillesDeRoute(Controleur c) {
         throw new IllegalStateException("Erreur : impossible de créer une feuille de route en mode modification de tournée.");
     }
 
     @Override
-    public Object saveTournee(Controlleur c) {
+    public Object saveTournee(Controleur c) {
         throw new IllegalStateException("Erreur : impossible de sauvegarder une tournée complète en mode modification.");
     }
 
     @Override
-    public Object loadTournee(Controlleur c, MultipartFile file, Carte carte) {
+    public Object loadTournee(Controleur c, MultipartFile file, Carte carte) {
         throw new IllegalStateException("Erreur : impossible de charger une tournée en mode modification.");
     }
 
-        @Override
-        public void passerEnModeModification(Controlleur c, Tournee tournee){return;}
+    @Override
+    public void passerEnModeModification(Controleur c, Tournee tournee) {
+        throw new IllegalStateException("Erreur : Impossible de passer en mode modification à l’état initial.");
+    }
 
 
-        @Override
-        public String getName() {
-            return "ModeModificationTournee";
-        }
-
-        public Tournee getTournee() {
-            return tournee;
-        }
-
-
-
-    public void modifierTournee(Controlleur c, String mode, Map<String, Object> body, double vitesse) {
+    @Override
+    public Tournee modifierTournee(Controleur c, String mode, Map<String, Object> body, double vitesse) {
         Commande commande;
 
         switch (mode.toLowerCase()) {
             case "supprimer" -> {
-                long idNoeudPickup = ((Number) body.get("idNoeudPickup")).longValue();
-                long idNoeudDelivery = ((Number) body.get("idNoeudDelivery")).longValue();
+                if (!body.containsKey("idNoeudPickup") || !body.containsKey("idNoeudDelivery")) {
+                    throw new IllegalArgumentException("Paramètres manquants pour suppression.");
+                }
 
-                commande = new CommandeSuppressionLivraison(
-                        tournee,
-                        carte,
-                        vitesse,
-                        idNoeudPickup,
-                        idNoeudDelivery
-                );
+                long idPickup = ((Number) body.get("idNoeudPickup")).longValue();
+                long idDelivery = ((Number) body.get("idNoeudDelivery")).longValue();
+
+                commande = new CommandeSuppressionLivraison(tournee, carte, vitesse, idPickup, idDelivery);
             }
 
             case "ajouter" -> {
+                String[] requiredKeys = {
+                        "idNoeudPickup", "idNoeudDelivery",
+                        "idPrecedentPickup", "idPrecedentDelivery",
+                        "dureeEnlevement", "dureeLivraison"
+                };
+                for (String key : requiredKeys) {
+                    if (!body.containsKey(key)) {
+                        throw new IllegalArgumentException("Paramètre manquant pour ajout : " + key);
+                    }
+                }
+
                 long idPickup = ((Number) body.get("idNoeudPickup")).longValue();
                 long idDelivery = ((Number) body.get("idNoeudDelivery")).longValue();
                 long idPrecedentPickup = ((Number) body.get("idPrecedentPickup")).longValue();
@@ -103,15 +99,10 @@ public class EtatModificationTournee implements Etat {
                 double dureeLivraison = ((Number) body.get("dureeLivraison")).doubleValue();
 
                 commande = new CommandeAjoutLivraison(
-                        tournee,
-                        carte,
-                        vitesse,
-                        idPickup,
-                        idDelivery,
-                        idPrecedentPickup,
-                        idPrecedentDelivery,
-                        dureeEnlevement,
-                        dureeLivraison
+                        tournee, carte, vitesse,
+                        idPickup, idDelivery,
+                        idPrecedentPickup, idPrecedentDelivery,
+                        dureeEnlevement, dureeLivraison
                 );
             }
 
@@ -120,14 +111,25 @@ public class EtatModificationTournee implements Etat {
 
         // Exécution de la commande
         c.executerCommande(commande);
+        return this.tournee;
     }
 
+
     @Override
-    public void sauvegarderModification(Controlleur c, DemandeDeLivraison demande, List<Tournee> tournees) {
+    public void sauvegarderModification(Controleur c, DemandeDeLivraison demande, List<Tournee> tournees) {
         if (tournees == null || tournees.isEmpty()) {
             throw new IllegalArgumentException("Aucune tournée à sauvegarder.");
         }
         c.setCurrentState(new EtatTourneeCalcule(carte, demande, tournees));
+    }
+
+    @Override
+    public String getName() {
+            return "ModeModificationTournee";
+    }
+
+    public Tournee getTournee() {
+            return tournee;
     }
 }
 

@@ -1,11 +1,8 @@
 package fr.insalyon.pldagile;
 
-import fr.insalyon.pldagile.algorithme.CalculChemins;
 import fr.insalyon.pldagile.algorithme.CalculTournees;
-import fr.insalyon.pldagile.algorithme.ModificationTournee;
 import fr.insalyon.pldagile.controleur.*;
 import fr.insalyon.pldagile.modele.*;
-import fr.insalyon.pldagile.sortie.FeuilleDeRoute;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -22,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 public class ModificationControleurTest {
 
-    private Controlleur controleur;
+    private Controleur controleur;
     private Tournee tournee;
     private Carte carte;
 
@@ -48,7 +45,7 @@ public class ModificationControleurTest {
 
         tournee = toutesLesTournees.get(0);
 
-        controleur = new Controlleur();
+        controleur = new Controleur();
 
         EtatModificationTournee etat = new EtatModificationTournee(carte, tournee);
         controleur.setCurrentState(etat);
