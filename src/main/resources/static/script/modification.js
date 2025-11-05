@@ -37,7 +37,6 @@ async function checkEtSupprimer() {
         console.error(err);
         envoyerNotification("Erreur réseau : " + err.message, "error");
     } finally {
-        modeSuppressionActif = false;
         idNoeudPickup = null;
         idNoeudDelivery = null;
     }
@@ -191,6 +190,7 @@ function filtreDemande(tournees) {
 }
 
 window.annulerModification = async function () {
+    modeSuppressionActif = false;
     try {
         const response = await fetch("http://localhost:8080/api/annuler", {method : "POST"});
         const data = await response.json();
@@ -211,6 +211,7 @@ window.annulerModification = async function () {
 }
 
 window.retablirModification = async function () {
+    modeSuppressionActif = false;
     try {
         const response = await fetch("http://localhost:8080/api/restaurer", {
             method: "POST"
@@ -240,6 +241,7 @@ window.retablirModification = async function () {
 }
 
 window.sauvegarderModification = async function () {
+    modeSuppressionActif = false;
     try {
         const body = {
             demande: demandeData,
@@ -295,4 +297,9 @@ window.activerModeModification = async function (){
 
             await updateUIFromEtat();
         });
+}
+
+window.activerModeAjout = async function (){
+    modeSuppressionActif = false;
+    envoyerNotification("Oups .. Le mode ajout n'est pas encore implementé","error");
 }

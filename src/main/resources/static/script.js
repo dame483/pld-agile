@@ -880,6 +880,7 @@ document.addEventListener('DOMContentLoaded',async () => {
                     window.directionNumbersLayer = null;
                     window.animPaths = {};
                     window.toutesLesTournees = [];
+                    modeSuppressionActif = false;
 
                     await updateUIFromEtat();
                 })
@@ -961,6 +962,8 @@ document.addEventListener('DOMContentLoaded',async () => {
     });
 
     document.getElementById('modifierTournee').addEventListener('click', activerModeModification);
+
+    document.getElementById('modeAjout').addEventListener("click", activerModeAjout);
 
     document.getElementById('modeSupression').addEventListener("click", activerModeSuppression);
 
