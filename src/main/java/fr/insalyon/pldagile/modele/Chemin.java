@@ -43,6 +43,13 @@ public class Chemin {
         this.longueurTotal = longueurTotal;
     }
 
+    public void setNoeudDePassageDepart(NoeudDePassage noeudDePassageDepart) {
+        this.NoeudDePassageDepart = noeudDePassageDepart;
+    }
+
+    public void setNoeudDePassageArrivee(NoeudDePassage noeudDePassageArrivee) {
+        this.NoeudDePassageArrivee = noeudDePassageArrivee;
+    }
 
     public Chemin copieProfonde() {
         List<Troncon> tronconsCopie = new ArrayList<>(this.troncons); // si Troncon est immutable

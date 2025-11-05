@@ -9,6 +9,10 @@ let animControl=null, isAnimating=false, isPaused=false;
 let animSpeed=8, animSamples=[], animIndex=0;
 window.toutesLesTournees = [];
 var selectedIndex = 0;
+let modeSuppressionActif = false;
+let idNoeudPickup = null;
+let idNoeudDelivery = null;
+
 
 const colors=[
     '#e6194b','#3cb44b','#ffe119','#4363d8','#f58231','#911eb4','#46f0f0',
@@ -17,7 +21,10 @@ const colors=[
 ];
 const STEP_M=10;
 
-// OUTILS
+
+// ======================================================
+// ===================   OUTILS   =======================
+// ======================================================
 
 function makeStepNumberIcon(n,color){
     const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="34" height="18" viewBox="0 0 34 18">
@@ -63,8 +70,21 @@ function formatHoraireFourchette(horaire, deltaMinutes = 30) {
     return `${format(min)}-${format(max)}`;
 }
 
+function envoyerNotification(message, type = "success", duration = 3000) {
+    const notification = document.getElementById("notification");
+    notification.textContent = message;
+    notification.className = "notification " + type;
+    notification.style.display = "block";
 
-// CHARGEMENT
+    setTimeout(() => {
+        notification.style.display = "none";
+    }, duration);
+}
+
+
+// ======================================================
+// ====================   CHARGEMENT   ===================
+// ======================================================
 
 async function uploadCarte(file) {
     const formData = new FormData();
@@ -97,7 +117,6 @@ async function uploadCarte(file) {
     }
 }
 
-
 async function uploadDemande(file){
     if(!carteData){
         envoyerNotification("Charger le plan XML d'abord.", "error");
@@ -113,7 +132,13 @@ async function uploadDemande(file){
         }
         const res=await response.json();
         demandeData = res.data.demande;
-        document.getElementById('nbLivreurs').max = demandeData.livraisons.length || 1;
+        const input = document.getElementById('nbLivreurs');
+        input.min = 1;
+        input.step = 1;
+        input.required = true;
+        input.max = demandeData.livraisons.length || 1;
+        input.value = 1;
+        input.addEventListener('keydown', e => e.preventDefault());
         drawLivraisons(demandeData);
         drawEntrepot(demandeData.entrepot);
         await updateUIFromEtat();
@@ -124,7 +149,9 @@ async function uploadDemande(file){
     }
 }
 
-// AFFICHAGE CARTE ET DEMANDES
+// ======================================================
+// ============   AFFICHAGE CARTE ET DONNÉES   ==========
+// ======================================================
 
 function resetCarte() {
     if (map) {
@@ -146,7 +173,7 @@ function resetCarte() {
 }
 
 function resetLivraisons(){
-    demandeData = null;
+    demandeData = null; //utile ?
     document.getElementById('tableauDemandes').innerHTML = "";
     document.getElementById('tableauTournees').innerHTML = "";
     if (livraisonsLayer) livraisonsLayer.clearLayers();
@@ -171,13 +198,11 @@ function drawCarte(carte) {
             attribution: '© OpenStreetMap'
         }).addTo(map);
 
-        // créer les layers **une seule fois**
         livraisonsLayer = L.layerGroup().addTo(map);
         entrepotLayer = L.layerGroup().addTo(map);
         addLegend();
     }
 
-    // Supprimer uniquement les tronçons de la carte précédente
     if (window.tronconsLayer) window.tronconsLayer.clearLayers();
     else window.tronconsLayer = L.layerGroup().addTo(map);
 
@@ -191,8 +216,32 @@ function drawCarte(carte) {
 
     const all = Object.values(n).map(x => [x.latitude, x.longitude]);
     if (all.length > 0) map.fitBounds(L.latLngBounds(all).pad(0.1));
+
+    map.on('click', function(e) {
+        if (!carteData || !carteData.noeuds) return;
+        let closest = null, minDist = Infinity;
+
+        for (const node of Object.values(carteData.noeuds)) {
+            const d = map.distance(e.latlng, L.latLng(node.latitude, node.longitude));
+            if (d < minDist) { minDist = d; closest = node; }
+        }
+
+        if (closest && minDist < 50) {
+            L.popup()
+                .setLatLng([closest.latitude, closest.longitude])
+                .setContent(`<b>Nœud ${closest.id}</b><br>Lat: ${closest.latitude.toFixed(6)}<br>Lng: ${closest.longitude.toFixed(6)}`)
+                .openOn(map);
+            console.log("Nœud proche cliqué :", closest.id);
+        } else {
+            console.log("Aucun nœud proche du clic.");
+        }
+    });
 }
 
+
+// ======================================================
+// ============   LIVRAISONS + ENTREPOS   ===============
+// ======================================================
 
 function drawLivraisons(d){
     if(!map||!carteData) return;
@@ -227,12 +276,47 @@ function drawLivraisons(d){
         window.colorByNodeId[lv.id] = color;
         L.marker([en.latitude,en.longitude],{
             icon:L.divIcon({className:'',iconSize:[18,18],
-                html:`<div style="width:18px;height:18px;background:${color};border:2px solid black;border-radius:3px;"></div>`})
-        }).addTo(livraisonsLayer);
+                html:`<div style="width:18px;height:18px;background:${color};border:2px solid black;border-radius:3px;"></div>`}),
+            id: en.id
+        }).addTo(livraisonsLayer)
+            .on('click', e => {
+                const nodeId = e.target.options.id;
+                if (modeSuppressionActif) {
+                    idNoeudPickup = nodeId;
+                    checkEtSupprimer();
+                    L.popup().setLatLng(e.latlng)
+                        .setContent(`<b>Pickup sélectionné : ${nodeId}</b>`)
+                        .openOn(map);
+                    console.log("Pickup sélectionné pour suppression :", nodeId);
+                } else {
+                    L.popup().setLatLng(e.latlng)
+                        .setContent(`<b>Pickup ID ${nodeId}</b>`)
+                        .openOn(map);
+                }
+            });
+
+        // --- Livraison
         L.marker([lv.latitude,lv.longitude],{
             icon:L.divIcon({className:'',iconSize:[18,18],
-                html:`<div style="width:18px;height:18px;background:${color};border:2px solid black;border-radius:50%;"></div>`})
-        }).addTo(livraisonsLayer);
+                html:`<div style="width:18px;height:18px;background:${color};border:2px solid black;border-radius:50%;"></div>`}),
+            id: lv.id
+        }).addTo(livraisonsLayer)
+            .on('click', e => {
+                const nodeId = e.target.options.id;
+                if (modeSuppressionActif) {
+                    idNoeudDelivery = nodeId;
+                    checkEtSupprimer();
+                    L.popup().setLatLng(e.latlng)
+                        .setContent(`<b>Livraison sélectionnée : ${nodeId}</b>`)
+                        .openOn(map);
+                    console.log("Livraison sélectionnée pour suppression :", nodeId);
+                } else {
+                    L.popup().setLatLng(e.latlng)
+                        .setContent(`<b>Livraison ID ${nodeId}</b>`)
+                        .openOn(map);
+                }
+            });
+
         const row = document.createElement("tr");
         row.innerHTML = `
       <td style="padding:4px;text-align:center;">
@@ -251,9 +335,17 @@ function drawEntrepot(e){
     L.marker([e.latitude,e.longitude],{
         icon:L.divIcon({className:'',iconSize:[24,24],
             html:`<svg width="24" height="24" viewBox="0 0 26 26">
-                  <polygon points="13,3 23,23 3,23" fill="#000" stroke="black" stroke-width="2"/>
-                </svg>`})
-    }).addTo(entrepotLayer);
+                    <polygon points="13,3 23,23 3,23" fill="#000" stroke="black" stroke-width="2"/>
+                  </svg>`}),
+        id: e.id
+    }).addTo(entrepotLayer)
+      .on('click', ev => {
+          const nodeId = ev.target.options.id;
+          L.popup().setLatLng(ev.latlng)
+                   .setContent(`<b>Entrepôt ID ${nodeId}</b>`)
+                   .openOn(map);
+          console.log("Entrepôt cliqué :", nodeId);
+      });
 }
 
 function addLegend(){
@@ -367,42 +459,138 @@ function drawTourneeTable(tournee){
     let ordre = 1;
 
     const chemins = tournee.chemins;
-    const firstNode = chemins[0]?.noeudDePassageDepart;
-    const lastNode = chemins[chemins.length-1]?.noeudDePassageArrivee;
+    const premierNoeud = chemins[0]?.noeudDePassageDepart;
 
     chemins.forEach(c => {
-        const noeudsChemin = [(c.noeudDePassageDepart && c.noeudDePassageDepart.type === "ENTREPOT") ? c.noeudDePassageDepart : null, c.noeudDePassageArrivee];
+        const noeudsChemin = [
+            (c.noeudDePassageDepart && c.noeudDePassageDepart.type === "ENTREPOT") ? c.noeudDePassageDepart : null,
+            c.noeudDePassageArrivee
+        ];
+
         noeudsChemin.forEach(noeud => {
             if (!noeud) return;
-            if (["ENTREPOT","PICKUP","DELIVERY"].includes(noeud.type)) {
+            if (["ENTREPOT", "PICKUP", "DELIVERY"].includes(noeud.type)) {
 
                 const color = window.colorByNodeId?.[noeud.id] || "#000000";
-                const bordercolor = color !== "#000000"? "solid black":"white";
+                const bordercolor = color !== "#000000" ? "solid black" : "white";
 
                 let horaire = "";
-                if (noeud === firstNode && noeud.type === "ENTREPOT") {
+                if (noeud === premierNoeud && noeud.type === "ENTREPOT") {
                     horaire = noeud.horaireDepart || "-";
-                } else if (noeud === lastNode && noeud.type === "ENTREPOT") {
-                    horaire = formatHoraireFourchette(noeud.horaireArrivee) || "-";
                 } else {
                     horaire = formatHoraireFourchette(noeud.horaireArrivee) || "-";
                 }
 
-                const row = document.createElement("tr");
-                row.innerHTML = `
-              <td style="padding:4px;text-align:center;">
-                <div style="width:18px;height:18px;background:${color};
-                    border:1px solid ${bordercolor};border-radius:3px;margin:auto;"></div>
-              </td>
+                let formeHTML = "";
+                if (noeud.type === "PICKUP") {
+                    formeHTML = `<div style="
+                    width:18px;height:18px;
+                    background:${color};
+                    border:1px ${bordercolor};
+                    border-radius:3px;
+                    margin:auto;"></div>`;
+                } else if (noeud.type === "DELIVERY") {
+                    formeHTML = `<div style="
+                    width:18px;height:18px;
+                    background:${color};
+                    border:1px ${bordercolor};
+                    border-radius:50%;
+                    margin:auto;"></div>`;
+                } else if (noeud.type === "ENTREPOT") {
+                    const strokeColor = (color.toLowerCase() === "#000000" || color.toLowerCase() === "black") ? "white" : "black";
+                    formeHTML = `
+                        <svg width="18" height="18" viewBox="0 0 24 24" style="display:block;margin:auto;">
+                            <polygon points="12,3 21,21 3,21"
+                                fill="${color}"
+                                stroke="${strokeColor}"
+                                stroke-width="1.5"/>
+                        </svg>`;
+                }
+                const ligne = document.createElement("tr");
+                ligne.innerHTML = `
+              <td style="padding:4px;text-align:center;">${formeHTML}</td>
               <td style="border-left:1px solid #ccc;padding:4px;text-align:center;">${ordre++}</td>
               <td style="border-left:1px solid #ccc;padding:4px;text-align:center;">${noeud.type}</td>
               <td style="border-left:1px solid #ccc;padding:4px;text-align:center;">${noeud.id}</td>
               <td style="border-left:1px solid #ccc;padding:4px;text-align:center;">${horaire}</td>
             `;
-                tbody.appendChild(row);
+                tbody.appendChild(ligne);
             }
         });
     });
+}
+
+function drawTourneeNodes(tourneeData) {
+    if (!map || !carteData || !demandeData) return;
+
+    if (livraisonsLayer) livraisonsLayer.clearLayers();
+    if (entrepotLayer) entrepotLayer.clearLayers();
+    if (window.tourneeLayer) window.tourneeLayer.clearLayers();
+    if (window.directionNumbersLayer) window.directionNumbersLayer.clearLayers();
+
+    stopAnimation();
+    if (animControl && map) { map.removeControl(animControl); animControl = null; }
+    animPath = []; isAnimating = false; isPaused = false;
+
+    const n = carteData.noeuds;
+    const livraisons = demandeData.livraisons || [];
+    const entrepot = demandeData.entrepot;
+
+    const idsDansTournee = new Set();
+    tourneeData.chemins?.forEach(c => {
+        if (c.noeudDePassageDepart?.id) idsDansTournee.add(c.noeudDePassageDepart.id);
+        if (c.noeudDePassageArrivee?.id) idsDansTournee.add(c.noeudDePassageArrivee.id);
+    });
+
+    window.colorByNodeId = {};
+
+    livraisons.forEach((l, i) => {
+        const color = colors[i % colors.length];
+        const en = n[l.adresseEnlevement.id];
+        const lv = n[l.adresseLivraison.id];
+        if (!en || !lv) return;
+
+        if (!idsDansTournee.has(en.id) && !idsDansTournee.has(lv.id)) return;
+
+        window.colorByNodeId[en.id] = color;
+        window.colorByNodeId[lv.id] = color;
+
+        L.marker([en.latitude, en.longitude], {
+            icon: L.divIcon({
+                className: '',
+                iconSize: [18, 18],
+                html: `<div style="width:18px;height:18px;background:${color};border:2px solid black;border-radius:3px;"></div>`
+            }),
+            id: en.id
+        }).addTo(livraisonsLayer)
+            .on('click', e => {
+                idNoeudPickup = e.target.options.id;
+                checkEtSupprimer();
+                L.popup().setLatLng(e.latlng)
+                    .setContent(`<b>Pickup ID ${idNoeudPickup}</b>`)
+                    .openOn(map);
+            });
+
+        L.marker([lv.latitude, lv.longitude], {
+            icon: L.divIcon({
+                className: '',
+                iconSize: [18, 18],
+                html: `<div style="width:18px;height:18px;background:${color};border:2px solid black;border-radius:50%;"></div>`
+            }),
+            id: lv.id
+        }).addTo(livraisonsLayer)
+            .on('click', e => {
+                idNoeudDelivery = e.target.options.id;
+                checkEtSupprimer();
+                L.popup().setLatLng(e.latlng)
+                    .setContent(`<b>Livraison ID ${idNoeudDelivery}</b>`)
+                    .openOn(map);
+            });
+    });
+
+    if (entrepot) {
+        drawEntrepot(entrepot);
+    }
 }
 
 async function creerFeuillesDeRoute() {
@@ -488,72 +676,67 @@ function resumeAnimation(){ if(!animTimer) runAnimation(); }
 function stopAnimation(){ if(animTimer){ clearInterval(animTimer); animTimer=null; } if(courierMarker){ map.removeLayer(courierMarker); courierMarker=null; } }
 
 function addAnimationButton() {
-    if (animControl) { map.removeControl(animControl); animControl = null; }
+    const elementDroite = document.querySelector('.elementDroite');
+    const oldControl = document.getElementById("animationControl");
+    if (oldControl) oldControl.remove();
+    const div = document.createElement('div');
+    div.id = "animationControl";
 
-    animControl = L.control({ position: 'topleft' });
-    animControl.onAdd = function () {
-        const div = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
-        const tourneeOptions = Object.keys(window.animPaths)
-            .map(i => `<option value="${i}">Tournée ${parseInt(i) + 1}</option>`)
-            .join('');
+    const tourneeOptions = Object.keys(window.animPaths || {})
+        .map(i => `<option value="${i}">Tournée ${parseInt(i) + 1}</option>`)
+        .join('') || `<option disabled>Aucune tournée</option>`;
 
-        div.innerHTML = `
-          <div style="background:rgba(255,255,255,0.85);border-radius:10px;
-                      box-shadow:0 0 5px rgba(0,0,0,0.3);padding:8px;
-                      font-size:13px;text-align:center;width:160px;color:black;">
-            <h4 style="margin:0 0 8px 0;font-weight:bold;">Livreur</h4>
-            <select id="tourneeSelect" style="width:100%;margin-bottom:6px;">${tourneeOptions}</select>
-            <button id="btnStartStop" style="background:#b2d1d2;border:none;padding:5px 8px;
-                     border-radius:6px;cursor:pointer;width:100%;margin-bottom:5px;">Lancer l’animation</button>
-            <button id="btnPause" style="background:#ddd;border:none;padding:5px 8px;
-                     border-radius:6px;cursor:pointer;width:100%;">Pause</button>
-          </div>`;
+    div.innerHTML = `
+        <h4>Tournée sélectionnée</h4>
+        <select id="tourneeSelect">${tourneeOptions}</select>
+        <button id="btnStartStop">Lancer l’animation</button>
+        <button id="btnPause">Pause</button>
+    `;
 
-        const start = div.querySelector('#btnStartStop');
-        const pause = div.querySelector('#btnPause');
-        const select = div.querySelector('#tourneeSelect');
+    elementDroite.insertBefore(div, elementDroite.firstChild);
 
-        select.onchange = e => {
-            selectedIndex = parseInt(e.target.value);
-            const tournee = window.toutesLesTournees[selectedIndex];
-            drawTourneeTable(tournee);
-        };
+    const start = div.querySelector('#btnStartStop');
+    const pause = div.querySelector('#btnPause');
+    const select = div.querySelector('#tourneeSelect');
 
-        start.onclick = e => {
-            e.stopPropagation();
-            if (!isAnimating) {
-                start.textContent = 'Arrêter l’animation';
-                startAnimation(selectedIndex);
-                isAnimating = true;
-                pause.disabled = false;
-            } else {
-                start.textContent = 'Lancer l’animation';
-                stopAnimation();
-                isAnimating = false;
-                isPaused = false;
-                pause.textContent = 'Pause';
-                pause.disabled = true;
-            }
-        };
-
-        pause.onclick = e => {
-            e.stopPropagation();
-            if (!isAnimating) return;
-            if (!isPaused) {
-                pauseAnimation();
-                isPaused = true;
-                pause.textContent = 'Reprendre';
-            } else {
-                resumeAnimation();
-                isPaused = false;
-                pause.textContent = 'Pause';
-            }
-        };
-
-        pause.disabled = true;
-        return div;
+    select.onchange = e => {
+        selectedIndex = parseInt(e.target.value);
+        const tournee = window.toutesLesTournees[selectedIndex];
+        drawTourneeTable(tournee);
     };
-    animControl.addTo(map);
+
+    start.onclick = e => {
+        e.stopPropagation();
+        if (!isAnimating) {
+            start.textContent = 'Arrêter l’animation';
+            startAnimation(selectedIndex);
+            isAnimating = true;
+            pause.disabled = false;
+        } else {
+            start.textContent = 'Lancer l’animation';
+            stopAnimation();
+            isAnimating = false;
+            isPaused = false;
+            pause.textContent = 'Pause';
+            pause.disabled = true;
+        }
+    };
+
+    pause.onclick = e => {
+        e.stopPropagation();
+        if (!isAnimating) return;
+        if (!isPaused) {
+            pauseAnimation();
+            isPaused = true;
+            pause.textContent = 'Reprendre';
+        } else {
+            resumeAnimation();
+            isPaused = false;
+            pause.textContent = 'Pause';
+        }
+    };
+
+    pause.disabled = true;
 }
 
 // AFFICHAGE GLOBAL
@@ -563,6 +746,7 @@ async function updateUIFromEtat() {
         const res = await fetch("http://localhost:8080/api/etat");
         if(!res.ok) return;
         const data = await res.json();
+        console.log(data); //DEBUG
 
         document.getElementById('welcome-message').style.display = "none";
         document.getElementById('carte-chargee-message').style.display = "none";
@@ -583,6 +767,9 @@ async function updateUIFromEtat() {
         document.querySelector('.navbar-item img[alt="Charger une tournée"]').style.cursor = "pointer";
         document.getElementById('map').style.display = "block";
         document.getElementById('tournee-modifier').style.display = "none";
+        if (document.getElementById('animationControl')) {
+            document.getElementById('animationControl').style.display = "none";
+        }
         if(data.data.etat === "Etat Initial") {
             document.getElementById('welcome-message').style.display = "flex";
             document.querySelector('.navbar-item img[alt="Ajouter une carte"]').style.filter = "drop-shadow(0 0 10px rgba(225,225,0,1))";
@@ -601,6 +788,7 @@ async function updateUIFromEtat() {
         } else if(data.data.tourneeChargee) {
             document.getElementById('tournee-chargee').style.display = "inline";
             document.getElementById('tableauTournees').style.display = "inline";
+            document.getElementById('animationControl').style.display = "block";
         } else if(data.data.demandeChargee) {
             document.getElementById('livraisons').style.display = "inline";
             document.getElementById('fileNameDemande').style.display = "inline";
@@ -633,7 +821,13 @@ document.addEventListener('DOMContentLoaded',async () => {
     });
 
     document.getElementById('calculerTournee').addEventListener('click', async () => {
-        const nbLivreurs = parseInt(document.getElementById('nbLivreurs').value) || 1;
+        let nbLivreurs = parseInt(document.getElementById('nbLivreurs').value);
+        if (isNaN(nbLivreurs) || nbLivreurs < 1) nbLivreurs = 1;
+        const max = demandeData?.livraisons?.length || 1;
+        if (nbLivreurs > max) nbLivreurs = max;
+
+        document.getElementById('nbLivreurs').value = nbLivreurs;
+
         await calculTournee(nbLivreurs);
     });
 
@@ -695,7 +889,9 @@ document.addEventListener('DOMContentLoaded',async () => {
             .then(response => response.json())
             .then(async data => {
                 resetTournee();
+                drawTourneeNodes(tournee);
                 drawTournee(tournee, colors[0], 0)
+
                 await updateUIFromEtat();
             });
     });
@@ -705,6 +901,10 @@ document.addEventListener('DOMContentLoaded',async () => {
     });
 
     document.querySelectorAll('.navbar-item img').forEach(img => {
+        img.title = img.alt;
+    });
+
+    document.querySelectorAll('.boutonModif img').forEach(img => {
         img.title = img.alt;
     });
 
@@ -724,12 +924,13 @@ document.addEventListener('DOMContentLoaded',async () => {
             const data = await response.json();
 
             if (data.success) {
-                window.toutesLesTournees = data.data.tournees || [];
-                demandeData = data.data.demande ||[];
                 resetLivraisons();
                 resetTournee();
 
-                drawLivraisons(data.data.demande);
+                window.toutesLesTournees = data.data.tournees || [];
+                demandeData = data.data.demande ||[];
+
+                drawLivraisons(demandeData);
                 window.toutesLesTournees.forEach((t, i) => {
                     const color = colors[i % colors.length];
                     drawTournee(t, color, i);
@@ -738,8 +939,8 @@ document.addEventListener('DOMContentLoaded',async () => {
                 addAnimationButton();
                 await updateUIFromEtat();
             } else {
-                console.error("Erreur serveur :", data.data.message);
-                envoyerNotification(data.data.message, "error");
+                console.error("Erreur serveur :", data.message);
+                envoyerNotification(data.message, "error");
             }
         } catch (err) {
             console.error("Erreur fetch :", err);
@@ -757,30 +958,50 @@ document.addEventListener('DOMContentLoaded',async () => {
         await updateUIFromEtat();
     });
 
-    document.getElementById('modeSupression').addEventListener("click", async () => {
-        const formData = new FormData();
-        formData.append("idNoeudPickup", idNoeudPickup);
-        formData.append("idNoeudDelivery", idNoeudDelivery);
-        formData.append("mode", "supprimer");
-        const response = await fetch("http://localhost:8080/api/tournee/mode-modification", {
-            method: "POST",
-            body: formData
-        });
-        const data = await response.json();
-        if (data.success) {
-            console.log(data.data);
-            // TRAITEMENT DE LA SUPPRESSION
+    document.getElementById('modeSupression').addEventListener("click", () => {
+        if (!modeSuppressionActif) {
+            modeSuppressionActif = true;
+            idNoeudPickup = null;
+            idNoeudDelivery = null;
+            envoyerNotification("Mode suppression activé : cliquez sur un point Pickup ou Livraison à supprimer.","success");
+        }
+    });
+
+    document.getElementById('sauvegarderModification').addEventListener("click", async () => {
+        try {
+            const body = {
+                demande: demandeData,
+                tournees: window.toutesLesTournees
+            };
+            const response = await fetch("http://localhost:8080/api/sauvegarder-modifications", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(body)
+            });
+
+            const data = await response.json();
+            console.log(data); //DEBUG
+            if (data.success) {
+                console.log("Modifications sauvegardées !");
+                envoyerNotification("Modifications sauvegardées avec succès", "success");
+                resetTournee();
+                filtreDemande(window.toutesLesTournees); //actualise demandeData avec les noeuds des tournees
+                drawLivraisons(demandeData);
+                window.toutesLesTournees.forEach((t, i) => {
+                    const color = colors[i % colors.length];
+                    drawTournee(t, color, i);
+                });
+                drawTourneeTable(window.toutesLesTournees[0])
+                await updateUIFromEtat();
+            } else{
+                console.error("Erreur serveur :", data.message);
+                envoyerNotification(data.message, "error");
+            }
+        }
+        catch (err){
+            console.error("Erreur sauvegarde :", err);
+            envoyerNotification("Erreur réseau lors de la sauvegarde des modifications", "error");
         }
     });
 });
 
-function envoyerNotification(message, type = "success", duration = 3000) {
-    const notification = document.getElementById("notification");
-    notification.textContent = message;
-    notification.className = "notification " + type;
-    notification.style.display = "block";
-
-    setTimeout(() => {
-        notification.style.display = "none";
-    }, duration);
-}
