@@ -27,7 +27,7 @@ async function checkEtSupprimer() {
 
             drawTourneeNodes(nouvelleTournee);
             drawTournee(nouvelleTournee, colors[0], 0);
-            majTableauTournee(nouvelleTournee, window.toutesLesTournees[selectedIndex])
+            majTableauTournee(nouvelleTournee, window.tourneeBaseline)
             window.toutesLesTournees[selectedIndex] = nouvelleTournee;
             await updateUIFromEtat();
         } else {
@@ -37,7 +37,6 @@ async function checkEtSupprimer() {
         console.error(err);
         envoyerNotification("Erreur réseau : " + err.message, "error");
     } finally {
-        modeSuppressionActif = false;
         idNoeudPickup = null;
         idNoeudDelivery = null;
     }
@@ -47,14 +46,33 @@ function majTableauTournee(nouvelleTournee, ancienneTournee) {
     const tableauTournees = document.getElementById("tableauTournees");
 
     const anciensHoraires = new Map();
-    if (ancienneTournee?.chemins) {
+
+    if (ancienneTournee?.chemins?.length) {
+        let premier = true;
+
         ancienneTournee.chemins.forEach(c => {
             const noeuds = [c.noeudDePassageDepart, c.noeudDePassageArrivee];
+
             noeuds.forEach(noeud => {
-                if (noeud && noeud.id) {
-                    const horaire = formatHoraireFourchette(noeud.horaireArrivee || noeud.horaireDepart);
-                    anciensHoraires.set(noeud.id, horaire || "-");
+                if (!noeud || !noeud.id) return;
+
+                let horaire = "-";
+                let key = noeud.id;
+
+                if (premier && noeud.type === "ENTREPOT") {
+                    horaire = noeud.horaireDepart || "-";
+                    key = `${noeud.id}_depart`;
+                    premier = false;
                 }
+                else if (noeud.type === "ENTREPOT") {
+                    horaire = formatHoraireFourchette(noeud.horaireArrivee) || "-";
+                    key = `${noeud.id}_arrivee`;
+                }
+                else {
+                    horaire = formatHoraireFourchette(noeud.horaireArrivee) || "-";
+                }
+
+                anciensHoraires.set(key, horaire);
             });
         });
     }
@@ -67,8 +85,8 @@ function majTableauTournee(nouvelleTournee, ancienneTournee) {
                     <th style="border-bottom:1px solid #ccc;border-left:1px solid #ccc;padding:4px;">Ordre</th>
                     <th style="border-bottom:1px solid #ccc;border-left:1px solid #ccc;padding:4px;">Type</th>
                     <th style="border-bottom:1px solid #ccc;border-left:1px solid #ccc;padding:4px;">ID</th>
-                    <th style="border-bottom:1px solid #ccc;border-left:1px solid #ccc;padding:4px;">Ancien horaire</th>
-                    <th style="border-bottom:1px solid #ccc;border-left:1px solid #ccc;padding:4px;">Nouveau horaire</th>
+                    <th style="border-bottom:1px solid #ccc;border-left:1px solid #ccc;padding:4px;">Ancienne fourchette horaire</th>
+                    <th style="border-bottom:1px solid #ccc;border-left:1px solid #ccc;padding:4px;">Nouvel horaire exact</th>
                 </tr>
             </thead>
             <tbody id="tourneeBody"></tbody>
@@ -94,12 +112,23 @@ function majTableauTournee(nouvelleTournee, ancienneTournee) {
                     ? "white"
                     : "black";
 
-                const ancienHoraire = anciensHoraires.get(noeud.id) || "-";
+                let key = noeud.id;
+
+                if (noeud.type === "ENTREPOT") {
+                    if (noeud === premierNoeud) key = `${noeud.id}_depart`;
+                    else if (noeud === chemins[chemins.length - 1]?.noeudDePassageArrivee)
+                        key = `${noeud.id}_arrivee`;
+                }
+
+                const ancienHoraire = anciensHoraires.get(key) || "-";
                 let nouveauHoraire = "-";
+                let nouveauHoraireExact = "-";
                 if (noeud === premierNoeud && noeud.type === "ENTREPOT") {
                     nouveauHoraire = noeud.horaireDepart || "-";
+                    nouveauHoraireExact = noeud.horaireDepart || "-";
                 } else {
                     nouveauHoraire = formatHoraireFourchette(noeud.horaireArrivee) || "-";
+                    nouveauHoraireExact = noeud.horaireArrivee || "-";
                 }
 
                 const styleDiff = (ancienHoraire !== "-" && nouveauHoraire !== ancienHoraire)
@@ -131,7 +160,7 @@ function majTableauTournee(nouvelleTournee, ancienneTournee) {
                 <td style="border-left:1px solid #ccc;padding:4px;text-align:center;">${noeud.type}</td>
                 <td style="border-left:1px solid #ccc;padding:4px;text-align:center;">${noeud.id}</td>
                 <td style="border-left:1px solid #ccc;padding:4px;text-align:center;">${ancienHoraire}</td>
-                <td style="border-left:1px solid #ccc;padding:4px;text-align:center;${styleDiff}">${nouveauHoraire}</td>
+                <td style="border-left:1px solid #ccc;padding:4px;text-align:center;${styleDiff}">${nouveauHoraireExact}</td>
             `;
                 tbody.appendChild(row);
             }
@@ -158,4 +187,119 @@ function filtreDemande(tournees) {
     });
 
     demandeData.livraisons = nouvellesLivraisons;
+}
+
+window.annulerModification = async function () {
+    modeSuppressionActif = false;
+    try {
+        const response = await fetch("http://localhost:8080/api/annuler", {method : "POST"});
+        const data = await response.json();
+        if (data.success){
+            const tournee = data.data.tournee;
+            resetTournee();
+            drawTourneeNodes(tournee);
+            drawTournee(tournee, colors[0], 0);
+            majTableauTournee(tournee, window.tourneeBaseline)
+            window.toutesLesTournees[selectedIndex] = tournee;
+            await updateUIFromEtat();
+        } else{
+            envoyerNotification("Erreur : " + (data.message || "Impossible d'annuler la dernière modification."),"error");
+        }
+    } catch (err){
+        envoyerNotification("Erreur réseau : " + err.message, "error");
+    }
+}
+
+window.retablirModification = async function () {
+    modeSuppressionActif = false;
+    try {
+        const response = await fetch("http://localhost:8080/api/restaurer", {
+            method: "POST"
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            const tournee = data.data.tournee;
+
+            resetTournee();
+            drawTourneeNodes(tournee);
+            drawTournee(tournee, colors[0], 0);
+            majTableauTournee(tournee, window.tourneeBaseline);
+            window.toutesLesTournees[selectedIndex] = tournee;
+
+            await updateUIFromEtat();
+        } else {
+            envoyerNotification(
+                "Erreur : " + (data.message || "Impossible de restaurer la dernière modification."),
+                "error"
+            );
+        }
+    } catch (err) {
+        envoyerNotification("Erreur réseau : " + err.message, "error");
+    }
+}
+
+window.sauvegarderModification = async function () {
+    modeSuppressionActif = false;
+    try {
+        const body = {
+            demande: demandeData,
+            tournees: window.toutesLesTournees
+        };
+        const response = await fetch("http://localhost:8080/api/sauvegarder-modifications", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body)
+        });
+
+        const data = await response.json();
+        if (data.success) {
+            envoyerNotification("Modifications sauvegardées avec succès", "success");
+            resetTournee();
+            filtreDemande(window.toutesLesTournees); //actualise demandeData avec les noeuds des tournees
+            drawLivraisons(demandeData);
+            window.toutesLesTournees.forEach((t, i) => {
+                const color = colors[i % colors.length];
+                drawTournee(t, color, i);
+            });
+            drawTourneeTable(window.toutesLesTournees[selectedIndex])
+            await updateUIFromEtat();
+        } else{
+            console.error("Erreur serveur :", data.message);
+            envoyerNotification(data.message, "error");
+        }
+    }
+    catch (err){
+        console.error("Erreur sauvegarde :", err);
+        envoyerNotification("Erreur réseau lors de la sauvegarde des modifications", "error");
+    }
+}
+
+window.activerModeSuppression = function () {
+    if (!modeSuppressionActif) {
+        modeSuppressionActif = true;
+        idNoeudPickup = null;
+        idNoeudDelivery = null;
+        envoyerNotification("Mode suppression activé : cliquez sur un point Pickup ou Livraison à supprimer.","success");
+    }
+}
+
+window.activerModeModification = async function (){
+    const tournee = window.toutesLesTournees[selectedIndex];
+    fetch("http://localhost:8080/api/tournee/mode-modification", {method: "POST", headers: {"Content-Type": "application/json"},body: JSON.stringify(tournee)})
+        .then(response => response.json())
+        .then(async data => {
+            window.tourneeBaseline = JSON.parse(JSON.stringify(tournee));
+            resetTournee();
+            drawTourneeNodes(tournee);
+            drawTournee(tournee, colors[0], 0)
+
+            await updateUIFromEtat();
+        });
+}
+
+window.activerModeAjout = async function (){
+    modeSuppressionActif = false;
+    envoyerNotification("Oups .. Le mode ajout n'est pas encore implementé","error");
 }
