@@ -47,14 +47,33 @@ function majTableauTournee(nouvelleTournee, ancienneTournee) {
     const tableauTournees = document.getElementById("tableauTournees");
 
     const anciensHoraires = new Map();
-    if (ancienneTournee?.chemins) {
+
+    if (ancienneTournee?.chemins?.length) {
+        let premier = true;
+
         ancienneTournee.chemins.forEach(c => {
             const noeuds = [c.noeudDePassageDepart, c.noeudDePassageArrivee];
+
             noeuds.forEach(noeud => {
-                if (noeud && noeud.id) {
-                    const horaire = formatHoraireFourchette(noeud.horaireArrivee || noeud.horaireDepart);
-                    anciensHoraires.set(noeud.id, horaire || "-");
+                if (!noeud || !noeud.id) return;
+
+                let horaire = "-";
+                let key = noeud.id;
+
+                if (premier && noeud.type === "ENTREPOT") {
+                    horaire = noeud.horaireDepart || "-";
+                    key = `${noeud.id}_depart`;
+                    premier = false;
                 }
+                else if (noeud.type === "ENTREPOT") {
+                    horaire = formatHoraireFourchette(noeud.horaireArrivee) || "-";
+                    key = `${noeud.id}_arrivee`;
+                }
+                else {
+                    horaire = formatHoraireFourchette(noeud.horaireArrivee) || "-";
+                }
+
+                anciensHoraires.set(key, horaire);
             });
         });
     }
@@ -94,7 +113,16 @@ function majTableauTournee(nouvelleTournee, ancienneTournee) {
                     ? "white"
                     : "black";
 
-                const ancienHoraire = anciensHoraires.get(noeud.id) || "-";
+                let key = noeud.id;
+
+                if (noeud.type === "ENTREPOT") {
+                    if (noeud === premierNoeud) key = `${noeud.id}_depart`;
+                    else if (noeud === chemins[chemins.length - 1]?.noeudDePassageArrivee)
+                        key = `${noeud.id}_arrivee`;
+                }
+
+                const ancienHoraire = anciensHoraires.get(key) || "-";
+                console.log(key, ancienHoraire); //debug
                 let nouveauHoraire = "-";
                 if (noeud === premierNoeud && noeud.type === "ENTREPOT") {
                     nouveauHoraire = noeud.horaireDepart || "-";
