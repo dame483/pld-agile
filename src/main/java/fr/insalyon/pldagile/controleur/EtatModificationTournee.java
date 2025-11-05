@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
@@ -103,7 +104,7 @@ public class EtatModificationTournee implements Etat {
         }
 
         @Override
-        public Object creerFeuillesDeRoute(Controlleur c) {
+        public List<Path> creerFeuillesDeRoute(Controlleur c) {
             System.err.println("Erreur : impossible de créer une feuille de route en mode modification de la tournée.");
             return null;
         }
@@ -210,10 +211,12 @@ public class EtatModificationTournee implements Etat {
         c.executerCommande(commande);
     }
 
-
-
-
-
-
+    @Override
+    public void sauvegarderModification(Controlleur c, DemandeDeLivraison demande, List<Tournee> tournees) {
+        if (tournees == null || tournees.isEmpty()) {
+            throw new IllegalArgumentException("Aucune tournée à sauvegarder.");
+        }
+        c.setCurrentState(new EtatTourneeCalcule(carte, demande, tournees));
+    }
 }
 

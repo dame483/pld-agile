@@ -5,6 +5,8 @@ import fr.insalyon.pldagile.modele.*;
 import java.io.File;
 import java.io.FileWriter;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -16,16 +18,10 @@ public class FeuilleDeRoute {
         this.tournee = tournee;
     }
 
-    public void genererFeuilleDeRoute(int index) throws Exception {
-        File feuilleDeRoute = new File("src/main/java/fr/insalyon/pldagile/sortie/feuilleDeRoute/feuilleDeRoute" + (index + 1) + ".txt");
+    public Path genererFeuilleDeRoute(int index) throws Exception {
+        Path feuilleDeRoute = Files.createTempFile("feuilleDeRoute" + (index + 1) + "-", ".txt");
         try {
-            if (feuilleDeRoute.createNewFile()) {
-                System.out.println("Feuille de route créée pour le livreur");
-
-            } else {
-                System.out.println("Ce fichier existe déjà");
-            }
-            try (FileWriter writer = new FileWriter("src/main/java/fr/insalyon/pldagile/sortie/feuilleDeRoute/feuilleDeRoute" + (index + 1) + ".txt")) {
+            try (FileWriter writer = new FileWriter(feuilleDeRoute.toFile())) {
 
                 writer.write("L'heure de départ de l'entrepôt : " + tournee.getChemins().get(0).getNoeudDePassageDepart().getHoraireDepart()+ "\n\n");
 
@@ -44,10 +40,12 @@ public class FeuilleDeRoute {
                     writer.write("L'id de l'adresse de livraison " + "N° " + (i + 1) + " est " + "(" + arrivee.getId() + "," + arrivee.getType() + ")\n");
                     writer.write("\n");
                 }
+                return  feuilleDeRoute;
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return feuilleDeRoute;
     }
     }
 

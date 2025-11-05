@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -117,7 +118,7 @@ public class EtatDemandeLivraisonChargee implements Etat {
     }
 
     @Override
-    public Object creerFeuillesDeRoute(Controlleur c) {
+    public List<Path> creerFeuillesDeRoute(Controlleur c) {
         System.err.println("Erreur : impossible de créer une feuille de route avant le calcul de la tournée.");
         return null;
     }
@@ -167,6 +168,9 @@ public class EtatDemandeLivraisonChargee implements Etat {
     @Override
     public void passerEnModeModification(Controlleur c, Tournee tournee){return;}
 
+    @Override
+    public void sauvegarderModification(Controlleur c, DemandeDeLivraison demande, List<Tournee> tournees) {
+    }
 
     @Override
     public String getName() {

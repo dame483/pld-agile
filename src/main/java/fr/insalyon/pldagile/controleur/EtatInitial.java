@@ -3,11 +3,14 @@ package fr.insalyon.pldagile.controleur;
 import fr.insalyon.pldagile.erreurs.exception.XMLFormatException;
 import fr.insalyon.pldagile.modele.Carte;
 import fr.insalyon.pldagile.modele.CarteParseurXML;
+import fr.insalyon.pldagile.modele.DemandeDeLivraison;
 import fr.insalyon.pldagile.modele.Tournee;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.nio.file.Path;
+import java.util.List;
 
 @Component
 public class EtatInitial implements Etat {
@@ -67,7 +70,7 @@ public class EtatInitial implements Etat {
 
 
     @Override
-    public Object creerFeuillesDeRoute(Controlleur c) {
+    public List<Path> creerFeuillesDeRoute(Controlleur c) {
         throw new IllegalStateException("Erreur : impossible de créer une feuille de route avant le calcul de la tournée.");
     }
 
@@ -82,6 +85,9 @@ public class EtatInitial implements Etat {
         throw new IllegalStateException("Impossible de charger une tournée sans carte préalablement chargée.");
     }
 
+    @Override
+    public void sauvegarderModification(Controlleur c, DemandeDeLivraison demande, List<Tournee> tournees) {
+    }
 
     @Override
     public String getName() {

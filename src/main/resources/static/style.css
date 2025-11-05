@@ -7,6 +7,11 @@ body {
     color : #FFFFFF;
 }
 
+h4{
+    margin:0 0 8px 0;
+    font-weight:bold;
+}
+
 .bandeau {
     align-items: center;
     background-color: #1B1E29;
@@ -255,7 +260,7 @@ body, h1 {
     flex-wrap: wrap;
 }
 
-#modifierTournee, #sauvegarderTournee, #creerFeuillesDeRoute, #modeAjout, #modeSupression, #annulerModification, #sauvegarderModification, #retablirModification {
+#modifierTournee, #sauvegarderTournee, #creerFeuillesDeRoute {
      height:140px;
      width:100px;
      background-color: #3D38F5;
@@ -273,18 +278,30 @@ body, h1 {
     transition: all 0.2s ease-in-out;
 }
 
+.boutonModif {
+    height:50px;
+    width:50px;
+    background-color: #3D38F5;
+    color: #FFFFFF;
+    font-family: Inter, sans-serif;
+    border: none;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    transition: all 0.2s ease-in-out;
+}
+
 #modifierTournee img, #sauvegarderTournee img, #creerFeuillesDeRoute img {
+    height:50%;
+    margin-top:20px;
+}
+
+.boutonModif img {
     height:60%;
-}
-
-#modeAjout img, #modeSupression img {
-    margin-top : 10px;
-    height:40%;
-}
-
-#annulerModification img, #sauvegarderModification img, #retablirModification img {
-    margin-top : 20px;
-    height:40%;
 }
 #notification {
     position: fixed;
@@ -313,6 +330,51 @@ body, h1 {
 #notification.error {
     background-color: rgba(244, 67, 54, 0.9);
 }
+
+.elementDroite{
+    margin-right:10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#animationControl {
+    background: #1B1E29;
+    border-radius: 10px;
+    box-shadow: 0 0 5px rgb(255, 255, 255);
+    padding: 10px;
+    font-size: 13px;
+    text-align: center;
+    color: white;
+    margin-bottom: 10px;
+    margin-top : 20px;
+    width: 60%;
+}
+
+#btnStartStop{
+    background:#b2d1d2;
+    border:none;
+    padding:5px 8px;
+    border-radius:6px;
+    cursor:pointer;
+    width:80%;
+    margin-bottom:5px;
+}
+
+#btnPause{
+    background:#ddd;
+    border:none;
+    padding:5px 8px;
+    border-radius:6px;
+    cursor:pointer;
+    width:80%;
+}
+
+#tourneeSelect {
+    width:80%;
+    margin-bottom:6px;
+}
+
 
 @keyframes slideDown {
     from { transform: translateX(-50%) translateY(-20px); opacity: 0; }
