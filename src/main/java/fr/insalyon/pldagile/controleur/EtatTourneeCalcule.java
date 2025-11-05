@@ -203,6 +203,7 @@ public class EtatTourneeCalcule implements Etat {
 
     @Override
     public void sauvegarderModification(Controlleur c, DemandeDeLivraison demande, List<Tournee> tournees) {
+        throw new IllegalStateException("Erreur : aucune modification à sauvegarder à ce stade.");
     }
 
     @Override

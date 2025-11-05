@@ -23,133 +23,44 @@ public class EtatModificationTournee implements Etat {
         }
 
 
-        @Override
-        public Carte loadCarte(Controlleur c, @RequestParam("file") MultipartFile file )
-        {
-            Carte carte=(Carte)uploadXML("carte", file,this.carte);
-            if(carte==null )
-            {
-                c.setCurrentState(new EtatInitial());
-                return carte;
-            }
+    @Override
+    public Carte loadCarte(Controlleur c, @RequestParam("file") MultipartFile file) {
+        throw new IllegalStateException("Erreur : impossible de charger une carte en mode modification.");
+    }
 
-            return carte;
-        }
-
-        @Override
-        public Object loadDemandeLivraison(Controlleur c, @RequestParam("file")  MultipartFile file, Carte carte) {
-            Object dem=uploadXML("demande", file, this.carte);
-            if(dem instanceof DemandeDeLivraison){
-                c.setCurrentState(new EtatDemandeLivraisonChargee(carte,(DemandeDeLivraison) dem));
-                return dem;
-            }
-
-            return dem;
-        }
-
-
-        @Override
-        public Object runCalculTournee(Controlleur c, int nombreLivreurs, double vitesse) {
-            return null;
-        }
+    @Override
+    public Object loadDemandeLivraison(Controlleur c, @RequestParam("file") MultipartFile file, Carte carte) {
+        throw new IllegalStateException("Erreur : impossible de charger une demande de livraison en mode modification.");
+    }
 
 
 
-        @Override
-        public Object uploadXML(String type, MultipartFile file, Carte carte) throws XMLFormatException {
-            if (file == null || file.isEmpty()) {
-                throw new XMLFormatException("Le fichier est vide ou nul.");
-            }
+    @Override
+    public Object runCalculTournee(Controlleur c, int nombreLivreurs, double vitesse) {
+        throw new IllegalStateException("Erreur : impossible de recalculer les tournées en mode modification.");
+    }
 
-            File tempFile = null;
-            try {
-                tempFile = File.createTempFile(type + "-", ".xml");
-                file.transferTo(tempFile);
 
-                System.out.println("Fichier temporaire créé : " + tempFile.getAbsolutePath());
-                Object result;
 
-                switch (type.toLowerCase()) {
-                    case "carte":
-                        result = CarteParseurXML.loadFromFile(tempFile);
-                        break;
+    @Override
+    public Object uploadXML(String type, MultipartFile file, Carte carte) throws XMLFormatException {
+        throw new IllegalStateException("Erreur : impossible de charger un fichier en mode modification de tournée.");
+    }
 
-                    case "demande":
-                        result = DemandeDeLivraisonParseurXML.loadFromFile(tempFile, this.carte);
-                        break;
+    @Override
+    public List<Path> creerFeuillesDeRoute(Controlleur c) {
+        throw new IllegalStateException("Erreur : impossible de créer une feuille de route en mode modification de tournée.");
+    }
 
-                    case "tournee":
-                        Object tournee = parseurTourneeJson.parseurTournee(tempFile.getAbsolutePath());
-                        Object demande = parseurTourneeJson.parseurDemandeDeLivraison(tempFile.getAbsolutePath());
-                        result = new TourneeUpload(tournee, demande);
-                        break;
+    @Override
+    public Object saveTournee(Controlleur c) {
+        throw new IllegalStateException("Erreur : impossible de sauvegarder une tournée complète en mode modification.");
+    }
 
-                    default:
-                        throw new XMLFormatException("Type de fichier non reconnu : " + type);
-                }
-
-                return result;
-
-            } catch (XMLFormatException e) {
-                throw e;
-
-            } catch (Exception e) {
-                throw new XMLFormatException("Erreur lors du chargement du fichier XML/JSON : " + e.getMessage(), e);
-
-            } finally {
-                if (tempFile != null && tempFile.exists() && !tempFile.delete()) {
-                    System.err.println("Impossible de supprimer le fichier temporaire : " + tempFile.getAbsolutePath());
-                }
-            }
-        }
-
-        @Override
-        public List<Path> creerFeuillesDeRoute(Controlleur c) {
-            System.err.println("Erreur : impossible de créer une feuille de route en mode modification de la tournée.");
-            return null;
-        }
-
-        @Override
-        public Object saveTournee(Controlleur c) {
-            System.err.println("Erreur : impossible de sauvegarder la tournée en mode modification.");
-            return null;
-        }
-
-        @Override
-        public Object loadTournee(Controlleur c, MultipartFile file, Carte carte) {
-            Object result = uploadXML("tournee", file, carte);
-
-            if (result instanceof Exception e) {
-                return e;
-            }
-
-            if (!(result instanceof TourneeUpload upload)) {
-                return new Exception("Résultat inattendu lors du chargement de la tournée");
-            }
-
-            Object tourneeObj = upload.getTournee();
-            Object demandeObj = upload.getDemande();
-
-            DemandeDeLivraison demande;
-            if (demandeObj instanceof DemandeDeLivraison d) {
-                demande = d;
-            } else {
-                return new Exception("Objet de demande invalide");
-            }
-
-            List<Tournee> toutesLesTournees;
-            if (tourneeObj instanceof Tournee tournee) {
-                toutesLesTournees = List.of(tournee);
-            } else if (tourneeObj instanceof List<?> liste && !liste.isEmpty() && liste.get(0) instanceof Tournee) {
-                toutesLesTournees = (List<Tournee>) liste;
-            } else {
-                return new Exception("Fichier JSON invalide ou format incorrect");
-            }
-
-            c.setCurrentState(new EtatTourneeCalcule(carte, demande, toutesLesTournees));
-
-            return new TourneeUpload(toutesLesTournees, demande);
-        }
+    @Override
+    public Object loadTournee(Controlleur c, MultipartFile file, Carte carte) {
+        throw new IllegalStateException("Erreur : impossible de charger une tournée en mode modification.");
+    }
 
         @Override
         public void passerEnModeModification(Controlleur c, Tournee tournee){return;}

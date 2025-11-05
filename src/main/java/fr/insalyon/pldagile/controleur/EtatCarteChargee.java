@@ -96,21 +96,18 @@ public class EtatCarteChargee implements Etat {
     }
 
     @Override
-    public Object runCalculTournee(Controlleur c, int nombreLivreurs, double vitesse){
-        System.err.println("Erreur : impossible de calculer une tournée sans demande de livraison.");
-        return null;
+    public Object runCalculTournee(Controlleur c, int nombreLivreurs, double vitesse) {
+        throw new IllegalStateException("Erreur : impossible de calculer une tournée sans demande de livraison.");
     }
 
     @Override
     public List<Path> creerFeuillesDeRoute(Controlleur c) {
-        System.err.println("Erreur : impossible de créer une feuille de route avant le calcul de la tournée.");
-        return null;
+        throw new IllegalStateException("Erreur : impossible de créer une feuille de route avant le calcul de la tournée.");
     }
 
     @Override
     public Object saveTournee(Controlleur c) {
-        System.err.println("Erreur : impossible de sauvegarder une tournée avant son calcul.");
-        return null;
+        throw new IllegalStateException("Erreur : impossible de sauvegarder une tournée avant son calcul.");
     }
 
     @Override
@@ -150,11 +147,13 @@ public class EtatCarteChargee implements Etat {
     }
 
     @Override
-    public void passerEnModeModification(Controlleur c, Tournee tournee){return;}
-
+    public void passerEnModeModification(Controlleur c, Tournee tournee) {
+        throw new IllegalStateException("Erreur : impossible de passer en mode modification sans calcul de tournée.");
+    }
 
     @Override
     public void sauvegarderModification(Controlleur c, DemandeDeLivraison demande, List<Tournee> tournees) {
+        throw new IllegalStateException("Erreur : aucune modification à sauvegarder à ce stade.");
     }
 
     @Override
