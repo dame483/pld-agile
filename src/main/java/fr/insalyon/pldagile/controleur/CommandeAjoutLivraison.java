@@ -12,13 +12,16 @@ public class CommandeAjoutLivraison implements Commande {
     private final Carte carte;
     private final double vitesse;
     private final long idPickup, idDelivery, idPrecedentPickup, idPrecedentDelivery;
-    private double dureeEnlevement;
-    private double dureeLivraison;
-    private List<Chemin> anciensChemins;
+    private final double dureeEnlevement;
+    private final double dureeLivraison;
+
+    private List<Chemin> etatAvantExecution;
+    private List<Chemin> etatApresExecution;
 
     public CommandeAjoutLivraison(Tournee tournee, Carte carte, double vitesse,
                                   long idPickup, long idDelivery,
-                                  long idPrecedentPickup, long idPrecedentDelivery, double dureeEnlevement, double dureeLivraison) {
+                                  long idPrecedentPickup, long idPrecedentDelivery,
+                                  double dureeEnlevement, double dureeLivraison) {
         this.tournee = tournee;
         this.carte = carte;
         this.vitesse = vitesse;
@@ -26,24 +29,42 @@ public class CommandeAjoutLivraison implements Commande {
         this.idDelivery = idDelivery;
         this.idPrecedentPickup = idPrecedentPickup;
         this.idPrecedentDelivery = idPrecedentDelivery;
-        this.anciensChemins = tournee.getChemins().stream()
-                .map(Chemin::copieProfonde)
-                .toList();
         this.dureeEnlevement = dureeEnlevement;
         this.dureeLivraison = dureeLivraison;
+
     }
 
     @Override
     public void executer() {
-        ModificationTournee modif = new ModificationTournee(new CalculChemins(carte), vitesse);
-        modif.ajouterNoeudPickup(tournee, idPickup, idPrecedentPickup, dureeEnlevement);
-        modif.ajouterNoeudDelivery(tournee, idDelivery, idPrecedentDelivery, dureeLivraison);
+
+        etatAvantExecution = tournee.getChemins().stream()
+                .map(Chemin::copieProfonde)
+                .toList();
+
+        if (etatApresExecution == null) {
+
+            ModificationTournee modif = new ModificationTournee(new CalculChemins(carte), vitesse);
+            modif.ajouterNoeudPickup(tournee, idPickup, idPrecedentPickup, dureeEnlevement);
+            modif.ajouterNoeudDelivery(tournee, idDelivery, idPrecedentDelivery, dureeLivraison);
+
+            etatApresExecution = tournee.getChemins().stream()
+                    .map(Chemin::copieProfonde)
+                    .toList();
+        } else {
+            List<Chemin> cheminsRestores = etatApresExecution.stream()
+                    .map(Chemin::copieProfonde)
+                    .toList();
+            tournee.setChemins(new ArrayList<>(cheminsRestores));
+        }
     }
 
     @Override
     public void annuler() {
-        if (anciensChemins != null) {
-            tournee.setChemins(new ArrayList<>(anciensChemins));
+        if (etatAvantExecution != null) {
+            List<Chemin> cheminsRestores = etatAvantExecution.stream()
+                    .map(Chemin::copieProfonde)
+                    .toList();
+            tournee.setChemins(new ArrayList<>(cheminsRestores));
         }
     }
 }

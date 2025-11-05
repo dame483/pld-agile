@@ -8,12 +8,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CommandeSuppressionLivraison implements Commande {
-
-    private Tournee tournee;  // Référence partagée
+    private Tournee tournee;
     private Long idNoeudClique;
     private Long idNoeudAssocie;
 
-    private List<Chemin> anciensChemins;
+    private List<Chemin> etatAvantExecution;
+    private List<Chemin> etatApresExecution;
+
     private Carte carte;
     private double vitesse;
 
@@ -24,25 +25,37 @@ public class CommandeSuppressionLivraison implements Commande {
         this.idNoeudAssocie = idNoeudAssocie;
         this.carte = carte;
         this.vitesse = vitesse;
-        this.anciensChemins = tournee.getChemins().stream()
-                .map(Chemin::copieProfonde)
-                .toList();
     }
 
     @Override
     public void executer() {
+        etatAvantExecution = tournee.getChemins().stream()
+                .map(Chemin::copieProfonde)
+                .toList();
 
-        ModificationTournee modif = new ModificationTournee(new CalculChemins(carte), vitesse);
+        if (etatApresExecution == null) {
+            ModificationTournee modif = new ModificationTournee(new CalculChemins(carte), vitesse);
+            modif.supprimerNoeud(tournee, idNoeudClique);
+            modif.supprimerNoeud(tournee, idNoeudAssocie);
 
-        modif.supprimerNoeud(tournee, idNoeudClique);
-        modif.supprimerNoeud(tournee, idNoeudAssocie);
+            etatApresExecution = tournee.getChemins().stream()
+                    .map(Chemin::copieProfonde)
+                    .toList();
+        } else {
+            List<Chemin> cheminsRestores = etatApresExecution.stream()
+                    .map(Chemin::copieProfonde)
+                    .toList();
+            tournee.setChemins(new ArrayList<>(cheminsRestores));
+        }
     }
 
     @Override
     public void annuler() {
-        // Restauration de l'état sauvegardé
-        if (anciensChemins != null) {
-            tournee.setChemins(new ArrayList<>(anciensChemins));
+        if (etatAvantExecution != null) {
+            List<Chemin> cheminsRestores = etatAvantExecution.stream()
+                    .map(Chemin::copieProfonde)
+                    .toList();
+            tournee.setChemins(new ArrayList<>(cheminsRestores));
         }
     }
 }
