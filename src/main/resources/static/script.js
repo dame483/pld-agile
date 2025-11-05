@@ -982,40 +982,11 @@ document.addEventListener('DOMContentLoaded',async () => {
         }
     });
 
-    document.getElementById('sauvegarderModification').addEventListener("click", async () => {
-        try {
-            const body = {
-                demande: demandeData,
-                tournees: window.toutesLesTournees
-            };
-            const response = await fetch("http://localhost:8080/api/sauvegarder-modifications", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(body)
-            });
+    document.getElementById('annulerModification').addEventListener("click", annulerModification);
 
-            const data = await response.json();
-            if (data.success) {
-                //console.log("Modifications sauvegardées !");
-                envoyerNotification("Modifications sauvegardées avec succès", "success");
-                resetTournee();
-                filtreDemande(window.toutesLesTournees); //actualise demandeData avec les noeuds des tournees
-                drawLivraisons(demandeData);
-                window.toutesLesTournees.forEach((t, i) => {
-                    const color = colors[i % colors.length];
-                    drawTournee(t, color, i);
-                });
-                drawTourneeTable(window.toutesLesTournees[selectedIndex])
-                await updateUIFromEtat();
-            } else{
-                console.error("Erreur serveur :", data.message);
-                envoyerNotification(data.message, "error");
-            }
-        }
-        catch (err){
-            console.error("Erreur sauvegarde :", err);
-            envoyerNotification("Erreur réseau lors de la sauvegarde des modifications", "error");
-        }
-    });
+    document.getElementById("retablirModification").addEventListener("click", retablirModification);
+
+    document.getElementById('sauvegarderModification').addEventListener("click", sauvegarderModification);
+
 });
 

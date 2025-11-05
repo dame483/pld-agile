@@ -189,3 +189,87 @@ function filtreDemande(tournees) {
 
     demandeData.livraisons = nouvellesLivraisons;
 }
+
+window.annulerModification = async function () {
+    try {
+        const response = await fetch("http://localhost:8080/api/annuler", {method : "POST"});
+        const data = await response.json();
+        if (data.success){
+            const tournee = data.data.tournee;
+            resetTournee();
+            drawTourneeNodes(tournee);
+            drawTournee(tournee, colors[0], 0);
+            majTableauTournee(tournee, window.toutesLesTournees[selectedIndex])
+            window.toutesLesTournees[selectedIndex] = tournee;
+            await updateUIFromEtat();
+        } else{
+            envoyerNotification("Erreur : " + (data.message || "Impossible d'annuler la dernière modification."),"error");
+        }
+    } catch (err){
+        envoyerNotification("Erreur réseau : " + err.message, "error");
+    }
+}
+
+window.retablirModification = async function () {
+    try {
+        const response = await fetch("http://localhost:8080/api/restaurer", {
+            method: "POST"
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+            const tournee = data.data.tournee;
+
+            resetTournee();
+            drawTourneeNodes(tournee);
+            drawTournee(tournee, colors[0], 0);
+            majTableauTournee(tournee, window.toutesLesTournees[selectedIndex]);
+            window.toutesLesTournees[selectedIndex] = tournee;
+
+            await updateUIFromEtat();
+        } else {
+            envoyerNotification(
+                "Erreur : " + (data.message || "Impossible de restaurer la dernière modification."),
+                "error"
+            );
+        }
+    } catch (err) {
+        envoyerNotification("Erreur réseau : " + err.message, "error");
+    }
+}
+
+window.sauvegarderModification = async function () {
+    try {
+        const body = {
+            demande: demandeData,
+            tournees: window.toutesLesTournees
+        };
+        const response = await fetch("http://localhost:8080/api/sauvegarder-modifications", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body)
+        });
+
+        const data = await response.json();
+        if (data.success) {
+            envoyerNotification("Modifications sauvegardées avec succès", "success");
+            resetTournee();
+            filtreDemande(window.toutesLesTournees); //actualise demandeData avec les noeuds des tournees
+            drawLivraisons(demandeData);
+            window.toutesLesTournees.forEach((t, i) => {
+                const color = colors[i % colors.length];
+                drawTournee(t, color, i);
+            });
+            drawTourneeTable(window.toutesLesTournees[selectedIndex])
+            await updateUIFromEtat();
+        } else{
+            console.error("Erreur serveur :", data.message);
+            envoyerNotification(data.message, "error");
+        }
+    }
+    catch (err){
+        console.error("Erreur sauvegarde :", err);
+        envoyerNotification("Erreur réseau lors de la sauvegarde des modifications", "error");
+    }
+}
