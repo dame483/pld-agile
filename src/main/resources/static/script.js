@@ -760,10 +760,13 @@ async function updateUIFromEtat() {
         document.getElementById('calcul-tournee').style.display = "none";
         document.getElementById('fileNameCarte').style.display = "none";
         document.getElementById('fileNameDemande').style.display = "none";
+        document.getElementById('xmlCarte').disabled = false;
         document.getElementById('xmlDemande').disabled = false;
         document.getElementById('inputTournee').disabled = false;
         document.querySelector('.navbar-item img[alt="Ajouter une demande de livraison"]').style.filter = "";
-        document.querySelector('.navbar-item img[alt="Ajouter une carte"]').style.filter = "";
+        document.querySelector('.navbar-item img[alt="Charger une carte"]').src = "tools/map-logo.png";
+        document.querySelector('.navbar-item img[alt="Charger une carte"]').style.cursor = "pointer";
+        document.querySelector('.navbar-item img[alt="Charger une carte"]').style.filter = "";
         document.querySelector('.navbar-item img[alt="Ajouter une demande de livraison"]').src = "tools/colis-logo-white.png";
         document.querySelector('.navbar-item img[alt="Ajouter une demande de livraison"]').style.cursor = "pointer";
         document.querySelector('.navbar-item img[alt="Charger une tournée"]').src = "tools/open-logo.png";
@@ -775,7 +778,7 @@ async function updateUIFromEtat() {
         }
         if(data.data.etat === "Etat Initial") {
             document.getElementById('welcome-message').style.display = "flex";
-            document.querySelector('.navbar-item img[alt="Ajouter une carte"]').style.filter = "drop-shadow(0 0 10px rgba(225,225,0,1))";
+            document.querySelector('.navbar-item img[alt="Charger une carte"]').style.filter = "drop-shadow(0 0 10px rgba(225,225,0,1))";
             document.querySelector('.navbar-item img[alt="Ajouter une demande de livraison"]').src = "tools/colis-logo-gray.png";
             document.querySelector('.navbar-item img[alt="Ajouter une demande de livraison"]').style.cursor = "not-allowed";
             document.querySelector('.navbar-item img[alt="Charger une tournée"]').style.cursor = "not-allowed";
@@ -788,6 +791,15 @@ async function updateUIFromEtat() {
         } else if (data.data.etat === "ModeModificationTournee"){
             document.getElementById('tableauTournees').style.display = "inline";
             document.getElementById('tournee-modifier').style.display = "inline";
+            document.querySelector('.navbar-item img[alt="Ajouter une demande de livraison"]').src = "tools/colis-logo-gray.png";
+            document.querySelector('.navbar-item img[alt="Ajouter une demande de livraison"]').style.cursor = "not-allowed";
+            document.querySelector('.navbar-item img[alt="Charger une tournée"]').style.cursor = "not-allowed";
+            document.querySelector('.navbar-item img[alt="Charger une tournée"]').src = "tools/open-logo-gray.png";
+            document.querySelector('.navbar-item img[alt="Charger une carte"]').style.cursor = "not-allowed";
+            document.querySelector('.navbar-item img[alt="Charger une carte"]').src = "tools/map-logo-gray.png";
+            document.getElementById('xmlDemande').disabled = true;
+            document.getElementById('inputTournee').disabled = true;
+            document.getElementById('xmlCarte').disabled = true;
         } else if(data.data.tourneeChargee) {
             document.getElementById('tournee-chargee').style.display = "inline";
             document.getElementById('tableauTournees').style.display = "inline";
@@ -813,7 +825,7 @@ async function updateUIFromEtat() {
 document.addEventListener('DOMContentLoaded',async () => {
     await updateUIFromEtat();
 
-    document.querySelector('.navbar-item img[alt="Ajouter une carte"]').addEventListener('click', () => {
+    document.querySelector('.navbar-item img[alt="Charger une carte"]').addEventListener('click', () => {
         document.getElementById('xmlCarte').click();
     });
 
@@ -983,9 +995,8 @@ document.addEventListener('DOMContentLoaded',async () => {
             });
 
             const data = await response.json();
-            console.log(data); //DEBUG
             if (data.success) {
-                console.log("Modifications sauvegardées !");
+                //console.log("Modifications sauvegardées !");
                 envoyerNotification("Modifications sauvegardées avec succès", "success");
                 resetTournee();
                 filtreDemande(window.toutesLesTournees); //actualise demandeData avec les noeuds des tournees

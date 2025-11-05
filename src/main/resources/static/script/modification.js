@@ -86,8 +86,8 @@ function majTableauTournee(nouvelleTournee, ancienneTournee) {
                     <th style="border-bottom:1px solid #ccc;border-left:1px solid #ccc;padding:4px;">Ordre</th>
                     <th style="border-bottom:1px solid #ccc;border-left:1px solid #ccc;padding:4px;">Type</th>
                     <th style="border-bottom:1px solid #ccc;border-left:1px solid #ccc;padding:4px;">ID</th>
-                    <th style="border-bottom:1px solid #ccc;border-left:1px solid #ccc;padding:4px;">Ancien horaire</th>
-                    <th style="border-bottom:1px solid #ccc;border-left:1px solid #ccc;padding:4px;">Nouveau horaire</th>
+                    <th style="border-bottom:1px solid #ccc;border-left:1px solid #ccc;padding:4px;">Ancienne fourchette horaire</th>
+                    <th style="border-bottom:1px solid #ccc;border-left:1px solid #ccc;padding:4px;">Nouvel horaire exact</th>
                 </tr>
             </thead>
             <tbody id="tourneeBody"></tbody>
@@ -122,12 +122,14 @@ function majTableauTournee(nouvelleTournee, ancienneTournee) {
                 }
 
                 const ancienHoraire = anciensHoraires.get(key) || "-";
-                console.log(key, ancienHoraire); //debug
                 let nouveauHoraire = "-";
+                let nouveauHoraireExact = "-";
                 if (noeud === premierNoeud && noeud.type === "ENTREPOT") {
                     nouveauHoraire = noeud.horaireDepart || "-";
+                    nouveauHoraireExact = noeud.horaireDepart || "-";
                 } else {
                     nouveauHoraire = formatHoraireFourchette(noeud.horaireArrivee) || "-";
+                    nouveauHoraireExact = noeud.horaireArrivee || "-";
                 }
 
                 const styleDiff = (ancienHoraire !== "-" && nouveauHoraire !== ancienHoraire)
@@ -159,7 +161,7 @@ function majTableauTournee(nouvelleTournee, ancienneTournee) {
                 <td style="border-left:1px solid #ccc;padding:4px;text-align:center;">${noeud.type}</td>
                 <td style="border-left:1px solid #ccc;padding:4px;text-align:center;">${noeud.id}</td>
                 <td style="border-left:1px solid #ccc;padding:4px;text-align:center;">${ancienHoraire}</td>
-                <td style="border-left:1px solid #ccc;padding:4px;text-align:center;${styleDiff}">${nouveauHoraire}</td>
+                <td style="border-left:1px solid #ccc;padding:4px;text-align:center;${styleDiff}">${nouveauHoraireExact}</td>
             `;
                 tbody.appendChild(row);
             }
