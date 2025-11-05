@@ -994,7 +994,7 @@ document.addEventListener('DOMContentLoaded',async () => {
                     const color = colors[i % colors.length];
                     drawTournee(t, color, i);
                 });
-                drawTourneeTable(window.toutesLesTournees[0])
+                drawTourneeTable(window.toutesLesTournees[selectedIndex])
                 await updateUIFromEtat();
             } else{
                 console.error("Erreur serveur :", data.message);
