@@ -1,5 +1,11 @@
 package fr.insalyon.pldagile.algorithme;
 
+/**
+ * Interface représentant un graphe orienté pondéré.
+ *
+ * <p>Un graphe est défini par un ensemble de sommets et des arcs entre ces sommets.
+ * Chaque arc peut avoir un coût associé, qui peut être mis à jour.</p>
+ */
 public interface Graphe {
 
 	/**

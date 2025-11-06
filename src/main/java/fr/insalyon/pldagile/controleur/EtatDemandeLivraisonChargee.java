@@ -15,17 +15,35 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Représente l'état de l'application où une carte et une demande de livraison ont été chargées.
+ * Permet de calculer les tournées en fonction de la demande, ou de charger de nouvelles cartes ou demandes.
+ * Certaines opérations comme la création de feuilles de route ou la sauvegarde sont encore impossibles
+ * avant le calcul des tournées.
+ */
 @Component
 public class EtatDemandeLivraisonChargee implements Etat {
 
+    /** Carte actuellement chargée. */
     private final Carte carte;
+
+    /** Demande de livraison actuellement chargée. */
     private final DemandeDeLivraison demande;
 
+    /**
+     * Constructeur de l'état avec la carte et la demande déjà chargées.
+     *
+     * @param carte Carte chargée
+     * @param demande Demande de livraison chargée
+     */
     public EtatDemandeLivraisonChargee(Carte carte, DemandeDeLivraison demande) {
         this.carte = carte;
         this.demande = demande;
     }
 
+    /**
+     * Charge une nouvelle carte et met à jour l'état si réussite.
+     */
     @Override
     public Carte chargerCarte(Controleur c, MultipartFile file) throws XMLFormatException {
         Object result = chargerXML("carte", file, null);
@@ -44,6 +62,9 @@ public class EtatDemandeLivraisonChargee implements Etat {
         }
     }
 
+    /**
+     * Charge une nouvelle demande de livraison et met à jour l'état si réussite.
+     */
     @Override
     public Object chargerDemandeLivraison(Controleur c, @RequestParam("file") MultipartFile file, Carte carte) {
         Object dem = chargerXML("demande", file, this.carte);
@@ -54,6 +75,9 @@ public class EtatDemandeLivraisonChargee implements Etat {
         return dem;
     }
 
+    /**
+     * Calcule les tournées à partir de la demande et met à jour l'état.
+     */
     @Override
     public Object lancerCalculTournee(Controleur c, int nombreLivreurs, double vitesse) {
         try {
@@ -70,6 +94,9 @@ public class EtatDemandeLivraisonChargee implements Etat {
         }
     }
 
+    /**
+     * Upload et parse un fichier XML/JSON selon le type.
+     */
     @Override
     public Object chargerXML(String type, MultipartFile file, Carte carte) throws XMLFormatException {
         if (file == null || file.isEmpty()) {
@@ -118,7 +145,20 @@ public class EtatDemandeLivraisonChargee implements Etat {
         }
     }
 
+    /**
+     * Impossible de créer des feuilles de route avant le calcul des tournées.
+     */
+    @Override
+    public List<Path> creerFeuillesDeRoute(Controlleur c) {
+        throw IllegalStateException("Erreur : Impossible de créer de feuille de route si la tournée n'est pas encore calculé")
+    }
 
+
+
+
+    /**
+     * Charge une tournée depuis un fichier et met à jour l'état si réussite.
+     */
     @Override
     public Object chargerTournee(Controleur c, MultipartFile file, Carte carte) {
         Object result = chargerXML("tournee", file, carte);
@@ -155,6 +195,9 @@ public class EtatDemandeLivraisonChargee implements Etat {
         return new TourneeUpload(toutesLesTournees, demande);
     }
 
+    /**
+     * Pas de passage en mode modification possible dans cet état.
+     */
     @Override
     public void passerEnModeModification(Controleur c, Tournee tournee) {
         throw new IllegalStateException("Erreur : impossible de passer en mode modification avant le calcul de la tournée.");
@@ -165,21 +208,32 @@ public class EtatDemandeLivraisonChargee implements Etat {
         throw new IllegalStateException("Erreur : impossible de créer une feuille de route avant le calcul de la tournée.");
     }
 
+    /**
+     * Impossible de sauvegarder une tournée avant son calcul.
+     */
     @Override
     public Object sauvegarderTournee(Controleur c) {
         throw new IllegalStateException("Erreur : impossible de sauvegarder une tournée avant son calcul.");
     }
 
+    /**
+     * Pas de sauvegarde de mofication possible
+     */
     @Override
     public void sauvegarderModification(Controleur c, DemandeDeLivraison demande, List<Tournee> tournees) {
         throw new IllegalStateException("Erreur : aucune modification à sauvegarder à ce stade.");
     }
 
+    /**
+     * Pas de modification possible
+     */
     public Tournee modifierTournee(Controleur c, String mode, Map<String, Object> body, double vitesse){
         throw new IllegalStateException("Erreur : Pas de modification de tournée possible dans l'état actuel");
     }
 
-
+    /**
+     * Retourne le nom de l'état courant.
+     */
     @Override
     public String getNom() {
         return "Etat Demande de Livraison Chargee";

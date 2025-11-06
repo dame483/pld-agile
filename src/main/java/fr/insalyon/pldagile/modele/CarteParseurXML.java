@@ -13,8 +13,20 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 import fr.insalyon.pldagile.erreurs.exception.XMLFormatException;
 
+/**
+ * Parseur pour charger une {@link Carte} depuis un fichier XML,
+ * avec option de validation via un fichier XSD.
+ */
 public class CarteParseurXML {
 
+    /**
+     * Charge une carte depuis un fichier XML et valide le format si un fichier XSD est fourni.
+     *
+     * @param fichierXML Le fichier XML à lire.
+     * @param xsdFile    Le fichier XSD pour validation (optionnel, peut être null).
+     * @return La carte construite à partir du XML.
+     * @throws Exception Si le fichier est invalide ou si une erreur survient lors du parsing.
+     */
     public static Carte loadFromFile(File fichierXML, File xsdFile) throws Exception {
         if (fichierXML == null || !fichierXML.exists() || !fichierXML.isFile()) {
             throw new IllegalArgumentException("Fichier XML invalide ou introuvable !");
@@ -139,6 +151,13 @@ public class CarteParseurXML {
         }
     }
 
+    /**
+     * Charge une carte depuis un fichier XML sans validation XSD.
+     *
+     * @param fichierXML Le fichier XML à lire.
+     * @return La carte construite à partir du XML.
+     * @throws Exception Si le fichier est invalide ou si une erreur survient lors du parsing.
+     */
     public static Carte loadFromFile(File fichierXML) throws Exception {
         return loadFromFile(fichierXML, null);
     }

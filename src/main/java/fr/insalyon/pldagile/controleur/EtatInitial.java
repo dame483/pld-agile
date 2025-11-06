@@ -13,11 +13,28 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Représente l'état initial de l'application, avant que toute carte ou demande de livraison
+ * ne soit chargée. Dans cet état, seules les opérations de chargement de carte sont possibles.
+ * Les autres opérations (demande de livraison, calcul de tournée, création de feuilles de route,
+ * sauvegarde ou chargement de tournée) sont interdites et génèrent des exceptions ou des messages d'erreur.
+ */
 @Component
 public class EtatInitial implements Etat {
 
+    /**
+     * Constructeur par défaut de l'état initial.
+     */
     public EtatInitial() {}
 
+    /**
+     * Charge une carte depuis un fichier XML et change l'état en {@link EtatCarteChargee} si réussite.
+     *
+     * @param c Contrôleur principal
+     * @param file Fichier XML contenant la carte
+     * @return Carte chargée
+     * @throws XMLFormatException si le fichier est invalide ou si le chargement échoue
+     */
     @Override
     public Carte chargerCarte(Controleur c, MultipartFile file) throws XMLFormatException {
         Object result = chargerXML("carte", file, null);
@@ -36,6 +53,17 @@ public class EtatInitial implements Etat {
         }
     }
 
+
+
+    /**
+     * Upload et parse un fichier XML pour la carte.
+     *
+     * @param type Type de fichier ("carte")
+     * @param file Fichier XML à traiter
+     * @param carte Carte existante (non utilisée ici)
+     * @return Carte chargée
+     * @throws XMLFormatException si le fichier est invalide ou si une erreur se produit
+     */
     @Override
     public Object chargerXML(String type, MultipartFile file, Carte carte) throws XMLFormatException {
         if (file == null || file.isEmpty()) {
@@ -63,51 +91,71 @@ public class EtatInitial implements Etat {
         }
     }
 
-
-    public Tournee modifierTournee(Controleur c, String mode, Map<String, Object> body, double vitesse){
-        throw new IllegalStateException("Erreur : Pas de modification de tournée possible dans l'état actuel");
-    }
-
+    /**
+     * Impossible de charger une demande sans carte préalablement chargée.
+     */
     @Override
+
     public Object chargerDemandeLivraison(Controleur c, MultipartFile file, Carte carte) {
         throw new IllegalStateException("Erreur : Impossible de charger une demande de livraison avant de charger une carte.");
     }
 
-
+    /**
+     * Impossible de créer des feuilles de route avant le calcul des tournées.
+     */
     @Override
     public List<Path> creerFeuillesDeRoute(Controleur c) {
-        throw new IllegalStateException("Erreur : Impossible de créer une feuille de route avant le calcul de la tournée.");
+        throw new IllegalStateException("Erreur : impossible de créer une feuille de route avant le calcul de la tournée.");
     }
 
+    /**
+     * Impossible de sauvegarder une tournée avant son calcul.
+     */
     @Override
     public Object sauvegarderTournee(Controleur c) {
         throw new IllegalStateException("Erreur : Impossible de sauvegarder une tournée qui n'a pas été calculée.");
     }
 
 
+    /**
+     * Impossible de charger une tournée sans carte.
+     */
     @Override
     public Object chargerTournee(Controleur c, MultipartFile file, Carte carte) {
         throw new IllegalStateException("Erreur : Impossible de charger une tournée sans carte préalablement chargée.");
     }
 
-    @Override
+    /**
+     * Pas de sauvegarde de modification possible dans cet état.
+     */
+    public Object chargerTournee(Controleur c, MultipartFile file, Carte carte) {
+        throw new IllegalStateException("Erreur : Impossible de charger une tournée sans carte préalablement chargée.");
     public void sauvegarderModification(Controleur c, DemandeDeLivraison demande, List<Tournee> tournees) {
         throw new IllegalStateException("Erreur : Aucune modification à sauvegarder à l’état initial.");
     }
 
+    /**
+     * Le calcul de tournée n'est pas possible dans cet état.
+     */
     @Override
     public Object lancerCalculTournee(Controleur c, int nombreLivreurs, double vitesse) {
         throw new IllegalStateException("Erreur : Impossible de calculer une tournée sans carte et demande de livraison.");
     }
 
+
+    /**
+     * Pas de passage en mode modification possible dans cet état.
+     */
     @Override
     public void passerEnModeModification(Controleur c, Tournee tournee) {
         throw new IllegalStateException("Erreur : Impossible de passer en mode modification à l’état initial.");
     }
 
+    /**
+     * Retourne le nom de l'état courant.
+     */
     @Override
     public String getNom() {
         return "Etat Initial";
     }
-
 }

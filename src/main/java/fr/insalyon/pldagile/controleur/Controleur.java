@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import fr.insalyon.pldagile.sortie.TourneeUpload;
 
+import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -24,23 +25,52 @@ import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+/**
+ * Contrôleur principal de l'application PLD Agile.
+ * <p>
+ * Gère les requêtes REST pour le chargement de la carte, des demandes de livraison,
+ * le calcul et la modification des tournées, ainsi que les fonctionnalités de sauvegarde et de réinitialisation.
+ * <br>
+ * Implémente le patron de conception <b>State</b> pour gérer les différents états
+ * de l'application (initial, carte chargée, tournée calculée, modification, etc.).
+ * </p>
+ */
 @RestController
 @RequestMapping("/api")
 @CrossOrigin(origins = "*")
 public class Controleur {
 
+    /** État courant de l'application (pattern State). */
     private Etat etatActuelle;
+
+    /** Carte routière actuellement chargée. */
     private Carte carte;
+
+    /** Demande de livraison en cours. */
     private DemandeDeLivraison demande;
+
+    /** Historique des commandes exécutées (pattern Command). */
     private ListeDeCommandes historique;
+
+    /** Vitesse moyenne du livreur en m/s (par défaut 4.1). */
     private double vitesse = 4.1;
 
-
+    /**
+     * Constructeur par défaut.
+     * Initialise l'état à {@link EtatInitial} et crée un historique de commandes vide.
+     */
     public Controleur() {
         this.etatActuelle = new EtatInitial();
         this.historique = new ListeDeCommandes();
     }
 
+
+    /**
+     * Charge une carte XML et met à jour l'état de l'application.
+     *
+     * @param file fichier XML de la carte à charger
+     * @return une {@link ResponseEntity} contenant un {@link ApiReponse} de succès ou d'erreur
+     */
     @PostMapping("/upload-carte")
     public ResponseEntity<ApiReponse> chargerCarte(@RequestParam("file") MultipartFile file) {
         try {
@@ -68,7 +98,12 @@ public class Controleur {
         }
     }
 
-
+    /**
+     * Charge un fichier XML de demande de livraison après qu'une carte a été chargée.
+     *
+     * @param file fichier XML de la demande
+     * @return une {@link ResponseEntity} contenant le résultat du chargement
+     */
     @PostMapping("/upload-demande")
     public ResponseEntity<ApiReponse> chargerDemandeLivraison(@RequestParam("file") MultipartFile file) {
         try {
@@ -95,7 +130,12 @@ public class Controleur {
     }
 
 
-
+    /**
+     * Calcule les tournées optimisées pour le nombre de livreurs indiqué.
+     *
+     * @param nombreLivreurs nombre de livreurs à utiliser
+     * @return une {@link ResponseEntity} avec la liste des tournées ou une erreur
+     */
     @PostMapping("/tournee/calculer")
     public ResponseEntity<ApiReponse> calculerTournee(@RequestParam(defaultValue = "1") int nombreLivreurs) {
         try {
@@ -115,6 +155,11 @@ public class Controleur {
         }
     }
 
+    /**
+     * Génère les feuilles de route au format ZIP pour les tournées calculées.
+     *
+     * @return un fichier ZIP téléchargeable contenant les feuilles de route
+     */
     @PostMapping("/tournee/feuille-de-route")
     public ResponseEntity<?> creerFeuilleDeRoute() {
         try {
@@ -144,6 +189,11 @@ public class Controleur {
         }
     }
 
+    /**
+     * Sauvegarde la tournée calculée sur le disque ou en mémoire.
+     *
+     * @return une {@link ResponseEntity} indiquant le succès ou l'échec de la sauvegarde
+     */
     @PostMapping("/tournee/sauvegarde")
     public ResponseEntity<ApiReponse> sauvegarderTournee() {
         try {
@@ -164,14 +214,16 @@ public class Controleur {
         }
     }
 
+    /**
+     * Charge un fichier de tournée sauvegardée.
+     *
+     * @param file fichier XML ou ZIP contenant les données de tournée
+     * @return une {@link ResponseEntity} avec les tournées et la demande associée
+     */
     @PostMapping("/upload-tournee")
     public ResponseEntity<ApiReponse> chargerTournee(@RequestParam("file") MultipartFile file) {
         try {
             Object result = etatActuelle.chargerTournee(this, file, this.carte);
-
-           /* if (result instanceof Exception e) {
-                return ResponseEntity.badRequest().body(ApiReponse.erreur("Exception" + e.getMessage()));
-            }*/
 
             if (result instanceof TourneeUpload upload) {
                 return ResponseEntity.ok(ApiReponse.succes("Tournées chargées avec succès", Map.of(
@@ -188,7 +240,11 @@ public class Controleur {
         }
     }
 
-
+    /**
+     * Réinitialise l'application en supprimant la carte, la demande et les tournées.
+     *
+     * @return une {@link ResponseEntity} confirmant la réinitialisation
+     */
     @PostMapping("/reset")
     public ResponseEntity<ApiReponse> reinitialiserApplication() {
         try {
@@ -207,6 +263,11 @@ public class Controleur {
     }
 
 
+    /**
+     * Retourne l'état actuel de l'application ainsi que les données chargées.
+     *
+     * @return une {@link ResponseEntity} contenant l'état courant et les informations de chargement
+     */
     @GetMapping("/etat")
     public ResponseEntity<ApiReponse> getEtatActuel() {
         return ResponseEntity.ok(ApiReponse.succes( "Nous sommes dans l'état" + etatActuelle.getNom(), Map.of(
@@ -218,6 +279,12 @@ public class Controleur {
     }
 
 
+    /**
+     * Passe en mode modification pour une tournée donnée.
+     *
+     * @param tourneeCible la tournée à modifier
+     * @return une {@link ResponseEntity} confirmant le passage en mode modification
+     */
     @PostMapping("/tournee/mode-modification")
     public ResponseEntity<ApiReponse> passerEnModeModification(@RequestBody Tournee tourneeCible) {
         try {
@@ -236,10 +303,17 @@ public class Controleur {
         }
     }
 
+    /**
+     * Modifie une tournée existante en ajoutant ou supprimant une livraison.
+     *
+     * @param body paramètres JSON de la modification (mode, identifiants, durées)
+     * @return une {@link ResponseEntity} contenant la tournée mise à jour
+     */
     @PostMapping("/tournee/modifier")
     public ResponseEntity<ApiReponse> modifierTournee(@RequestBody Map<String, Object> body) {
         try {
             String mode = (String) body.get("mode"); // "ajouter" ou "supprimer"
+
             if (mode == null) {
                 return ResponseEntity.badRequest().body(ApiReponse.erreur("Le mode doit être précisé (ajouter/supprimer)."));
             }
@@ -262,12 +336,17 @@ public class Controleur {
     }
 
 
-
+    /**
+     * Annule la dernière commande effectuée (pattern Command).
+     *
+     * @return une {@link ResponseEntity} indiquant le résultat de l'annulation
+     */
     @PostMapping("/annuler")
     public ResponseEntity<ApiReponse> annuler() {
         try {
             this.annulerCommande();
 
+            // Récupère la tournée actuelle après annulation
             Tournee tourneeActuelle = null;
             if (etatActuelle instanceof EtatModificationTournee etatSupp) {
                 tourneeActuelle = etatSupp.getTournee();
@@ -281,6 +360,11 @@ public class Controleur {
         }
     }
 
+    /**
+     * Rétablit la dernière commande annulée (pattern Command).
+     *
+     * @return une {@link ResponseEntity} indiquant le résultat de la restauration
+     */
     @PostMapping("/restaurer")
     public ResponseEntity<ApiReponse> restaurer() {
         try {
@@ -299,6 +383,12 @@ public class Controleur {
         }
     }
 
+    /**
+     * Sauvegarde les modifications réalisées sur les tournées et les demandes.
+     *
+     * @param dto objet contenant les données modifiées à sauvegarder
+     * @return une {@link ResponseEntity} avec un message de confirmation
+     */
     @PostMapping("/sauvegarder-modifications")
     public ResponseEntity<ApiReponse> sauvegarderModifications(@RequestBody ModificationsDTO dto) {
         try {
@@ -310,30 +400,61 @@ public class Controleur {
         }
     }
 
+    /**
+     * Exécute une commande et l’ajoute à l’historique pour permettre l’annulation/rétablissement.
+     *
+     * @param commande la commande à exécuter
+     */
     public void executerCommande(Commande commande) {
         historique.executerCommande(commande);
     }
 
+    /**
+     * Annule la dernière commande exécutée.
+     */
     public void annulerCommande() {
         historique.annuler();
     }
 
+    /**
+     * Rétablit la dernière commande annulée.
+     */
     public void restaurerCommande() {
         historique.restaurer();
     }
 
+    /**
+     * Définit l’état courant de l’application.
+     *
+     * @param etat le nouvel état
+     */
     public void setEtatActuelle(Etat etat) {
         this.etatActuelle = etat;
     }
 
+    /**
+     * Retourne l’état courant de l’application.
+     *
+     * @return l’état actuel
+     */
     public Etat getEtatActuelle() {
         return etatActuelle;
     }
 
+    /**
+     * Retourne la carte actuellement chargée.
+     *
+     * @return la {@link Carte} courante
+     */
     public Carte getCarte() {
         return carte;
     }
 
+    /**
+     * Retourne la demande de livraison actuellement chargée.
+     *
+     * @return la {@link DemandeDeLivraison} courante
+     */
     public DemandeDeLivraison getDemande() {
         return demande;
     }

@@ -2,14 +2,30 @@ package fr.insalyon.pldagile.modele;
 
 import java.time.LocalTime;
 
+/**
+ * Représente un nœud spécifique dans une tournée de livraison, avec un type (entrepôt, pickup ou delivery),
+ * une durée associée, et des horaires d'arrivée et de départ.
+ */
 public class NoeudDePassage extends Noeud {
+
+    /** Type du nœud (PICKUP, DELIVERY, ENTREPOT). */
     private TypeNoeud type;
+
+    /** Durée estimée pour effectuer l'action au nœud (en minutes ou secondes selon convention). */
     private double duree;
+
+    /** Horaire d'arrivée prévu au nœud. */
     private LocalTime horaireArrivee;
+
+    /** Horaire de départ prévu du nœud. */
     private LocalTime horaireDepart;
 
+    /** Constructeur par défaut. */
     public NoeudDePassage() {}
 
+    /**
+     * Constructeur avec initialisation complète (id, coordonnées, type, durée, horaireArrivee).
+     */
     public NoeudDePassage(long id, double latitude, double longitude, TypeNoeud type, double duree, LocalTime horaireArrivee) {
         super(id, latitude, longitude);
         this.type = type;
@@ -18,11 +34,17 @@ public class NoeudDePassage extends Noeud {
         this.horaireDepart = null;
     }
 
+    /**
+     * Constructeur minimal avec id, coordonnées et type.
+     */
     public NoeudDePassage(long id, double latitude, double longitude, TypeNoeud type) {
         super(id, latitude, longitude);
         this.type = type;
     }
 
+    /**
+     * Constructeur avec id, coordonnées, type et durée.
+     */
     public NoeudDePassage(long id, double latitude, double longitude, TypeNoeud type, double duree) {
         super(id, latitude, longitude);
         this.type = type;
@@ -31,6 +53,9 @@ public class NoeudDePassage extends Noeud {
         this.horaireDepart = null;
     }
 
+    /**
+     * Constructeur complet avec horaires d'arrivée et de départ.
+     */
     public NoeudDePassage(long id, double latitude, double longitude, TypeNoeud type, double duree, LocalTime horaireArrivee, LocalTime horaireDepart) {
         super(id, latitude, longitude);
         this.type = type;
@@ -39,6 +64,7 @@ public class NoeudDePassage extends Noeud {
         this.horaireDepart = horaireDepart;
     }
 
+    /** Getters et setters pour tous les champs. */
     public TypeNoeud getType() {
         return this.type;
     }
@@ -71,6 +97,10 @@ public class NoeudDePassage extends Noeud {
         this.horaireDepart = horaireDepart;
     }
 
+    /**
+     * Crée une copie profonde du nœud de passage.
+     * @return une nouvelle instance avec les mêmes valeurs.
+     */
     public NoeudDePassage copieProfonde() {
         NoeudDePassage copie = new NoeudDePassage(
                 this.getId(),
@@ -84,7 +114,9 @@ public class NoeudDePassage extends Noeud {
         return copie;
     }
 
-
+    /**
+     * Deux NoeudDePassage sont égaux si leurs identifiants sont identiques.
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -98,6 +130,9 @@ public class NoeudDePassage extends Noeud {
         return Long.hashCode(this.getId());
     }
 
+    /**
+     * Retourne une représentation textuelle complète du nœud de passage.
+     */
     @Override
     public String toString() {
         return "NoeudDePassage {id=" + getId()
@@ -109,9 +144,17 @@ public class NoeudDePassage extends Noeud {
                 + ", horaireDepart=" + horaireDepart + "}";
     }
 
+    /**
+     * Type d'un nœud dans une tournée.
+     */
     public static enum TypeNoeud {
+        /** Nœud de prise en charge (pickup). */
         PICKUP,
+
+        /** Nœud de livraison (delivery). */
         DELIVERY,
+
+        /** Nœud représentant un entrepôt. */
         ENTREPOT;
     }
 }
