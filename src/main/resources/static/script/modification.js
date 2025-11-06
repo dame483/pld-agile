@@ -34,6 +34,91 @@ function clearTempMarkers() {
     tempMarkers.length = 0;
 }
 
+// ======================================================
+// === ANNULATION / RETABLISSEMENT DU WORKFLOW AJOUT ====
+// ======================================================
+
+const etatsAjout = [];
+let indexEtatCourant = -1;
+
+/** Sauvegarde l’état courant (après une étape validée) */
+function sauvegarderEtatAjout() {
+    const snapshot = {
+        idNoeudPickupAjout,
+        idPrecedentPickup,
+        idNoeudDeliveryAjout,
+        idPrecedentDelivery,
+        couleurAjout,
+        tempMarkersData: tempMarkers.map(m => {
+            const ll = m.getLatLng();
+            const icon = m.options && m.options.icon;
+            const html = icon && icon.options && typeof icon.options.html === "string"
+                ? icon.options.html
+                : (m.getElement && m.getElement() ? (m.getElement().innerHTML || "") : "");
+            return { lat: ll.lat, lng: ll.lng, html };
+        })
+    };
+
+    // Coupe les états futurs si on a fait "Annuler" puis on reprend
+    etatsAjout.splice(indexEtatCourant + 1);
+    etatsAjout.push(JSON.parse(JSON.stringify(snapshot)));
+    indexEtatCourant = etatsAjout.length - 1;
+}
+
+/**
+ * Restaure un état dans l’historique
+ * @param {number} direction -1 pour Annuler, +1 pour Rétablir
+ */
+function restaurerEtatAjout(direction = -1) {
+    const newIndex = indexEtatCourant + direction;
+    if (newIndex < 0 || newIndex >= etatsAjout.length) {
+        envoyerNotification(direction < 0 ? "Aucun état précédent à annuler." : "Aucun état à rétablir.", "error");
+        return;
+    }
+
+    const etat = etatsAjout[newIndex];
+    indexEtatCourant = newIndex;
+
+    idNoeudPickupAjout   = etat.idNoeudPickupAjout;
+    idPrecedentPickup    = etat.idPrecedentPickup;
+    idNoeudDeliveryAjout = etat.idNoeudDeliveryAjout;
+    idPrecedentDelivery  = etat.idPrecedentDelivery;
+    couleurAjout         = etat.couleurAjout;
+
+    // Recrée les marqueurs temporaires fidèlement
+    clearTempMarkers();
+    etat.tempMarkersData.forEach(m => addTempMarker(m.lat, m.lng, m.html));
+
+    // Message d’étape correspondante
+    if (!idNoeudPickupAjout) {
+        envoyerNotification("Retour à l'étape : sélection du nœud Pickup", "info");
+    } else if (idNoeudPickupAjout && !idPrecedentPickup) {
+        envoyerNotification("Retour à l'étape : sélection du nœud précédent du Pickup", "info");
+    } else if (idPrecedentPickup && !idNoeudDeliveryAjout) {
+        envoyerNotification("Retour à l'étape : sélection du nœud Delivery", "info");
+    } else if (idNoeudDeliveryAjout && !idPrecedentDelivery) {
+        envoyerNotification("Retour à l'étape : sélection du nœud précédent du Delivery", "info");
+    } else {
+        envoyerNotification("Aucune étape à restaurer.", "warning");
+    }
+}
+
+// Expose deux helpers (si tu veux leur mettre des boutons dédiés plus tard)
+window.annulerEtapeAjout = function () {
+    if (!modeAjoutActif) {
+        envoyerNotification("Aucune opération d’ajout en cours.", "error");
+        return;
+    }
+    restaurerEtatAjout(-1);
+};
+window.retablirEtapeAjout = function () {
+    if (!modeAjoutActif) {
+        envoyerNotification("Aucune opération d’ajout en cours.", "error");
+        return;
+    }
+    restaurerEtatAjout(+1);
+};
+
 // === Vérifie si un nœud est valide comme "précédent" ===
 function estNoeudValideCommePrecedent(noeud) {
     if (!noeud || !noeud.type) return false;
@@ -75,7 +160,7 @@ function trouverNoeudValideProcheVisuel(latlng) {
 
         let rayonPx = FACTEUR_BASE_RAYON_PIXEL * facteurZoom;
         switch (n.type.toUpperCase()) {
-            case "PICKUP": rayonPx = 10 * facteurZoom; break;
+            case "PICKUP":   rayonPx = 10 * facteurZoom; break;
             case "DELIVERY": rayonPx = 12 * facteurZoom; break;
             case "ENTREPOT": rayonPx = 14 * facteurZoom; break;
         }
@@ -92,12 +177,15 @@ function trouverNoeudValideProcheVisuel(latlng) {
 // === Désactivation des popups pendant le mode ajout ===
 function desactiverPopups() {
     if (livraisonsLayer) livraisonsLayer.eachLayer(l => l.off("click"));
-    if (entrepotLayer) entrepotLayer.eachLayer(l => l.off("click"));
+    if (entrepotLayer)    entrepotLayer.eachLayer(l  => l.off("click"));
 }
 
 // === Réattacher les handlers SANS redessiner (évite d'écraser le rendu courant) ===
+// IMPORTANT: on n’intervient que SI le mode Ajout est actif (sinon on laisse
+// les handlers par défaut posés par drawLivraisons/drawTourneeNodes).
 function reattacherPopups() {
-    // on ne redessine pas ici ; on ne fait que rebrancher les clics si nécessaire
+    if (!modeAjoutActif) return;
+
     if (livraisonsLayer) {
         livraisonsLayer.eachLayer(layer => {
             layer.off("click");
@@ -132,9 +220,6 @@ function highlightNode(noeud) {
     setTimeout(() => el.style.boxShadow = "", 1000);
 }
 
-// (SUPPRIMÉ) === Affichage d’un message utilisateur ===
-// -> Remplacé par envoyerNotification(message, type = "success", duration = 3000)
-
 // === Clic sur la carte ou sur un marqueur ===
 async function handleAjoutClick(e) {
     if (!modeAjoutActif || !carteData) return;
@@ -161,6 +246,7 @@ async function handleAjoutClick(e) {
 
         highlightNode(closest);
         envoyerNotification("Sélectionnez le nœud précédent du Pickup", "success");
+        sauvegarderEtatAjout(); // <-- Historise l’état après la sélection Pickup
         return;
     }
 
@@ -174,6 +260,7 @@ async function handleAjoutClick(e) {
         idPrecedentPickup = closest.id;
         highlightNode(closest);
         envoyerNotification("Sélectionnez maintenant le nœud Delivery", "success");
+        sauvegarderEtatAjout(); // <-- Historise après choix du précédent Pickup
         return;
     }
 
@@ -196,6 +283,7 @@ async function handleAjoutClick(e) {
 
         highlightNode(closest);
         envoyerNotification("Sélectionnez maintenant le nœud précédent du Delivery", "success");
+        sauvegarderEtatAjout(); // <-- Historise après la sélection Delivery
         return;
     }
 
@@ -209,6 +297,7 @@ async function handleAjoutClick(e) {
 
         idPrecedentDelivery = closest.id;
         highlightNode(closest);
+        sauvegarderEtatAjout(); // <-- Historise l’état final du workflow
         await ajouterLivraison();
     }
 }
@@ -304,12 +393,18 @@ async function ajouterLivraison() {
     } catch (err) {
         envoyerNotification("Erreur réseau : " + err.message, "error");
     } finally {
+        // Fin du mode ajout + reset des états et de l'historique local
         modeAjoutActif = false;
         idNoeudPickupAjout = null;
         idNoeudDeliveryAjout = null;
         idPrecedentPickup = null;
         idPrecedentDelivery = null;
-        reattacherPopups();
+
+        etatsAjout.length = 0;
+        indexEtatCourant = -1;
+
+        // IMPORTANT: ne pas toucher aux handlers si on n’est plus en mode ajout.
+        reattacherPopups(); // no-op si modeAjoutActif === false
     }
 }
 
@@ -527,7 +622,21 @@ function filtreDemande(tournees) {
     demandeData.livraisons = nouvellesLivraisons;
 }
 
+// ======================================================
+// ========== ANNULER / RETABLIR (BOUTONS EXISTANTS) =====
+// ======================================================
+// NOTE : Ces deux fonctions se comportent contextuellement :
+// - SI modeAjoutActif === true -> annuler/rétablir une ÉTAPE D’AJOUT (local, sans API)
+// - SINON -> comportement original (appel API /annuler ou /restaurer)
+
 window.annulerModification = async function () {
+    if (modeAjoutActif) {
+        // Annulation d’une étape du workflow d’ajout (local)
+        annulerEtapeAjout();
+        return;
+    }
+
+    // ---- Comportement original (global) ----
     modeSuppressionActif = false;
     try {
         const response = await fetch("http://localhost:8080/api/annuler", {method : "POST"});
@@ -537,7 +646,7 @@ window.annulerModification = async function () {
             resetTournee();
             drawTourneeNodes(tournee);
             drawTournee(tournee, colors[0], 0);
-            majTableauTournee(tournee, window.tourneeBaseline)
+            majTableauTournee(tournee, window.tourneeBaseline);
             window.toutesLesTournees[selectedIndex] = tournee;
             await updateUIFromEtat();
         } else{
@@ -546,9 +655,16 @@ window.annulerModification = async function () {
     } catch (err){
         envoyerNotification("Erreur réseau : " + err.message, "error");
     }
-}
+};
 
 window.retablirModification = async function () {
+    if (modeAjoutActif) {
+        // Rétablit une étape annulée du workflow d’ajout (local)
+        retablirEtapeAjout();
+        return;
+    }
+
+    // ---- Comportement original (global) ----
     modeSuppressionActif = false;
     try {
         const response = await fetch("http://localhost:8080/api/restaurer", {
@@ -576,12 +692,10 @@ window.retablirModification = async function () {
     } catch (err) {
         envoyerNotification("Erreur réseau : " + err.message, "error");
     }
-}
+};
 
 window.sauvegarderModification = async function () {
     modeSuppressionActif = false;
-    console.log(demandeData);
-    console.log(window.toutesLesTournees);
     try {
         const body = {
             demande: demandeData,
@@ -603,7 +717,7 @@ window.sauvegarderModification = async function () {
                 const color = colors[i % colors.length];
                 drawTournee(t, color, i);
             });
-            drawTourneeTable(window.toutesLesTournees[selectedIndex])
+            drawTourneeTable(window.toutesLesTournees[selectedIndex]);
             await updateUIFromEtat();
         } else{
             console.error("Erreur serveur :", data.message);
@@ -614,71 +728,109 @@ window.sauvegarderModification = async function () {
         console.error("Erreur sauvegarde :", err);
         envoyerNotification("Erreur réseau lors de la sauvegarde des modifications", "error");
     }
-}
+};
+
+// ======================================================
+// ================ MODES (AJOUT / SUPPR) ================
+// ======================================================
 
 window.activerModeSuppression = function () {
+    // Si on était en mode Ajout → on nettoie cet état
+    if (modeAjoutActif) {
+        modeAjoutActif = false;
+        idNoeudPickupAjout = null;
+        idNoeudDeliveryAjout = null;
+        idPrecedentPickup = null;
+        idPrecedentDelivery = null;
+        etatsAjout.length = 0;
+        indexEtatCourant = -1;
+        clearTempMarkers();
+        // On laisse les handlers par défaut (drawLivraisons/drawTourneeNodes)
+        envoyerNotification("Mode ajout annulé. Passage en mode suppression.", "info");
+    }
+
     if (!modeSuppressionActif) {
         modeSuppressionActif = true;
         idNoeudPickup = null;
         idNoeudDelivery = null;
         envoyerNotification("Mode suppression activé : cliquez sur un point Pickup ou Livraison à supprimer.","success");
     }
-}
+};
 
 window.activerModeModification = async function (){
-    const tournee = window.toutesLesTournees[selectedIndex];
-    fetch("http://localhost:8080/api/tournee/mode-modification", {method: "POST", headers: {"Content-Type": "application/json"},body: JSON.stringify(tournee)})
-        .then(response => response.json())
-        .then(async data => {
-            window.tourneeBaseline = JSON.parse(JSON.stringify(tournee));
-            resetTournee();
-            drawTourneeNodes(tournee);
-            drawTournee(tournee, colors[0], 0)
+    // Sort proprement du mode Ajout si besoin
+    if (modeAjoutActif) {
+        modeAjoutActif = false;
+        etatsAjout.length = 0;
+        indexEtatCourant = -1;
+        clearTempMarkers();
+    }
 
-            await updateUIFromEtat();
-        });
-}
+    const tournee = window.toutesLesTournees[selectedIndex];
+    fetch("http://localhost:8080/api/tournee/mode-modification", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify(tournee)
+    })
+    .then(response => response.json())
+    .then(async data => {
+        window.tourneeBaseline = JSON.parse(JSON.stringify(tournee));
+        resetTournee();
+        drawTourneeNodes(tournee);
+        drawTournee(tournee, colors[0], 0);
+
+        await updateUIFromEtat();
+    });
+};
 
 window.activerModeAjout = async function (){
     modeSuppressionActif = false;
-        if (!carteData || !window.toutesLesTournees.length) {
-            envoyerNotification("Veuillez charger une tournée avant d'ajouter une livraison", "error");
-            return;
+
+    if (!carteData || !window.toutesLesTournees.length) {
+        envoyerNotification("Veuillez charger une tournée avant d'ajouter une livraison", "error");
+        return;
+    }
+
+    if (!modeAjoutActif) {
+        modeAjoutActif = true;
+
+        // Reset état ajout
+        idNoeudPickupAjout = null;
+        idNoeudDeliveryAjout = null;
+        idPrecedentPickup = null;
+        idPrecedentDelivery = null;
+        clearTempMarkers();
+        desactiverPopups();
+
+        // Reset historique et snapshot initial (état "vide")
+        etatsAjout.length = 0;
+        indexEtatCourant = -1;
+        sauvegarderEtatAjout();
+
+        // clic direct sur les marqueurs existants (en mode Ajout)
+        if (livraisonsLayer) {
+            livraisonsLayer.eachLayer(layer => {
+                layer.on("click", e => {
+                    if (modeAjoutActif) {
+                        const nodeId = e.target.options.id;
+                        const noeud = carteData.noeuds[nodeId];
+                        if (noeud) handleAjoutClick({ latlng: e.latlng, noeudDirect: noeud });
+                    }
+                });
+            });
+        }
+        if (entrepotLayer) {
+            entrepotLayer.eachLayer(layer => {
+                layer.on("click", e => {
+                    if (modeAjoutActif) {
+                        const nodeId = e.target.options.id;
+                        const noeud = carteData.noeuds[nodeId];
+                        if (noeud) handleAjoutClick({ latlng: e.latlng, noeudDirect: noeud });
+                    }
+                });
+            });
         }
 
-        if (!modeAjoutActif) {
-            modeAjoutActif = true;
-            idNoeudPickupAjout = null;
-            idNoeudDeliveryAjout = null;
-            idPrecedentPickup = null;
-            idPrecedentDelivery = null;
-            clearTempMarkers();
-            desactiverPopups();
-
-            // clic direct sur les marqueurs existants
-            if (livraisonsLayer) {
-                livraisonsLayer.eachLayer(layer => {
-                    layer.on("click", e => {
-                        if (modeAjoutActif) {
-                            const nodeId = e.target.options.id;
-                            const noeud = carteData.noeuds[nodeId];
-                            if (noeud) handleAjoutClick({ latlng: e.latlng, noeudDirect: noeud });
-                        }
-                    });
-                });
-            }
-            if (entrepotLayer) {
-                entrepotLayer.eachLayer(layer => {
-                    layer.on("click", e => {
-                        if (modeAjoutActif) {
-                            const nodeId = e.target.options.id;
-                            const noeud = carteData.noeuds[nodeId];
-                            if (noeud) handleAjoutClick({ latlng: e.latlng, noeudDirect: noeud });
-                        }
-                    });
-                });
-            }
-
-            envoyerNotification("Cliquez sur le nœud Pickup à ajouter", "success");
-        }
- }
+        envoyerNotification("Cliquez sur le nœud Pickup à ajouter", "success");
+    }
+};
