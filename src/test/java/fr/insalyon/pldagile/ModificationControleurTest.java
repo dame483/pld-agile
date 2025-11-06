@@ -1,11 +1,8 @@
 package fr.insalyon.pldagile;
 
-import fr.insalyon.pldagile.algorithme.CalculChemins;
 import fr.insalyon.pldagile.algorithme.CalculTournees;
-import fr.insalyon.pldagile.algorithme.ModificationTournee;
 import fr.insalyon.pldagile.controleur.*;
 import fr.insalyon.pldagile.modele.*;
-import fr.insalyon.pldagile.sortie.FeuilleDeRoute;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -22,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
  */
 public class ModificationControleurTest {
 
-    private Controlleur controleur;
+    private Controleur controleur;
     private Tournee tournee;
     private Carte carte;
 
@@ -48,16 +45,16 @@ public class ModificationControleurTest {
 
         tournee = toutesLesTournees.get(0);
 
-        controleur = new Controlleur();
+        controleur = new Controleur();
 
         EtatModificationTournee etat = new EtatModificationTournee(carte, tournee);
-        controleur.setCurrentState(etat);
+        controleur.setEtatActuelle(etat);
     }
 
 
     @Test
     void testAjoutAnnulationRestaurationSurMemeTournee() throws Exception {
-        EtatModificationTournee etat = (EtatModificationTournee) controleur.getCurrentState();
+        EtatModificationTournee etat = (EtatModificationTournee) controleur.getEtatActuelle();
         Tournee tourneeEtat = etat.getTournee();
 
         // Vérifie que l’état référence bien la même tournée
@@ -169,7 +166,7 @@ public class ModificationControleurTest {
 
     @Test
     void testSuppressionAnnulationRestaurationSurMemeTournee() throws Exception {
-        EtatModificationTournee etat = (EtatModificationTournee) controleur.getCurrentState();
+        EtatModificationTournee etat = (EtatModificationTournee) controleur.getEtatActuelle();
 
         Tournee tourneeEtat = etat.getTournee();
 
@@ -321,7 +318,7 @@ public class ModificationControleurTest {
 
     @Test
     void testDeuxSuppressionsAvecAnnulationsEtRestaurations() throws Exception {
-        EtatModificationTournee etat = (EtatModificationTournee) controleur.getCurrentState();
+        EtatModificationTournee etat = (EtatModificationTournee) controleur.getEtatActuelle();
         Tournee tourneeEtat = etat.getTournee();
 
         assertSame(tournee, tourneeEtat, "L’état doit référencer la même tournée que le test.");
@@ -392,7 +389,7 @@ public class ModificationControleurTest {
 
     @Test
     void testAjoutAnnulationRestaurationSurMemeTournee2() throws Exception {
-        EtatModificationTournee etat = (EtatModificationTournee) controleur.getCurrentState();
+        EtatModificationTournee etat = (EtatModificationTournee) controleur.getEtatActuelle();
         Tournee tourneeEtat = etat.getTournee();
 
         // Vérifie qu'on a bien la même référence au départ
@@ -462,7 +459,7 @@ public class ModificationControleurTest {
 
     @Test
     void testSuppressionAjoutAnnulationRestaurationSurMemeTournee() throws Exception {
-        EtatModificationTournee etat = (EtatModificationTournee) controleur.getCurrentState();
+        EtatModificationTournee etat = (EtatModificationTournee) controleur.getEtatActuelle();
         Tournee tourneeEtat = etat.getTournee();
 
         // Vérifie qu'on a bien la même référence au départ

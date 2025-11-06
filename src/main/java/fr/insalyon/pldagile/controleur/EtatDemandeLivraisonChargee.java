@@ -13,6 +13,7 @@ import java.io.File;
 import java.nio.file.Path;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Map;
 
 @Component
 public class EtatDemandeLivraisonChargee implements Etat {
@@ -26,11 +27,11 @@ public class EtatDemandeLivraisonChargee implements Etat {
     }
 
     @Override
-    public Carte loadCarte(Controlleur c, MultipartFile file) throws XMLFormatException {
-        Object result = uploadXML("carte", file, null);
+    public Carte chargerCarte(Controleur c, MultipartFile file) throws XMLFormatException {
+        Object result = chargerXML("carte", file, null);
 
         if (result instanceof Carte carte) {
-            c.setCurrentState(new EtatCarteChargee(carte));
+            c.setEtatActuelle(new EtatCarteChargee(carte));
             return carte;
         } else if (result instanceof Exception e) {
             if (e instanceof XMLFormatException xmlEx) {
@@ -44,24 +45,24 @@ public class EtatDemandeLivraisonChargee implements Etat {
     }
 
     @Override
-    public Object loadDemandeLivraison(Controlleur c, @RequestParam("file") MultipartFile file, Carte carte) {
-        Object dem = uploadXML("demande", file, this.carte);
+    public Object chargerDemandeLivraison(Controleur c, @RequestParam("file") MultipartFile file, Carte carte) {
+        Object dem = chargerXML("demande", file, this.carte);
         if (dem instanceof DemandeDeLivraison demande) {
-            c.setCurrentState(new EtatDemandeLivraisonChargee(this.carte, demande));
+            c.setEtatActuelle(new EtatDemandeLivraisonChargee(this.carte, demande));
             return demande;
         }
         return dem;
     }
 
     @Override
-    public Object runCalculTournee(Controlleur c, int nombreLivreurs, double vitesse) {
+    public Object lancerCalculTournee(Controleur c, int nombreLivreurs, double vitesse) {
         try {
             LocalTime heureDepart = demande.getEntrepot().getHoraireDepart();
 
             CalculTournees t = new CalculTournees(carte, demande, vitesse, nombreLivreurs, heureDepart);
             List<Tournee> toutesLesTournees = t.calculerTournees();
 
-            c.setCurrentState(new EtatTourneeCalcule(carte, demande, toutesLesTournees));
+            c.setEtatActuelle(new EtatTourneeCalcule(carte, demande, toutesLesTournees));
             return toutesLesTournees;
 
         } catch (Exception e) {
@@ -70,7 +71,7 @@ public class EtatDemandeLivraisonChargee implements Etat {
     }
 
     @Override
-    public Object uploadXML(String type, MultipartFile file, Carte carte) throws XMLFormatException {
+    public Object chargerXML(String type, MultipartFile file, Carte carte) throws XMLFormatException {
         if (file == null || file.isEmpty()) {
             throw new XMLFormatException("Le fichier est vide ou nul.");
         }
@@ -117,21 +118,10 @@ public class EtatDemandeLivraisonChargee implements Etat {
         }
     }
 
-    @Override
-    public List<Path> creerFeuillesDeRoute(Controlleur c) {
-        System.err.println("Erreur : impossible de créer une feuille de route avant le calcul de la tournée.");
-        return null;
-    }
 
     @Override
-    public Object saveTournee(Controlleur c) {
-        System.err.println("Erreur : impossible de sauvegarder une tournée avant son calcul.");
-        return null;
-    }
-
-    @Override
-    public Object loadTournee(Controlleur c, MultipartFile file, Carte carte) {
-        Object result = uploadXML("tournee", file, carte);
+    public Object chargerTournee(Controleur c, MultipartFile file, Carte carte) {
+        Object result = chargerXML("tournee", file, carte);
 
         if (result instanceof Exception e) {
             return e;
@@ -160,20 +150,38 @@ public class EtatDemandeLivraisonChargee implements Etat {
             return new Exception("Fichier JSON invalide ou format incorrect");
         }
 
-        c.setCurrentState(new EtatTourneeCalcule(carte, demande, toutesLesTournees));
+        c.setEtatActuelle(new EtatTourneeCalcule(carte, demande, toutesLesTournees));
 
         return new TourneeUpload(toutesLesTournees, demande);
     }
 
     @Override
-    public void passerEnModeModification(Controlleur c, Tournee tournee){return;}
-
-    @Override
-    public void sauvegarderModification(Controlleur c, DemandeDeLivraison demande, List<Tournee> tournees) {
+    public void passerEnModeModification(Controleur c, Tournee tournee) {
+        throw new IllegalStateException("Erreur : impossible de passer en mode modification avant le calcul de la tournée.");
     }
 
     @Override
-    public String getName() {
+    public List<Path> creerFeuillesDeRoute(Controleur c) {
+        throw new IllegalStateException("Erreur : impossible de créer une feuille de route avant le calcul de la tournée.");
+    }
+
+    @Override
+    public Object sauvegarderTournee(Controleur c) {
+        throw new IllegalStateException("Erreur : impossible de sauvegarder une tournée avant son calcul.");
+    }
+
+    @Override
+    public void sauvegarderModification(Controleur c, DemandeDeLivraison demande, List<Tournee> tournees) {
+        throw new IllegalStateException("Erreur : aucune modification à sauvegarder à ce stade.");
+    }
+
+    public Tournee modifierTournee(Controleur c, String mode, Map<String, Object> body, double vitesse){
+        throw new IllegalStateException("Erreur : Pas de modification de tournée possible dans l'état actuel");
+    }
+
+
+    @Override
+    public String getNom() {
         return "Etat Demande de Livraison Chargee";
     }
 }

@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
 
 @Component
 public class EtatInitial implements Etat {
@@ -18,11 +19,11 @@ public class EtatInitial implements Etat {
     public EtatInitial() {}
 
     @Override
-    public Carte loadCarte(Controlleur c, MultipartFile file) throws XMLFormatException {
-        Object result = uploadXML("carte", file, null);
+    public Carte chargerCarte(Controleur c, MultipartFile file) throws XMLFormatException {
+        Object result = chargerXML("carte", file, null);
 
         if (result instanceof Carte carte) {
-            c.setCurrentState(new EtatCarteChargee(carte));
+            c.setEtatActuelle(new EtatCarteChargee(carte));
             return carte;
         } else if (result instanceof Exception e) {
             if (e instanceof XMLFormatException xmlEx) {
@@ -36,13 +37,7 @@ public class EtatInitial implements Etat {
     }
 
     @Override
-    public Object loadDemandeLivraison(Controlleur c, MultipartFile file, Carte carte) {
-        System.out.println("Impossible de charger une demande sans carte !");
-        return null;
-    }
-
-    @Override
-    public Object uploadXML(String type, MultipartFile file, Carte carte) throws XMLFormatException {
+    public Object chargerXML(String type, MultipartFile file, Carte carte) throws XMLFormatException {
         if (file == null || file.isEmpty()) {
             throw new XMLFormatException("Fichier vide ou non sélectionné !");
         }
@@ -62,44 +57,57 @@ public class EtatInitial implements Etat {
             if (tempFile != null && tempFile.exists()) {
                 boolean deleted = tempFile.delete();
                 if (!deleted) {
-                    System.err.println("⚠ Impossible de supprimer le fichier temporaire");
+                    System.err.println("Impossible de supprimer le fichier temporaire");
                 }
             }
         }
     }
 
 
-    @Override
-    public List<Path> creerFeuillesDeRoute(Controlleur c) {
-        throw new IllegalStateException("Erreur : impossible de créer une feuille de route avant le calcul de la tournée.");
+    public Tournee modifierTournee(Controleur c, String mode, Map<String, Object> body, double vitesse){
+        throw new IllegalStateException("Erreur : Pas de modification de tournée possible dans l'état actuel");
     }
 
     @Override
-    public Object saveTournee(Controlleur c) {
-        throw new IllegalStateException("Impossible de sauvegarder une tournée qui n'a pas été calculé.");
+    public Object chargerDemandeLivraison(Controleur c, MultipartFile file, Carte carte) {
+        throw new IllegalStateException("Erreur : Impossible de charger une demande de livraison avant de charger une carte.");
     }
 
 
     @Override
-    public Object loadTournee(Controlleur c, MultipartFile file, Carte carte) {
-        throw new IllegalStateException("Impossible de charger une tournée sans carte préalablement chargée.");
+    public List<Path> creerFeuillesDeRoute(Controleur c) {
+        throw new IllegalStateException("Erreur : Impossible de créer une feuille de route avant le calcul de la tournée.");
     }
 
     @Override
-    public void sauvegarderModification(Controlleur c, DemandeDeLivraison demande, List<Tournee> tournees) {
+    public Object sauvegarderTournee(Controleur c) {
+        throw new IllegalStateException("Erreur : Impossible de sauvegarder une tournée qui n'a pas été calculée.");
+    }
+
+
+    @Override
+    public Object chargerTournee(Controleur c, MultipartFile file, Carte carte) {
+        throw new IllegalStateException("Erreur : Impossible de charger une tournée sans carte préalablement chargée.");
     }
 
     @Override
-    public String getName() {
+    public void sauvegarderModification(Controleur c, DemandeDeLivraison demande, List<Tournee> tournees) {
+        throw new IllegalStateException("Erreur : Aucune modification à sauvegarder à l’état initial.");
+    }
+
+    @Override
+    public Object lancerCalculTournee(Controleur c, int nombreLivreurs, double vitesse) {
+        throw new IllegalStateException("Erreur : Impossible de calculer une tournée sans carte et demande de livraison.");
+    }
+
+    @Override
+    public void passerEnModeModification(Controleur c, Tournee tournee) {
+        throw new IllegalStateException("Erreur : Impossible de passer en mode modification à l’état initial.");
+    }
+
+    @Override
+    public String getNom() {
         return "Etat Initial";
     }
-
-    @Override
-    public Object runCalculTournee(Controlleur c, int nombreLivreurs, double vitesse) {
-        return null;
-    }
-
-    @Override
-    public void passerEnModeModification(Controlleur c, Tournee tournee){return;}
 
 }
