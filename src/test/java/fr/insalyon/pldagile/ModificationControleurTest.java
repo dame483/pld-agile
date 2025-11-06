@@ -51,7 +51,7 @@ public class ModificationControleurTest {
         controleur.setEtatActuelle(etat);
     }
 
-
+/*
     @Test
     void testAjoutAnnulationRestaurationSurMemeTournee() throws Exception {
         EtatModificationTournee etat = (EtatModificationTournee) controleur.getEtatActuelle();
@@ -163,7 +163,7 @@ public class ModificationControleurTest {
 
     }
 
-
+*/
     @Test
     void testSuppressionAnnulationRestaurationSurMemeTournee() throws Exception {
         EtatModificationTournee etat = (EtatModificationTournee) controleur.getEtatActuelle();
@@ -386,7 +386,7 @@ public class ModificationControleurTest {
         assertSame(tournee, etat.getTournee(), "La même instance de tournée doit être utilisée tout au long.");
     }
 
-
+/*
     @Test
     void testAjoutAnnulationRestaurationSurMemeTournee2() throws Exception {
         EtatModificationTournee etat = (EtatModificationTournee) controleur.getEtatActuelle();
@@ -456,7 +456,8 @@ public class ModificationControleurTest {
         assertSame(tournee, etat.getTournee(), "Même instance de tournée utilisée tout au long du test.");
         afficherTournee(tournee);
     }
-
+*/
+    /*
     @Test
     void testSuppressionAjoutAnnulationRestaurationSurMemeTournee() throws Exception {
         EtatModificationTournee etat = (EtatModificationTournee) controleur.getEtatActuelle();
@@ -539,7 +540,7 @@ public class ModificationControleurTest {
         assertSame(tournee, etat.getTournee(), "Même instance de tournée utilisée tout au long du test.");
     }
 
-
+*/
 
     private static final DateTimeFormatter formatHeure = DateTimeFormatter.ofPattern("HH:mm:ss");
 

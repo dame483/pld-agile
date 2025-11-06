@@ -1,5 +1,8 @@
 package fr.insalyon.pldagile.controleur;
 
+import fr.insalyon.pldagile.algorithme.CalculChemins;
+import fr.insalyon.pldagile.algorithme.ModificationTournee;
+import fr.insalyon.pldagile.erreurs.exception.ContrainteDePrecedenceException;
 import fr.insalyon.pldagile.erreurs.exception.XMLFormatException;
 import fr.insalyon.pldagile.modele.*;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -98,6 +101,11 @@ public class EtatModificationTournee implements Etat {
                 double dureeEnlevement = ((Number) body.get("dureeEnlevement")).doubleValue();
                 double dureeLivraison = ((Number) body.get("dureeLivraison")).doubleValue();
 
+                ModificationTournee modificationTournee = new ModificationTournee(new CalculChemins(carte), vitesse);
+                boolean respectContrainte = modificationTournee.contrainteDePrecedence(tournee, idDelivery, idPrecedentDelivery, idPrecedentPickup);
+                if (!respectContrainte) {
+                    throw new ContrainteDePrecedenceException("La contrainte de précédence n'est pas respectée pour le delivery");
+                }
                 commande = new CommandeAjoutLivraison(
                         tournee, carte, vitesse,
                         idPickup, idDelivery,
