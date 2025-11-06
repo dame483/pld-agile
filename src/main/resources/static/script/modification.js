@@ -17,16 +17,27 @@ const FACTEUR_BASE_RAYON_PIXEL = 10;     // base pour la détection dynamique de
 
 // Marqueurs temporaires pendant le workflow d'ajout
 const tempMarkers = [];
-function addTempMarker(lat, lng, html) {
+function addTempMarker(lat, lng, html, nodeId = null) {
+    const colorHTML = html.replace(/background:[^;"]*;/, 'background:#FFFFFF;');
+
     const m = L.marker([lat, lng], {
         icon: L.divIcon({
-            className: '',
+            className: 'temp-marker',
             iconSize: [18, 18],
-            html
-        })
-    }).addTo(livraisonsLayer);
+            html: colorHTML
+        }),
+        id: nodeId
+    })
+    .addTo(livraisonsLayer)
+    .on('click', (e) => {
+        const marker = e.target;
+        const node = carteData.noeuds[marker.options.id];
+        if (node) handleAjoutClick({ latlng: marker.getLatLng(), noeudDirect: node });
+    });
+
     tempMarkers.push(m);
 }
+
 function clearTempMarkers() {
     tempMarkers.forEach(m => {
         try { livraisonsLayer.removeLayer(m); } catch {}
@@ -123,7 +134,7 @@ window.retablirEtapeAjout = function () {
 function estNoeudValideCommePrecedent(noeud) {
     if (!noeud || !noeud.type) return false;
     const type = noeud.type.toUpperCase();
-    return ["ENTREPOT", "PICKUP", "DELIVERY"].includes(type);
+    return ["ENTREPOT", "PICKUP", "DELIVERY"].includes(type) || noeud.id === idNoeudPickupAjout;
 }
 
 // === Trouve un nœud valide proche selon le rayon géographique (pour Pickup/Delivery) ===
@@ -203,7 +214,8 @@ async function handleAjoutClick(e) {
             closest.latitude,
             closest.longitude,
             `<div id-noeud="${closest.id}" style="width:18px;height:18px;background:${couleurAjout};
-             border:2px solid black;border-radius:3px;"></div>`
+             border:2px solid black;border-radius:3px;"></div>`,
+             closest.id
         );
 
         highlightNode(closest);
@@ -361,6 +373,10 @@ async function ajouterLivraison() {
         idPrecedentPickup = null;
         idPrecedentDelivery = null;
         clearTempMarkers();
+        document.getElementById('annulerEtapeAjout').style.display='none';
+        document.getElementById('retablirEtapeAjout').style.display='none';
+        document.getElementById('annulerModification').style.display='inline';
+        document.getElementById('retablirModification').style.display='inline';
 
         etatsAjout.length = 0;
         indexEtatCourant = -1;
@@ -589,13 +605,6 @@ function filtreDemande(tournees) {
 // - SINON -> comportement original (appel API /annuler ou /restaurer)
 
 window.annulerModification = async function () {
-    if (modeAjoutActif) {
-        // Annulation d’une étape du workflow d’ajout (local)
-        annulerEtapeAjout();
-        return;
-    }
-
-    // ---- Comportement original (global) ----
     modeSuppressionActif = false;
     try {
         const response = await fetch("http://localhost:8080/api/annuler", {method : "POST"});
@@ -617,13 +626,6 @@ window.annulerModification = async function () {
 };
 
 window.retablirModification = async function () {
-    if (modeAjoutActif) {
-        // Rétablit une étape annulée du workflow d’ajout (local)
-        retablirEtapeAjout();
-        return;
-    }
-
-    // ---- Comportement original (global) ----
     modeSuppressionActif = false;
     try {
         const response = await fetch("http://localhost:8080/api/restaurer", {
@@ -739,11 +741,18 @@ window.activerModeModification = async function (){
         drawTournee(tournee, colors[0], 0);
 
         await updateUIFromEtat();
+        document.getElementById('annulerEtapeAjout').style.display='none';
+        document.getElementById('retablirEtapeAjout').style.display='none';
+
     });
 };
 
 window.activerModeAjout = async function (){
     modeSuppressionActif = false;
+    document.getElementById('annulerEtapeAjout').style.display='inline';
+    document.getElementById('retablirEtapeAjout').style.display='inline';
+    document.getElementById('annulerModification').style.display='none';
+    document.getElementById('retablirModification').style.display='none';
 
     if (!carteData || !window.toutesLesTournees.length) {
         envoyerNotification("Veuillez charger une tournée avant d'ajouter une livraison", "error");
