@@ -17,7 +17,7 @@ const FACTEUR_BASE_RAYON_PIXEL = 10;     // base pour la détection dynamique de
 
 // Marqueurs temporaires pendant le workflow d'ajout
 const tempMarkers = [];
-function addTempMarker(lat, lng, html) {
+function addTempMarker(lat, lng, html, nodeId = null) {
     const colorHTML = html.replace(/background:[^;"]*;/, 'background:#FFFFFF;');
 
     const m = L.marker([lat, lng], {
@@ -25,15 +25,19 @@ function addTempMarker(lat, lng, html) {
             className: 'temp-marker',
             iconSize: [18, 18],
             html: colorHTML
-        })
+        }),
+        id: nodeId
     })
     .addTo(livraisonsLayer)
     .on('click', (e) => {
         const marker = e.target;
-        const nodeId = marker.options.id;
+        const node = carteData.noeuds[marker.options.id];
+        if (node) handleAjoutClick({ latlng: marker.getLatLng(), noeudDirect: node });
     });
+
     tempMarkers.push(m);
 }
+
 function clearTempMarkers() {
     tempMarkers.forEach(m => {
         try { livraisonsLayer.removeLayer(m); } catch {}
@@ -210,7 +214,8 @@ async function handleAjoutClick(e) {
             closest.latitude,
             closest.longitude,
             `<div id-noeud="${closest.id}" style="width:18px;height:18px;background:${couleurAjout};
-             border:2px solid black;border-radius:3px;"></div>`
+             border:2px solid black;border-radius:3px;"></div>`,
+             closest.id
         );
 
         highlightNode(closest);
