@@ -183,12 +183,13 @@ public class ModificationTournee {
         return noeudDePassageDeliveryAAjouter;
     }
 
-    public boolean contrainteDePrecedence(Tournee tournee, long idDelivery, long idNoeudPrecedentDelivery, long idNoeudPrecedentPickup) {
+    public boolean contrainteDePrecedence(Tournee tournee, long idDelivery, long idNoeudPrecedentDelivery, long idNoeudPrecedentPickup, long idPickup) {
         List<Long> idsVisites = new ArrayList<>();
         for (Chemin chemin : tournee.getChemins()) {
             idsVisites.add(chemin.getNoeudDePassageDepart().getId());
             if ((chemin.getNoeudDePassageArrivee().getId() == idNoeudPrecedentPickup)) {
                 idsVisites.add(idNoeudPrecedentPickup);
+                idsVisites.add(idPickup);
                 break;
             }
         }
@@ -204,6 +205,18 @@ public class ModificationTournee {
                 return true;
             }
             return false;
+    }
+
+    public boolean verifierConnexiteNoeudSuivant(Tournee tournee, long idNoeudAjoute, long idNoeudPrecedent) {
+        boolean connexite = false;
+        for (Chemin chemin : tournee.getChemins()) {
+            if (chemin.getNoeudDePassageDepart().getId() == idNoeudPrecedent) {
+                long idNoeudSuivantPrecedent = chemin.getNoeudDePassageArrivee().getId();
+                connexite = verifierConnexite(idNoeudAjoute, idNoeudSuivantPrecedent);
+                return connexite;
+            }
+        }
+        return connexite;
     }
 
 }
