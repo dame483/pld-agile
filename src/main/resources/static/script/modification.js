@@ -130,6 +130,21 @@ window.retablirEtapeAjout = function () {
     restaurerEtatAjout(+1);
 };
 
+window.quitterModeAjout = function () {
+    modeAjoutActif = false;
+    idNoeudPickupAjout = null;
+    idNoeudDeliveryAjout = null;
+    idPrecedentPickup = null;
+    idPrecedentDelivery = null;
+    clearTempMarkers();
+    document.getElementById('annulerEtapeAjout').style.display='none';
+    document.getElementById('retablirEtapeAjout').style.display='none';
+    document.getElementById('quitterModeAjout').style.display='none';
+    document.getElementById('annulerModification').style.display='inline';
+    document.getElementById('retablirModification').style.display='inline';
+    document.getElementById('sauvegarderModification').style.display='inline';
+}
+
 // === Vérifie si un nœud est valide comme "précédent" ===
 function estNoeudValideCommePrecedent(noeud) {
     if (!noeud || !noeud.type) return false;
@@ -375,8 +390,10 @@ async function ajouterLivraison() {
         clearTempMarkers();
         document.getElementById('annulerEtapeAjout').style.display='none';
         document.getElementById('retablirEtapeAjout').style.display='none';
+        document.getElementById('quitterModeAjout').style.display='none';
         document.getElementById('annulerModification').style.display='inline';
         document.getElementById('retablirModification').style.display='inline';
+        document.getElementById('sauvegarderModification').style.display='inline';
 
         etatsAjout.length = 0;
         indexEtatCourant = -1;
@@ -743,6 +760,7 @@ window.activerModeModification = async function (){
         await updateUIFromEtat();
         document.getElementById('annulerEtapeAjout').style.display='none';
         document.getElementById('retablirEtapeAjout').style.display='none';
+        document.getElementById('quitterModeAjout').style.display='none';
 
     });
 };
@@ -751,8 +769,10 @@ window.activerModeAjout = async function (){
     modeSuppressionActif = false;
     document.getElementById('annulerEtapeAjout').style.display='inline';
     document.getElementById('retablirEtapeAjout').style.display='inline';
+    document.getElementById('quitterModeAjout').style.display='inline';
     document.getElementById('annulerModification').style.display='none';
     document.getElementById('retablirModification').style.display='none';
+    document.getElementById('sauvegarderModification').style.display='none';
 
     if (!carteData || !window.toutesLesTournees.length) {
         envoyerNotification("Veuillez charger une tournée avant d'ajouter une livraison", "error");

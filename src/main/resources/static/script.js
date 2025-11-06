@@ -964,5 +964,7 @@ document.addEventListener('DOMContentLoaded',async () => {
 
     document.getElementById('sauvegarderModification').addEventListener("click", sauvegarderModification);
 
+    document.getElementById('quitterModeAjout').addEventListener("click", quitterModeAjout);
+
 });
 
