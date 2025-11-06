@@ -17,21 +17,16 @@ const FACTEUR_BASE_RAYON_PIXEL = 10;     // base pour la détection dynamique de
 
 // Marqueurs temporaires pendant le workflow d'ajout
 const tempMarkers = [];
-function addTempMarker(lat, lng, html, tempId) {
+function addTempMarker(lat, lng, html) {
+    const colorHTML = html.replace(/background:[^;"]*;/, 'background:#FFFFFF;');
+
     const m = L.marker([lat, lng], {
-        id: tempId,
-        temp: true,
         icon: L.divIcon({
-            className: 'temp-marker',
+            className: '',
             iconSize: [18, 18],
-            html
+            html: colorHTML
         })
-    })
-    .addTo(livraisonsLayer)
-    .on('click', (e) => {
-        const marker = e.target;
-        const nodeId = marker.options.id;
-    });
+    }).addTo(livraisonsLayer);
     tempMarkers.push(m);
 }
 function clearTempMarkers() {
@@ -130,7 +125,7 @@ window.retablirEtapeAjout = function () {
 function estNoeudValideCommePrecedent(noeud) {
     if (!noeud || !noeud.type) return false;
     const type = noeud.type.toUpperCase();
-    return ["ENTREPOT", "PICKUP", "DELIVERY"].includes(type) || noeud.id === idNoeudPickupAjout;
+    return ["ENTREPOT", "PICKUP", "DELIVERY"].includes(type);
 }
 
 // === Trouve un nœud valide proche selon le rayon géographique (pour Pickup/Delivery) ===
@@ -212,7 +207,6 @@ async function handleAjoutClick(e) {
             `<div id-noeud="${closest.id}" style="width:18px;height:18px;background:${couleurAjout};
              border:2px solid black;border-radius:3px;"></div>`
         );
-
 
         highlightNode(closest);
         envoyerNotification("Sélectionnez le nœud précédent du Pickup", "success");
