@@ -1,5 +1,6 @@
 package fr.insalyon.pldagile;
 
+import fr.insalyon.pldagile.erreurs.exception.TSPTimeoutException;
 import fr.insalyon.pldagile.erreurs.exception.TourneeNonConnexeException;
 import fr.insalyon.pldagile.modele.*;
 import fr.insalyon.pldagile.algorithme.*;
@@ -12,8 +13,6 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TestsAlgorithmes {
-
-
     /**
      * Test CalculChemins sur un graphe très simple (2 nœuds et un tronçon).
      * Vérifie que la distance minimale calculée entre n1 et n2 est correcte.
@@ -211,7 +210,7 @@ public class TestsAlgorithmes {
      * Vérifie que l’ordre des livraisons est respecté dans la solution finale.
      */
     @Test
-    void testTSPAvecPrecedence_ordreRespecte() {
+    void testTSPAvecPrecedence_ordreRespecte() throws InterruptedException {
         GrapheComplet g = new GrapheComplet(3);
         g.setCout(0, 1, 10);
         g.setCout(1, 2, 5);

@@ -13,10 +13,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Classe utilitaire pour parser les fichiers JSON représentant des tournées et des demandes de livraison.
+ */
 public class parseurTourneeJson {
+
+    /** Constructeur par défaut */
     public parseurTourneeJson() {
     }
 
+    /**
+     * Parse un fichier JSON pour en extraire une liste de tournées.
+     * @param cheminFichier chemin vers le fichier JSON
+     * @return liste de tournées
+     * @throws Exception en cas de problème de lecture ou de parsing
+     */
     public static List<Tournee> parseurTournee(String cheminFichier) throws Exception {
         List<Tournee> listTournee = new ArrayList<>();
         LocalTime heureDepart = null;
@@ -95,6 +106,12 @@ public class parseurTourneeJson {
         }
         return listTournee;
     }
+
+    /**
+     * Parse un fichier JSON pour créer une demande de livraison complète.
+     * @param cheminFichier chemin vers le fichier JSON
+     * @return demande de livraison
+     */
     public static DemandeDeLivraison parseurDemandeDeLivraison(String cheminFichier) {
         System.out.println("Lecture et parsing de : " + cheminFichier);
 
@@ -163,6 +180,12 @@ public class parseurTourneeJson {
     }
 
 
+    /**
+     * Retourne un noeud de passage existant ou en crée un nouveau s'il n'existe pas.
+     * @param noeudJson JSON représentant le noeud
+     * @param cache cache des noeuds déjà créés
+     * @return le noeud de passage
+     */
     private static NoeudDePassage getOrCreateNoeud(JSONObject noeudJson, Map<Long, NoeudDePassage> cache) {
         long id = noeudJson.getLong("id");
         if (cache.containsKey(id)) {
