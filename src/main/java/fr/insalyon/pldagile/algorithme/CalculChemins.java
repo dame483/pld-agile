@@ -116,4 +116,26 @@ public class CalculChemins {
     public Carte getCarte() {
         return carte;
     }
+
+    public Chemin getChemin(long idNoeudDepart, long idNoeudArrivee) {
+        List<Noeud> listeNoeuds = new ArrayList<>(carte.getNoeuds().values());
+        List<NoeudDePassage> listNoeudDePassage = new ArrayList<>();
+        for (Noeud noeud : listeNoeuds) {
+            NoeudDePassage noeudDePassage = new NoeudDePassage(noeud.getId(), noeud.getLatitude(), noeud.getLongitude(), NoeudDePassage.TypeNoeud.PICKUP);
+            listNoeudDePassage.add((noeudDePassage));
+        }
+        calculerMatrice(listNoeudDePassage);
+        for (int i = 0; i < matriceChemins.length; i++) {
+            for (int j = 0; j < matriceChemins[i].length; j++) {
+                Chemin chemin = matriceChemins[i][j];
+                if (chemin != null
+                        && chemin.getNoeudDePassageDepart().getId() == idNoeudDepart
+                        && chemin.getNoeudDePassageArrivee().getId() == idNoeudArrivee) {
+                    return chemin;
+                }
+            }
+        }
+        return null;
+    }
+
 }

@@ -2,6 +2,8 @@ package fr.insalyon.pldagile.controleur;
 
 import fr.insalyon.pldagile.algorithme.CalculChemins;
 import fr.insalyon.pldagile.algorithme.ModificationTournee;
+import fr.insalyon.pldagile.erreurs.exception.ConnexiteDeliveryException;
+import fr.insalyon.pldagile.erreurs.exception.ConnexitePickupException;
 import fr.insalyon.pldagile.erreurs.exception.ContrainteDePrecedenceException;
 import fr.insalyon.pldagile.erreurs.exception.XMLFormatException;
 import fr.insalyon.pldagile.modele.*;
@@ -103,8 +105,16 @@ public class EtatModificationTournee implements Etat {
 
                 ModificationTournee modificationTournee = new ModificationTournee(new CalculChemins(carte), vitesse);
                 boolean respectContrainte = modificationTournee.contrainteDePrecedence(tournee, idDelivery, idPrecedentDelivery, idPrecedentPickup);
+                boolean connexitePickup = modificationTournee.verifierConnexite(idPickup, idPrecedentPickup);
+                boolean connexiteDelivery = modificationTournee.verifierConnexite(idDelivery, idPrecedentDelivery);
                 if (!respectContrainte) {
                     throw new ContrainteDePrecedenceException("La contrainte de précédence n'est pas respectée pour le delivery");
+                }
+                if (!connexitePickup) {
+                    throw new ConnexitePickupException("Il n'existe pas de chemins entre le pickup et son précédent");
+                }
+                if (!connexiteDelivery) {
+                    throw  new ConnexiteDeliveryException("Il n'existe pas de chemin entre le délivery et son précédent");
                 }
                 commande = new CommandeAjoutLivraison(
                         tournee, carte, vitesse,
