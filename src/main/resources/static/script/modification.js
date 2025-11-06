@@ -591,13 +591,6 @@ function filtreDemande(tournees) {
 // - SINON -> comportement original (appel API /annuler ou /restaurer)
 
 window.annulerModification = async function () {
-    if (modeAjoutActif) {
-        // Annulation d’une étape du workflow d’ajout (local)
-        annulerEtapeAjout();
-        return;
-    }
-
-    // ---- Comportement original (global) ----
     modeSuppressionActif = false;
     try {
         const response = await fetch("http://localhost:8080/api/annuler", {method : "POST"});
@@ -619,13 +612,6 @@ window.annulerModification = async function () {
 };
 
 window.retablirModification = async function () {
-    if (modeAjoutActif) {
-        // Rétablit une étape annulée du workflow d’ajout (local)
-        retablirEtapeAjout();
-        return;
-    }
-
-    // ---- Comportement original (global) ----
     modeSuppressionActif = false;
     try {
         const response = await fetch("http://localhost:8080/api/restaurer", {
