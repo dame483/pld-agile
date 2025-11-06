@@ -363,6 +363,10 @@ async function ajouterLivraison() {
         idPrecedentPickup = null;
         idPrecedentDelivery = null;
         clearTempMarkers();
+        document.getElementById('annulerEtapeAjout').style.display='none';
+        document.getElementById('retablirEtapeAjout').style.display='none';
+        document.getElementById('annulerModification').style.display='inline';
+        document.getElementById('retablirModification').style.display='inline';
 
         etatsAjout.length = 0;
         indexEtatCourant = -1;
@@ -727,11 +731,18 @@ window.activerModeModification = async function (){
         drawTournee(tournee, colors[0], 0);
 
         await updateUIFromEtat();
+        document.getElementById('annulerEtapeAjout').style.display='none';
+        document.getElementById('retablirEtapeAjout').style.display='none';
+
     });
 };
 
 window.activerModeAjout = async function (){
     modeSuppressionActif = false;
+    document.getElementById('annulerEtapeAjout').style.display='inline';
+    document.getElementById('retablirEtapeAjout').style.display='inline';
+    document.getElementById('annulerModification').style.display='none';
+    document.getElementById('retablirModification').style.display='none';
 
     if (!carteData || !window.toutesLesTournees.length) {
         envoyerNotification("Veuillez charger une tournée avant d'ajouter une livraison", "error");
