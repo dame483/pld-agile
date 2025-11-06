@@ -17,14 +17,16 @@ const FACTEUR_BASE_RAYON_PIXEL = 10;     // base pour la détection dynamique de
 
 // Marqueurs temporaires pendant le workflow d'ajout
 const tempMarkers = [];
-function addTempMarker(lat, lng, html, tempId) {
+function addTempMarker(lat, lng, html) {
+    const colorHTML = html.replace(/background:[^;"]*;/, 'background:#FFFFFF;');
+
     const m = L.marker([lat, lng], {
         id: tempId,
         temp: true,
         icon: L.divIcon({
             className: 'temp-marker',
             iconSize: [18, 18],
-            html
+            html: colorHTML
         })
     })
     .addTo(livraisonsLayer)
@@ -212,7 +214,6 @@ async function handleAjoutClick(e) {
             `<div id-noeud="${closest.id}" style="width:18px;height:18px;background:${couleurAjout};
              border:2px solid black;border-radius:3px;"></div>`
         );
-
 
         highlightNode(closest);
         envoyerNotification("Sélectionnez le nœud précédent du Pickup", "success");
@@ -597,13 +598,6 @@ function filtreDemande(tournees) {
 // - SINON -> comportement original (appel API /annuler ou /restaurer)
 
 window.annulerModification = async function () {
-    if (modeAjoutActif) {
-        // Annulation d’une étape du workflow d’ajout (local)
-        annulerEtapeAjout();
-        return;
-    }
-
-    // ---- Comportement original (global) ----
     modeSuppressionActif = false;
     try {
         const response = await fetch("http://localhost:8080/api/annuler", {method : "POST"});
@@ -625,13 +619,6 @@ window.annulerModification = async function () {
 };
 
 window.retablirModification = async function () {
-    if (modeAjoutActif) {
-        // Rétablit une étape annulée du workflow d’ajout (local)
-        retablirEtapeAjout();
-        return;
-    }
-
-    // ---- Comportement original (global) ----
     modeSuppressionActif = false;
     try {
         const response = await fetch("http://localhost:8080/api/restaurer", {
