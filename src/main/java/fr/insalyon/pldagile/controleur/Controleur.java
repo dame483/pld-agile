@@ -1,5 +1,6 @@
 package fr.insalyon.pldagile.controleur;
 
+import fr.insalyon.pldagile.erreurs.exception.ContrainteDePrecedenceException;
 import fr.insalyon.pldagile.erreurs.exception.GestionnaireException;
 import fr.insalyon.pldagile.erreurs.exception.XMLFormatException;
 import fr.insalyon.pldagile.modele.Carte;
@@ -15,7 +16,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import fr.insalyon.pldagile.sortie.TourneeUpload;
 
-import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -27,7 +27,7 @@ import java.util.zip.ZipOutputStream;
 @RestController
 @RequestMapping("/api")
 @CrossOrigin(origins = "*")
-public class Controlleur {
+public class Controleur {
 
     private Etat etatActuelle;
     private Carte carte;
@@ -36,22 +36,22 @@ public class Controlleur {
     private double vitesse = 4.1;
 
 
-    public Controlleur() {
+    public Controleur() {
         this.etatActuelle = new EtatInitial();
         this.historique = new ListeDeCommandes();
     }
 
     @PostMapping("/upload-carte")
-    public ResponseEntity<ApiReponse> loadCarte(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<ApiReponse> chargerCarte(@RequestParam("file") MultipartFile file) {
         try {
-            Carte newCarte = etatActuelle.loadCarte(this, file);
+            Carte newCarte = etatActuelle.chargerCarte(this, file);
 
             if (newCarte != null) {
                 this.carte = newCarte;
                 this.demande = null;
 
                 return ResponseEntity.ok(ApiReponse.succes(( "Carte chargée avec succès"), Map.of(
-                        "etatCourant", getCurrentState().getName(),
+                        "etatCourant", getEtatActuelle().getNom(),
                         "carte", newCarte
                 )));
             } else {
@@ -70,18 +70,18 @@ public class Controlleur {
 
 
     @PostMapping("/upload-demande")
-    public ResponseEntity<ApiReponse> loadDemandeLivraison(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<ApiReponse> chargerDemandeLivraison(@RequestParam("file") MultipartFile file) {
         try {
             if (this.carte == null) {
                 return ResponseEntity.badRequest().body(ApiReponse.erreur("Veuillez d'abord charger une carte avant la demande !"));
             }
 
-            Object result = etatActuelle.loadDemandeLivraison(this, file, this.carte);
+            Object result = etatActuelle.chargerDemandeLivraison(this, file, this.carte);
 
             if (result instanceof DemandeDeLivraison demande) {
-                this.demande = demande; //
+                this.demande = demande;
                 return ResponseEntity.ok(ApiReponse.succes(("Demande chargée avec succès"), Map.of(
-                        "etatCourant", getCurrentState().getName(),
+                        "etatCourant", getEtatActuelle().getNom(),
                         "demande", demande
                 )));
             } else if (result instanceof Exception e) {
@@ -99,10 +99,9 @@ public class Controlleur {
     @PostMapping("/tournee/calculer")
     public ResponseEntity<ApiReponse> calculerTournee(@RequestParam(defaultValue = "1") int nombreLivreurs) {
         try {
-            Object result = etatActuelle.runCalculTournee(this, nombreLivreurs, vitesse);
+            Object result = etatActuelle.lancerCalculTournee(this, nombreLivreurs, vitesse);
 
             if (result instanceof List<?> listeTournees) {
-                // Crée un Map explicite pour le JSON
                 Map<String, Object> response = new HashMap<>();
                 response.put("tournees", listeTournees);
                 return ResponseEntity.ok(ApiReponse.succes("Tournées calculées avec succès",response));
@@ -119,10 +118,6 @@ public class Controlleur {
     @PostMapping("/tournee/feuille-de-route")
     public ResponseEntity<?> creerFeuilleDeRoute() {
         try {
-            if (!(etatActuelle instanceof EtatTourneeCalcule)) {
-                return ResponseEntity.badRequest().body(ApiReponse.erreur("La tournée n'est pas encore calculée."));
-            }
-
             List<Path> fichiers = etatActuelle.creerFeuillesDeRoute(this);
             Path zipPath = Files.createTempFile("feuille-de-route -", ".zip");
             try (ZipOutputStream zos = new ZipOutputStream(Files.newOutputStream(zipPath))) {
@@ -150,13 +145,9 @@ public class Controlleur {
     }
 
     @PostMapping("/tournee/sauvegarde")
-    public ResponseEntity<ApiReponse> saveTournee() {
+    public ResponseEntity<ApiReponse> sauvegarderTournee() {
         try {
-            if (!(etatActuelle instanceof EtatTourneeCalcule)) {
-                return ResponseEntity.badRequest().body(ApiReponse.erreur("La tournée n'est pas encore calculée."));
-            }
-
-            Object result = etatActuelle.saveTournee(this);
+            Object result = etatActuelle.sauvegarderTournee(this);
 
             if (result instanceof String message) {
                 return ResponseEntity.ok(ApiReponse.succes("La tournée a été sauvegardée",Map.of(
@@ -174,13 +165,13 @@ public class Controlleur {
     }
 
     @PostMapping("/upload-tournee")
-    public ResponseEntity<ApiReponse> uploadTournee(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<ApiReponse> chargerTournee(@RequestParam("file") MultipartFile file) {
         try {
-            Object result = etatActuelle.loadTournee(this, file, this.carte);
+            Object result = etatActuelle.chargerTournee(this, file, this.carte);
 
-            if (result instanceof Exception e) {
+           /* if (result instanceof Exception e) {
                 return ResponseEntity.badRequest().body(ApiReponse.erreur("Exception" + e.getMessage()));
-            }
+            }*/
 
             if (result instanceof TourneeUpload upload) {
                 return ResponseEntity.ok(ApiReponse.succes("Tournées chargées avec succès", Map.of(
@@ -197,90 +188,78 @@ public class Controlleur {
         }
     }
 
+
     @PostMapping("/reset")
-    public ResponseEntity<ApiReponse> resetApplication() {
+    public ResponseEntity<ApiReponse> reinitialiserApplication() {
         try {
             this.carte = null;
             this.demande = null;
             this.etatActuelle = new EtatInitial();
 
             return ResponseEntity.ok(ApiReponse.succes("Application réinitialisée avec succès.", Map.of(
-                    "etatCourant", getCurrentState()
+                    "etatCourant", etatActuelle.getNom()
             )));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(ApiReponse.erreur("Erreur lors de la réinitialisation : " + e.getMessage()));
+            return ResponseEntity.badRequest().body(
+                    ApiReponse.erreur("Erreur lors de la réinitialisation : " + e.getMessage())
+            );
         }
     }
 
+
     @GetMapping("/etat")
     public ResponseEntity<ApiReponse> getEtatActuel() {
-        return ResponseEntity.ok(ApiReponse.succes( "Nous sommes dans l'état" + etatActuelle.getName(), Map.of(
-                "etat", etatActuelle.getName(),
+        return ResponseEntity.ok(ApiReponse.succes( "Nous sommes dans l'état" + etatActuelle.getNom(), Map.of(
+                "etat", etatActuelle.getNom(),
                 "carteChargee", carte != null,
                 "demandeChargee", demande != null,
                 "tourneeChargee", etatActuelle instanceof EtatTourneeCalcule
         )));
     }
 
+
     @PostMapping("/tournee/mode-modification")
     public ResponseEntity<ApiReponse> passerEnModeModification(@RequestBody Tournee tourneeCible) {
         try {
-            if (tourneeCible == null)
+            if (tourneeCible == null) {
                 return ResponseEntity.badRequest().body(ApiReponse.erreur("Aucune tournée fournie."));
-
-            if (etatActuelle instanceof EtatTourneeCalcule etatTourneeCalcule) {
-                etatTourneeCalcule.passerEnModeModification(this, tourneeCible);
-                return ResponseEntity.ok(ApiReponse.succes("Passage en mode modification effectué.", Map.of(
-                        "etatCourant", getCurrentState().getName()
-                )));
-            } else {
-                return ResponseEntity.badRequest().body(ApiReponse.erreur("Impossible depuis l'état actuel : " + getCurrentState()));
             }
+
+            etatActuelle.passerEnModeModification(this, tourneeCible);
+
+            return ResponseEntity.ok(ApiReponse.succes("Passage en mode modification effectué.", Map.of(
+                    "etatCourant", getEtatActuelle().getNom()
+            )));
+
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(ApiReponse.erreur("Erreur : " + e.getMessage()));
+            return ResponseEntity.internalServerError().body(ApiReponse.erreur("Erreur : " + e.getMessage()));
         }
     }
-
 
     @PostMapping("/tournee/modifier")
     public ResponseEntity<ApiReponse> modifierTournee(@RequestBody Map<String, Object> body) {
         try {
             String mode = (String) body.get("mode"); // "ajouter" ou "supprimer"
-
             if (mode == null) {
                 return ResponseEntity.badRequest().body(ApiReponse.erreur("Le mode doit être précisé (ajouter/supprimer)."));
             }
 
-            if (!(etatActuelle instanceof EtatModificationTournee etatModif)) {
-                return ResponseEntity.badRequest().body(ApiReponse.erreur("L'application n'est pas en mode modification."));
-            }
+            Tournee tournee = etatActuelle.modifierTournee(this, mode, body, vitesse);
 
-            Map<String, Object> params = new HashMap<>();
-            params.put("idNoeudPickup", ((Number) body.get("idNoeudPickup")).longValue());
-            params.put("idNoeudDelivery", ((Number) body.get("idNoeudDelivery")).longValue());
-
-            if (mode.equalsIgnoreCase("ajouter")) {
-                params.put("idPrecedentPickup", ((Number) body.get("idPrecedentPickup")).longValue());
-                params.put("idPrecedentDelivery", ((Number) body.get("idPrecedentDelivery")).longValue());
-                params.put("dureeEnlevement", ((Number) body.get("dureeEnlevement")).doubleValue());
-                params.put("dureeLivraison", ((Number) body.get("dureeLivraison")).doubleValue());
-            } else if (!mode.equalsIgnoreCase("supprimer")) {
-                return ResponseEntity.badRequest().body(ApiReponse.erreur( "Mode inconnu : " + mode));
-            }
-
-            etatModif.modifierTournee(this, mode, params, vitesse);
-
-            return ResponseEntity.ok(ApiReponse.succes("Opération effectuée : " + mode,Map.of(
-                    "tournee", etatModif.getTournee(),
-                    "etatCourant", getCurrentState().getName()
+            return ResponseEntity.ok(ApiReponse.succes("Opération effectuée : " + mode, Map.of(
+                    "tournee", tournee,
+                    "etatCourant", getEtatActuelle().getNom()
             )));
 
-        } catch (Exception e) {
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(ApiReponse.erreur(e.getMessage()));
+        } catch (ContrainteDePrecedenceException e ) {
             return ResponseEntity.badRequest().body(ApiReponse.erreur(e.getMessage()));
         }
+        catch (Exception e) {
+            return ResponseEntity.internalServerError().body(ApiReponse.erreur(e.getMessage()));
+        }
     }
-
-
 
 
 
@@ -289,7 +268,6 @@ public class Controlleur {
         try {
             this.annulerCommande();
 
-            // Récupère la tournée actuelle après annulation
             Tournee tourneeActuelle = null;
             if (etatActuelle instanceof EtatModificationTournee etatSupp) {
                 tourneeActuelle = etatSupp.getTournee();
@@ -314,7 +292,7 @@ public class Controlleur {
             }
 
             return ResponseEntity.ok(ApiReponse.succes("Rétablissement effectué", Map.of(
-                    "tournee", tourneeActuelle  // ← Retourne l'état après restauration
+                    "tournee", tourneeActuelle
             )));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(ApiReponse.erreur(e.getMessage()));
@@ -324,6 +302,7 @@ public class Controlleur {
     @PostMapping("/sauvegarder-modifications")
     public ResponseEntity<ApiReponse> sauvegarderModifications(@RequestBody ModificationsDTO dto) {
         try {
+            this.demande = dto.getDemande();
             etatActuelle.sauvegarderModification(this, dto.getDemande(), dto.getTournees());
             return ResponseEntity.ok(ApiReponse.succes("Modifications sauvegardées avec succès", null));
         } catch (Exception e) {
@@ -343,11 +322,11 @@ public class Controlleur {
         historique.restaurer();
     }
 
-    public void setCurrentState(Etat etat) {
+    public void setEtatActuelle(Etat etat) {
         this.etatActuelle = etat;
     }
 
-    public Etat getCurrentState() {
+    public Etat getEtatActuelle() {
         return etatActuelle;
     }
 

@@ -12,7 +12,7 @@ var selectedIndex = 0;
 let modeSuppressionActif = false;
 let idNoeudPickup = null;
 let idNoeudDelivery = null;
-
+window.tourneeBaseline = null;
 
 const colors=[
     '#e6194b','#3cb44b','#ffe119','#4363d8','#f58231','#911eb4','#46f0f0',
@@ -70,7 +70,7 @@ function formatHoraireFourchette(horaire, deltaMinutes = 30) {
     return `${format(min)}-${format(max)}`;
 }
 
-function envoyerNotification(message, type = "success", duration = 3000) {
+function envoyerNotification(message, type = "success", duration = 6000) {
     const notification = document.getElementById("notification");
     notification.textContent = message;
     notification.className = "notification " + type;
@@ -476,7 +476,7 @@ function drawTourneeTable(tournee){
 
                 let horaire = "";
                 if (noeud === premierNoeud && noeud.type === "ENTREPOT") {
-                    horaire = noeud.horaireDepart || "-";
+                    horaire = noeud.horaireDepart ? noeud.horaireDepart.slice(0, 5) : "-";
                 } else {
                     horaire = formatHoraireFourchette(noeud.horaireArrivee) || "-";
                 }
@@ -750,7 +750,6 @@ async function updateUIFromEtat() {
         const res = await fetch("http://localhost:8080/api/etat");
         if(!res.ok) return;
         const data = await res.json();
-        console.log(data); //DEBUG
 
         document.getElementById('welcome-message').style.display = "none";
         document.getElementById('carte-chargee-message').style.display = "none";
@@ -761,10 +760,13 @@ async function updateUIFromEtat() {
         document.getElementById('calcul-tournee').style.display = "none";
         document.getElementById('fileNameCarte').style.display = "none";
         document.getElementById('fileNameDemande').style.display = "none";
+        document.getElementById('xmlCarte').disabled = false;
         document.getElementById('xmlDemande').disabled = false;
         document.getElementById('inputTournee').disabled = false;
         document.querySelector('.navbar-item img[alt="Ajouter une demande de livraison"]').style.filter = "";
-        document.querySelector('.navbar-item img[alt="Ajouter une carte"]').style.filter = "";
+        document.querySelector('.navbar-item img[alt="Charger une carte"]').src = "tools/map-logo.png";
+        document.querySelector('.navbar-item img[alt="Charger une carte"]').style.cursor = "pointer";
+        document.querySelector('.navbar-item img[alt="Charger une carte"]').style.filter = "";
         document.querySelector('.navbar-item img[alt="Ajouter une demande de livraison"]').src = "tools/colis-logo-white.png";
         document.querySelector('.navbar-item img[alt="Ajouter une demande de livraison"]').style.cursor = "pointer";
         document.querySelector('.navbar-item img[alt="Charger une tournée"]').src = "tools/open-logo.png";
@@ -776,7 +778,7 @@ async function updateUIFromEtat() {
         }
         if(data.data.etat === "Etat Initial") {
             document.getElementById('welcome-message').style.display = "flex";
-            document.querySelector('.navbar-item img[alt="Ajouter une carte"]').style.filter = "drop-shadow(0 0 10px rgba(225,225,0,1))";
+            document.querySelector('.navbar-item img[alt="Charger une carte"]').style.filter = "drop-shadow(0 0 10px rgba(225,225,0,1))";
             document.querySelector('.navbar-item img[alt="Ajouter une demande de livraison"]').src = "tools/colis-logo-gray.png";
             document.querySelector('.navbar-item img[alt="Ajouter une demande de livraison"]').style.cursor = "not-allowed";
             document.querySelector('.navbar-item img[alt="Charger une tournée"]').style.cursor = "not-allowed";
@@ -789,6 +791,15 @@ async function updateUIFromEtat() {
         } else if (data.data.etat === "ModeModificationTournee"){
             document.getElementById('tableauTournees').style.display = "inline";
             document.getElementById('tournee-modifier').style.display = "inline";
+            document.querySelector('.navbar-item img[alt="Ajouter une demande de livraison"]').src = "tools/colis-logo-gray.png";
+            document.querySelector('.navbar-item img[alt="Ajouter une demande de livraison"]').style.cursor = "not-allowed";
+            document.querySelector('.navbar-item img[alt="Charger une tournée"]').style.cursor = "not-allowed";
+            document.querySelector('.navbar-item img[alt="Charger une tournée"]').src = "tools/open-logo-gray.png";
+            document.querySelector('.navbar-item img[alt="Charger une carte"]').style.cursor = "not-allowed";
+            document.querySelector('.navbar-item img[alt="Charger une carte"]').src = "tools/map-logo-gray.png";
+            document.getElementById('xmlDemande').disabled = true;
+            document.getElementById('inputTournee').disabled = true;
+            document.getElementById('xmlCarte').disabled = true;
         } else if(data.data.tourneeChargee) {
             document.getElementById('tournee-chargee').style.display = "inline";
             document.getElementById('tableauTournees').style.display = "inline";
@@ -814,7 +825,7 @@ async function updateUIFromEtat() {
 document.addEventListener('DOMContentLoaded',async () => {
     await updateUIFromEtat();
 
-    document.querySelector('.navbar-item img[alt="Ajouter une carte"]').addEventListener('click', () => {
+    document.querySelector('.navbar-item img[alt="Charger une carte"]').addEventListener('click', () => {
         document.getElementById('xmlCarte').click();
     });
 
@@ -869,6 +880,7 @@ document.addEventListener('DOMContentLoaded',async () => {
                     window.directionNumbersLayer = null;
                     window.animPaths = {};
                     window.toutesLesTournees = [];
+                    modeSuppressionActif = false;
 
                     await updateUIFromEtat();
                 })
@@ -885,19 +897,6 @@ document.addEventListener('DOMContentLoaded',async () => {
 
     document.getElementById('sauvegarderTournee').addEventListener('click', () => {
         sauvegarderTournee();
-    });
-
-    document.getElementById('modifierTournee').addEventListener('click', () => {
-        const tournee = window.toutesLesTournees[selectedIndex];
-        fetch("http://localhost:8080/api/tournee/mode-modification", {method: "POST", headers: {"Content-Type": "application/json"},body: JSON.stringify(tournee)})
-            .then(response => response.json())
-            .then(async data => {
-                resetTournee();
-                drawTourneeNodes(tournee);
-                drawTournee(tournee, colors[0], 0)
-
-                await updateUIFromEtat();
-            });
     });
 
     document.querySelector('.navbar-item img[alt="Charger une tournée"]').addEventListener("click", () => {
@@ -934,6 +933,7 @@ document.addEventListener('DOMContentLoaded',async () => {
                 window.toutesLesTournees = data.data.tournees || [];
                 demandeData = data.data.demande ||[];
 
+                drawEntrepot(demandeData.entrepot);
                 drawLivraisons(demandeData);
                 window.toutesLesTournees.forEach((t, i) => {
                     const color = colors[i % colors.length];
@@ -962,50 +962,17 @@ document.addEventListener('DOMContentLoaded',async () => {
         await updateUIFromEtat();
     });
 
-    document.getElementById('modeSupression').addEventListener("click", () => {
-        if (!modeSuppressionActif) {
-            modeSuppressionActif = true;
-            idNoeudPickup = null;
-            idNoeudDelivery = null;
-            envoyerNotification("Mode suppression activé : cliquez sur un point Pickup ou Livraison à supprimer.","success");
-        }
-    });
+    document.getElementById('modifierTournee').addEventListener('click', activerModeModification);
 
-    document.getElementById('sauvegarderModification').addEventListener("click", async () => {
-        try {
-            const body = {
-                demande: demandeData,
-                tournees: window.toutesLesTournees
-            };
-            const response = await fetch("http://localhost:8080/api/sauvegarder-modifications", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(body)
-            });
+    document.getElementById('modeAjout').addEventListener("click", activerModeAjout);
 
-            const data = await response.json();
-            console.log(data); //DEBUG
-            if (data.success) {
-                console.log("Modifications sauvegardées !");
-                envoyerNotification("Modifications sauvegardées avec succès", "success");
-                resetTournee();
-                filtreDemande(window.toutesLesTournees); //actualise demandeData avec les noeuds des tournees
-                drawLivraisons(demandeData);
-                window.toutesLesTournees.forEach((t, i) => {
-                    const color = colors[i % colors.length];
-                    drawTournee(t, color, i);
-                });
-                drawTourneeTable(window.toutesLesTournees[0])
-                await updateUIFromEtat();
-            } else{
-                console.error("Erreur serveur :", data.message);
-                envoyerNotification(data.message, "error");
-            }
-        }
-        catch (err){
-            console.error("Erreur sauvegarde :", err);
-            envoyerNotification("Erreur réseau lors de la sauvegarde des modifications", "error");
-        }
-    });
+    document.getElementById('modeSupression').addEventListener("click", activerModeSuppression);
+
+    document.getElementById('annulerModification').addEventListener("click", annulerModification);
+
+    document.getElementById("retablirModification").addEventListener("click", retablirModification);
+
+    document.getElementById('sauvegarderModification').addEventListener("click", sauvegarderModification);
+
 });
 
