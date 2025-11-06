@@ -476,7 +476,7 @@ function drawTourneeTable(tournee){
 
                 let horaire = "";
                 if (noeud === premierNoeud && noeud.type === "ENTREPOT") {
-                    horaire = noeud.horaireDepart || "-";
+                    horaire = noeud.horaireDepart ? noeud.horaireDepart.slice(0, 5) : "-";
                 } else {
                     horaire = formatHoraireFourchette(noeud.horaireArrivee) || "-";
                 }

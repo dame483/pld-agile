@@ -398,7 +398,7 @@ function majTableauTournee(nouvelleTournee, ancienneTournee) {
                 let key = noeud.id;
 
                 if (premier && noeud.type === "ENTREPOT") {
-                    horaire = noeud.horaireDepart || "-";
+                    horaire = noeud.horaireDepart ? noeud.horaireDepart.slice(0, 5) : "-";
                     key = `${noeud.id}_depart`;
                     premier = false;
                 }
@@ -462,11 +462,11 @@ function majTableauTournee(nouvelleTournee, ancienneTournee) {
                 let nouveauHoraire = "-";
                 let nouveauHoraireExact = "-";
                 if (noeud === premierNoeud && noeud.type === "ENTREPOT") {
-                    nouveauHoraire = noeud.horaireDepart || "-";
-                    nouveauHoraireExact = noeud.horaireDepart || "-";
+                    nouveauHoraire = noeud.horaireDepart ? noeud.horaireDepart.slice(0, 5) : "-";
+                    nouveauHoraireExact = noeud.horaireDepart ? noeud.horaireDepart.slice(0, 5) : "-";
                 } else {
                     nouveauHoraire = formatHoraireFourchette(noeud.horaireArrivee) || "-";
-                    nouveauHoraireExact = noeud.horaireArrivee || "-";
+                    nouveauHoraireExact = noeud.horaireArrivee ? noeud.horaireArrivee.slice(0, 5) : "-";
                 }
 
                 const styleDiff = (ancienHoraire !== "-" && nouveauHoraire !== ancienHoraire)
