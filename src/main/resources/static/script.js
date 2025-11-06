@@ -796,6 +796,22 @@ async function updateUIFromEtat() {
 }
 
 // GESTION DES CLICS
+document.addEventListener("DOMContentLoaded", () => {
+    const btnAnnulerEtape = document.getElementById("annulerEtapeAjout");
+    const btnRetablirEtape = document.getElementById("retablirEtapeAjout");
+
+    if (btnAnnulerEtape) {
+        btnAnnulerEtape.addEventListener("click", () => {
+            window.annulerEtapeAjout();
+        });
+    }
+
+    if (btnRetablirEtape) {
+        btnRetablirEtape.addEventListener("click", () => {
+            window.retablirEtapeAjout();
+        });
+    }
+});
 
 document.addEventListener('DOMContentLoaded',async () => {
     await updateUIFromEtat();
