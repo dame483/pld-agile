@@ -377,7 +377,6 @@ async function ajouterLivraison() {
             }
             // 2) Mettre à jour l'UI comme avant
             resetTournee();
-            clearTempMarkers();
 
             window.toutesLesTournees[selectedIndex] = nouvelleTournee;
 
@@ -399,6 +398,7 @@ async function ajouterLivraison() {
         idNoeudDeliveryAjout = null;
         idPrecedentPickup = null;
         idPrecedentDelivery = null;
+        clearTempMarkers();
 
         etatsAjout.length = 0;
         indexEtatCourant = -1;
