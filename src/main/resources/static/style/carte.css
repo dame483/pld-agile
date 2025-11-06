@@ -1,0 +1,64 @@
+#map {
+    width: 100%;
+    max-width: 1000px;
+    height: 500px;
+    margin: 20px auto;
+    border: 1px solid #ccc;
+    display: none;
+}
+
+.legend {
+    background: rgba(255,255,255,0.85);
+    border-radius: 6px;
+    box-shadow: 0 0 5px rgba(0,0,0,0.3);
+    padding: 6px;
+    line-height: 1.2;
+    font-size: 11px;
+    width: 150px;
+}
+.legend div {
+    display: flex;
+    align-items: center;
+    margin-bottom: 4px;
+    color: black;
+}
+
+.legend-symbol {
+    width: 16px;
+    height: 16px;
+    margin-right: 4px;
+    display: inline-block;
+}
+
+#map-container {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+    height: 500px;
+}
+
+#map {
+    flex: 3;
+    height: 100%;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+}
+
+#animationControl {
+    background: #1B1E29;
+    border-radius: 10px;
+    box-shadow: 0 0 5px rgb(255, 255, 255);
+    padding: 10px;
+    font-size: 13px;
+    text-align: center;
+    color: white;
+    margin-bottom: 10px;
+    margin-top : 20px;
+    width: 60%;
+}
+
+#tourneeSelect {
+    width:80%;
+    margin-bottom:6px;
+}
