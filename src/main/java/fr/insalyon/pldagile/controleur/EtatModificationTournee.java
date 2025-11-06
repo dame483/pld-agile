@@ -104,17 +104,25 @@ public class EtatModificationTournee implements Etat {
                 double dureeLivraison = ((Number) body.get("dureeLivraison")).doubleValue();
 
                 ModificationTournee modificationTournee = new ModificationTournee(new CalculChemins(carte), vitesse);
-                boolean respectContrainte = modificationTournee.contrainteDePrecedence(tournee, idDelivery, idPrecedentDelivery, idPrecedentPickup);
+                boolean respectContrainte = modificationTournee.contrainteDePrecedence(tournee, idDelivery, idPrecedentDelivery, idPrecedentPickup, idPickup);
                 boolean connexitePickup = modificationTournee.verifierConnexite(idPickup, idPrecedentPickup);
                 boolean connexiteDelivery = modificationTournee.verifierConnexite(idDelivery, idPrecedentDelivery);
+                boolean connexitePickupSuivant = modificationTournee.verifierConnexiteNoeudSuivant(tournee, idPickup, idPrecedentPickup);
+                boolean connexiteDeliverySuivant = modificationTournee.verifierConnexiteNoeudSuivant(tournee, idDelivery, idPrecedentDelivery);
                 if (!respectContrainte) {
                     throw new ContrainteDePrecedenceException("La contrainte de précédence n'est pas respectée pour le delivery");
                 }
-                if (!connexitePickup) {
+                else if (!connexitePickup) {
                     throw new ConnexitePickupException("Il n'existe pas de chemins entre le pickup et son précédent");
                 }
-                if (!connexiteDelivery) {
+                else if (!connexiteDelivery) {
                     throw  new ConnexiteDeliveryException("Il n'existe pas de chemin entre le délivery et son précédent");
+                }
+                else if (!connexitePickupSuivant) {
+                    throw new ConnexitePickupException("Il n'existe pas de chemins entre le pickup et son suivant");
+                }
+                else if (!connexiteDeliverySuivant) {
+                    throw  new ConnexiteDeliveryException("Il n'existe pas de chemin entre le délivery et son suivant");
                 }
                 commande = new CommandeAjoutLivraison(
                         tournee, carte, vitesse,
