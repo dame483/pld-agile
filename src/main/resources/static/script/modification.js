@@ -135,50 +135,6 @@ function highlightNode(noeud) {
 // (SUPPRIMÉ) === Affichage d’un message utilisateur ===
 // -> Remplacé par envoyerNotification(message, type = "success", duration = 3000)
 
-// === Activation du mode ajout ===
-function activerModeAjout() {
-    if (!carteData || !window.toutesLesTournees.length) {
-        envoyerNotification("Veuillez charger une tournée avant d'ajouter une livraison", "error");
-        return;
-    }
-
-    if (!modeAjoutActif) {
-        modeAjoutActif = true;
-        idNoeudPickupAjout = null;
-        idNoeudDeliveryAjout = null;
-        idPrecedentPickup = null;
-        idPrecedentDelivery = null;
-        clearTempMarkers();
-        desactiverPopups();
-
-        // clic direct sur les marqueurs existants
-        if (livraisonsLayer) {
-            livraisonsLayer.eachLayer(layer => {
-                layer.on("click", e => {
-                    if (modeAjoutActif) {
-                        const nodeId = e.target.options.id;
-                        const noeud = carteData.noeuds[nodeId];
-                        if (noeud) handleAjoutClick({ latlng: e.latlng, noeudDirect: noeud });
-                    }
-                });
-            });
-        }
-        if (entrepotLayer) {
-            entrepotLayer.eachLayer(layer => {
-                layer.on("click", e => {
-                    if (modeAjoutActif) {
-                        const nodeId = e.target.options.id;
-                        const noeud = carteData.noeuds[nodeId];
-                        if (noeud) handleAjoutClick({ latlng: e.latlng, noeudDirect: noeud });
-                    }
-                });
-            });
-        }
-
-        envoyerNotification("Cliquez sur le nœud Pickup à ajouter", "success");
-    }
-}
-
 // === Clic sur la carte ou sur un marqueur ===
 async function handleAjoutClick(e) {
     if (!modeAjoutActif || !carteData) return;
@@ -286,15 +242,48 @@ async function ajouterLivraison() {
             // >>>>>>>>>>>>>>>>>>>>>>>>>> AJOUT CLE <<<<<<<<<<<<<<<<<<<<<<<<<<
             // 1) Synchroniser la demande avec la nouvelle livraison
             if (demandeData) {
+                // Initialise les tableaux si absents
                 if (!demandeData.livraisons) demandeData.livraisons = [];
+                if (!demandeData.noeudsDePassage) demandeData.noeudsDePassage = [];
+
+                // Vérifie si la livraison existe déjà
                 const existeDeja = demandeData.livraisons.some(l =>
                     l?.adresseEnlevement?.id === pickupId || l?.adresseLivraison?.id === deliveryId
                 );
+
                 if (!existeDeja) {
-                    demandeData.livraisons.push({
-                        adresseEnlevement: { id: pickupId },
-                        adresseLivraison:  { id: deliveryId }
-                    });
+                    const nouvelleLivraison = {
+                        adresseEnlevement: {
+                            id: pickupId,
+                            latitude: null,
+                            longitude: null,
+                            type: 'PICKUP',
+                            duree: 500,
+                            horaireArrivee: null,
+                            horaireDepart: null
+                        },
+                        adresseLivraison: {
+                            id: deliveryId,
+                            latitude: null,
+                            longitude: null,
+                            type: 'DELIVERY',
+                            duree: 500,
+                            horaireArrivee: null,
+                            horaireDepart: null
+                        }
+                    };
+
+                    demandeData.livraisons.push(nouvelleLivraison);
+
+                    const ajouterNoeud = (adresse) => {
+                        const exists = demandeData.noeudsDePassage.some(n => n.id === adresse.id);
+                        if (!exists) {
+                            demandeData.noeudsDePassage.push({ ...adresse });
+                        }
+                    };
+
+                    ajouterNoeud(nouvelleLivraison.adresseEnlevement);
+                    ajouterNoeud(nouvelleLivraison.adresseLivraison);
                 }
             }
             // 2) Mettre à jour l'UI comme avant
@@ -648,7 +637,46 @@ window.activerModeModification = async function (){
         });
 }
 
-//window.activerModeAjout = async function (){
-//    modeSuppressionActif = false;
-//    envoyerNotification("Oups .. Le mode ajout n'est pas encore implementé","error");
-//}
+window.activerModeAjout = async function (){
+    modeSuppressionActif = false;
+        if (!carteData || !window.toutesLesTournees.length) {
+            envoyerNotification("Veuillez charger une tournée avant d'ajouter une livraison", "error");
+            return;
+        }
+
+        if (!modeAjoutActif) {
+            modeAjoutActif = true;
+            idNoeudPickupAjout = null;
+            idNoeudDeliveryAjout = null;
+            idPrecedentPickup = null;
+            idPrecedentDelivery = null;
+            clearTempMarkers();
+            desactiverPopups();
+
+            // clic direct sur les marqueurs existants
+            if (livraisonsLayer) {
+                livraisonsLayer.eachLayer(layer => {
+                    layer.on("click", e => {
+                        if (modeAjoutActif) {
+                            const nodeId = e.target.options.id;
+                            const noeud = carteData.noeuds[nodeId];
+                            if (noeud) handleAjoutClick({ latlng: e.latlng, noeudDirect: noeud });
+                        }
+                    });
+                });
+            }
+            if (entrepotLayer) {
+                entrepotLayer.eachLayer(layer => {
+                    layer.on("click", e => {
+                        if (modeAjoutActif) {
+                            const nodeId = e.target.options.id;
+                            const noeud = carteData.noeuds[nodeId];
+                            if (noeud) handleAjoutClick({ latlng: e.latlng, noeudDirect: noeud });
+                        }
+                    });
+                });
+            }
+
+            envoyerNotification("Cliquez sur le nœud Pickup à ajouter", "success");
+        }
+ }
