@@ -70,7 +70,6 @@ public class Tournee {
     }
 
 
-
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof Tournee tournee)) return false;
@@ -88,4 +87,6 @@ public class Tournee {
     public String toString() {
         return String.format("Tournee{livreur=%s, dureeTotale=%.2f, chemins=%s}", livreur, dureeTotale, chemins);
     }
+
+
 }

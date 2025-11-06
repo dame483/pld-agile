@@ -36,7 +36,7 @@ public class ModificationControleurTest {
         assertNotNull(demande, "La demande doit être chargée");
 
         LocalTime heureDepart = demande.getEntrepot().getHoraireDepart();
-        double vitesse = 4.16;
+        double vitesse = 4.1;
         int nombreLivreurs = 1;
 
         CalculTournees calculTournees = new CalculTournees(carte, demande, vitesse, nombreLivreurs, heureDepart);
@@ -49,6 +49,118 @@ public class ModificationControleurTest {
 
         EtatModificationTournee etat = new EtatModificationTournee(carte, tournee);
         controleur.setCurrentState(etat);
+    }
+
+
+    @Test
+    void testAjoutAnnulationRestaurationSurMemeTournee() throws Exception {
+        EtatModificationTournee etat = (EtatModificationTournee) controleur.getCurrentState();
+        Tournee tourneeEtat = etat.getTournee();
+
+        // Vérifie que l’état référence bien la même tournée
+        assertSame(tournee, tourneeEtat, "L’état doit référencer la même tournée que le test.");
+
+        // Sauvegarde des chemins initiaux
+        List<Chemin> cheminsAvant = new ArrayList<>(tournee.getChemins().stream()
+                .map(Chemin::copieProfonde)
+                .toList());
+        int cheminsAvantLongueur = tournee.getChemins().size();
+
+        afficherTournee(tournee);
+
+        // --- Ajout ---
+        System.out.println("---------------AJOUT--------------");
+        Map<String, Object> body = new HashMap<>();
+        body.put("idNoeudPickup", 459797860L);   // Id fictif à ajouter
+        body.put("idNoeudDelivery", 55475018L);
+        body.put("idPrecedentPickup", 208769457L);   // Id nœud avant lequel on insère
+        body.put("idPrecedentDelivery", 1679901320L);
+        body.put("dureeEnlevement", 300.0);  // durée fictive en secondes
+        body.put("dureeLivraison", 600.0);
+
+        etat.modifierTournee(controleur, "ajouter", body, 4.1);
+
+        List<Chemin> cheminsApresAjout = new ArrayList<>(tournee.getChemins().stream()
+                .map(Chemin::copieProfonde)
+                .toList());
+        int cheminsApresAjoutLongueur = tournee.getChemins().size();
+        assertTrue(cheminsApresAjoutLongueur > cheminsAvantLongueur, "La tournée doit avoir gagné des chemins après ajout.");
+        afficherTournee(tournee);
+
+        // --- Annulation 1 ---
+        System.out.println("---------------ANNULATION --------------");
+        controleur.annulerCommande();
+        List<Chemin> cheminsApresAnnulation1 = new ArrayList<>(tournee.getChemins().stream()
+                .map(Chemin::copieProfonde)
+                .toList());
+        assertEquals(cheminsAvant, cheminsApresAnnulation1, "Après annulation, la tournée doit revenir à son état initial.");
+        afficherTournee(tournee);
+
+
+        // --- Restauration 1 ---
+        System.out.println("---------------RESTAURATION --------------");
+        controleur.restaurerCommande();
+        List<Chemin> cheminsApresRestauration1 = new ArrayList<>(tournee.getChemins().stream()
+                .map(Chemin::copieProfonde)
+                .toList());
+        assertEquals(cheminsApresAjout, cheminsApresRestauration1, "Après restauration, l'ajout doit être réappliqué.");
+        afficherTournee(tournee);
+
+        // --- Annulation 1 ---
+        System.out.println("---------------ANNULATION 2--------------");
+        controleur.annulerCommande();
+        List<Chemin> cheminsApresAnnulation2 = new ArrayList<>(tournee.getChemins().stream()
+                .map(Chemin::copieProfonde)
+                .toList());
+        assertEquals(cheminsAvant, cheminsApresAnnulation2, "Après annulation, la tournée doit revenir à son état initial.");
+        afficherTournee(tournee);
+
+        // --- Restauration 1 ---
+        System.out.println("---------------RESTAURATION 2--------------");
+        controleur.restaurerCommande();
+        List<Chemin> cheminsApresRestauration2 = new ArrayList<>(tournee.getChemins().stream()
+                .map(Chemin::copieProfonde)
+                .toList());
+        assertEquals(cheminsApresAjout, cheminsApresRestauration2, "Après restauration, l'ajout doit être réappliqué.");
+        afficherTournee(tournee);
+
+
+        System.out.println("---------------AJOUT NOEUD 2--------------");
+        Map<String, Object> body2 = new HashMap<>();
+        body2.put("idNoeudPickup", 208769039L);   // Id fictif à ajouter
+        body2.put("idNoeudDelivery", 25173820L);
+        body2.put("idPrecedentPickup", 208769457L);   // Id nœud avant lequel on insère
+        body2.put("idPrecedentDelivery", 55475018L);
+        body2.put("dureeEnlevement", 300.0);  // durée fictive en secondes
+        body2.put("dureeLivraison", 600.0);
+
+
+        etat.modifierTournee(controleur, "ajouter", body2, 4.1);
+
+
+        afficherTournee(tournee);
+
+        // --- ANNULATION 1 ---
+        System.out.println("---------------ANNULATION 1--------------");
+        controleur.annulerCommande();
+        afficherTournee(tournee);
+
+        // --- ANNULATION 2 ---
+        System.out.println("---------------ANNULATION 2--------------");
+        controleur.annulerCommande();  // Reviens à l’état avant l’ajout initial
+        afficherTournee(tournee);
+
+        // --- RESTAURATION 1 ---
+        System.out.println("---------------RESTAURATION 1--------------");
+        controleur.restaurerCommande();
+        afficherTournee(tournee);
+
+        // --- RESTAURATION 2 ---
+        System.out.println("---------------RESTAURATION 2--------------");
+        controleur.restaurerCommande();
+        afficherTournee(tournee);
+
+
     }
 
 
@@ -69,8 +181,6 @@ public class ModificationControleurTest {
 
         afficherTournee(tournee);
 
-
-
         // --- Suppression ---
         System.out.print("\n");
         System.out.println("---------------SUPPRESSION--------------");
@@ -88,13 +198,12 @@ public class ModificationControleurTest {
         assertTrue(cheminsApresSuppressionLongueur < cheminsAvantLongueur, "La tournée doit avoir perdu des chemins après suppression.");
         afficherTournee(tournee);
 
-
         // --- Annulation ---
         System.out.print("\n");
         System.out.println("---------------ANNULATION--------------");
         controleur.annulerCommande();
 
-        List<Chemin> cheminsApresAnnulation= new ArrayList<>(tournee.getChemins().stream()
+        List<Chemin> cheminsApresAnnulation = new ArrayList<>(tournee.getChemins().stream()
                 .map(Chemin::copieProfonde)
                 .toList());
 
@@ -109,7 +218,7 @@ public class ModificationControleurTest {
         System.out.println("---------------RESTAURATION--------------");
         controleur.restaurerCommande();
 
-        List<Chemin> cheminsApresRestauration= new ArrayList<>(tournee.getChemins().stream()
+        List<Chemin> cheminsApresRestauration = new ArrayList<>(tournee.getChemins().stream()
                 .map(Chemin::copieProfonde)
                 .toList());
 
@@ -117,9 +226,93 @@ public class ModificationControleurTest {
         assertTrue(cheminsApresRestaurationLongueur < cheminsAvantLongueur, "Après restauration, la suppression doit être réappliquée.");
         assertEquals(cheminsApresSuppression, cheminsApresRestauration);
 
+        afficherTournee(tournee);
+
+        // --- Annulation 2 ---
+        System.out.print("\n");
+        System.out.println("---------------ANNULATION 2--------------");
+        controleur.annulerCommande();
+
+        List<Chemin> cheminsApresDeuxiemeAnnulation = new ArrayList<>(tournee.getChemins().stream()
+                .map(Chemin::copieProfonde)
+                .toList());
+
+        int cheminsApresDeuxiemeAnnulationLongueur = tournee.getChemins().size();
+        assertEquals(cheminsAvantLongueur, cheminsApresDeuxiemeAnnulationLongueur, "Après la 2e annulation, la tournée doit revenir à l’état initial.");
+        assertEquals(cheminsApresDeuxiemeAnnulation, cheminsAvant);
+
+        afficherTournee(tournee);
+
+        // --- Restauration 2 ---
+        System.out.print("\n");
+        System.out.println("---------------RESTAURATION 2--------------");
+        controleur.restaurerCommande();
+
+        List<Chemin> cheminsApresDeuxiemeRestauration = new ArrayList<>(tournee.getChemins().stream()
+                .map(Chemin::copieProfonde)
+                .toList());
+
+        int cheminsApresDeuxiemeRestaurationLongueur = tournee.getChemins().size();
+        assertTrue(cheminsApresDeuxiemeRestaurationLongueur < cheminsAvantLongueur, "Après la 2e restauration, la suppression doit être réappliquée.");
+        assertEquals(cheminsApresSuppression, cheminsApresDeuxiemeRestauration);
+
         // Vérifie que toutes les opérations ont agi sur la même instance
         assertSame(tournee, etat.getTournee(), "Même instance de tournée utilisée tout au long du test.");
         afficherTournee(tournee);
+
+        System.out.println("---------------SUPPRESSION NOEUD 2--------------");
+        Map<String, Object> body2= new HashMap<>();
+        body2.put("idNoeudPickup", 208769120L);
+        body2.put("idNoeudDelivery", 25336179L);
+
+        etat.modifierTournee(controleur, "supprimer", body2, 4.1);
+
+        List<Chemin> cheminsApresSuppression2 = new ArrayList<>(tournee.getChemins().stream()
+                .map(Chemin::copieProfonde)
+                .toList());
+
+        int cheminsApresSuppressionLongueur2 = tournee.getChemins().size();
+        assertTrue(cheminsApresSuppressionLongueur2 < cheminsAvantLongueur, "La tournée doit avoir perdu des chemins après suppression.");
+        afficherTournee(tournee);
+
+        // --- Annulation 1 ---
+        System.out.print("\n");
+        System.out.println("---------------ANNULATION 1--------------");
+        controleur.annulerCommande();
+
+        List<Chemin> cheminsApresAnnulation1 = new ArrayList<>(tournee.getChemins().stream()
+                .map(Chemin::copieProfonde)
+                .toList());
+
+        //assertEquals(cheminsAvant, cheminsApresAnnulation1, "Après 1ère annulation, la tournée doit revenir à son état initial.");
+        afficherTournee(tournee);
+
+        // --- Annulation 2 ---
+        System.out.print("\n");
+        System.out.println("---------------ANNULATION 2--------------");
+        controleur.annulerCommande();
+
+        List<Chemin> cheminsApresAnnulation2 = new ArrayList<>(tournee.getChemins().stream()
+                .map(Chemin::copieProfonde)
+                .toList());
+
+       // assertEquals(cheminsAvant, cheminsApresAnnulation2, "Après 2e annulation, la tournée doit encore être à son état initial.");
+        afficherTournee(tournee);
+
+        // --- Restauration ---
+        System.out.print("\n");
+        System.out.println("---------------RESTAURATION--------------");
+        controleur.restaurerCommande();
+
+        List<Chemin> cheminsApresRestauration2 = new ArrayList<>(tournee.getChemins().stream()
+                .map(Chemin::copieProfonde)
+                .toList());
+
+       // assertEquals(cheminsApresSuppression2, cheminsApresRestauration2, "Après restauration, la suppression doit être réappliquée.");
+        afficherTournee(tournee);
+
+        // Vérifie la cohérence de l’instance
+       // assertSame(tournee, etat.getTournee(), "Même instance de tournée utilisée tout au long du test.");
     }
 
 
@@ -195,7 +388,7 @@ public class ModificationControleurTest {
 
 
     @Test
-    void testAjoutAnnulationRestaurationSurMemeTournee() throws Exception {
+    void testAjoutAnnulationRestaurationSurMemeTournee2() throws Exception {
         EtatModificationTournee etat = (EtatModificationTournee) controleur.getCurrentState();
         Tournee tourneeEtat = etat.getTournee();
 
@@ -345,11 +538,6 @@ public class ModificationControleurTest {
         // Vérifie que toutes les opérations ont agi sur la même instance
         assertSame(tournee, etat.getTournee(), "Même instance de tournée utilisée tout au long du test.");
     }
-
-
-
-
-
 
 
 
