@@ -4,6 +4,7 @@ import fr.insalyon.pldagile.modele.*;
 
 import java.lang.reflect.Type;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ModificationTournee {
@@ -179,6 +180,21 @@ public class ModificationTournee {
         double longitude = noeudAAjouter.getLongitude();
         NoeudDePassage noeudDePassageDeliveryAAjouter = new NoeudDePassage(id, latitude, longitude, NoeudDePassage.TypeNoeud.DELIVERY, dureeLivraison);
         return noeudDePassageDeliveryAAjouter;
+    }
+
+    public boolean contrainteDePrecedence(Tournee tournee, long idDelivery, long idNoeudPrecedentDelivery, long idNoeudPrecedentPickup) {
+        List<Long> idsVisites = new ArrayList<>();
+        for (Chemin chemin : tournee.getChemins()) {
+            idsVisites.add(chemin.getNoeudDePassageDepart().getId());
+            if ((chemin.getNoeudDePassageArrivee().getId() == idNoeudPrecedentPickup)) {
+                idsVisites.add(idNoeudPrecedentPickup);
+                break;
+            }
+        }
+        if (idsVisites.contains(idNoeudPrecedentDelivery) || idsVisites.contains(idDelivery)) {
+            return false;
+        }
+        return true;
     }
 
 }

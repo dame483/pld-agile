@@ -1,5 +1,6 @@
 package fr.insalyon.pldagile.controleur;
 
+import fr.insalyon.pldagile.erreurs.exception.ContrainteDePrecedenceException;
 import fr.insalyon.pldagile.erreurs.exception.GestionnaireException;
 import fr.insalyon.pldagile.erreurs.exception.XMLFormatException;
 import fr.insalyon.pldagile.modele.Carte;
@@ -235,7 +236,6 @@ public class Controleur {
         }
     }
 
-
     @PostMapping("/tournee/modifier")
     public ResponseEntity<ApiReponse> modifierTournee(@RequestBody Map<String, Object> body) {
         try {
@@ -253,7 +253,10 @@ public class Controleur {
 
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(ApiReponse.erreur(e.getMessage()));
-        } catch (Exception e) {
+        } catch (ContrainteDePrecedenceException e ) {
+            return ResponseEntity.badRequest().body(ApiReponse.erreur(e.getMessage()));
+        }
+        catch (Exception e) {
             return ResponseEntity.internalServerError().body(ApiReponse.erreur(e.getMessage()));
         }
     }
