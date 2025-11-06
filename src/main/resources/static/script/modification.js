@@ -18,11 +18,13 @@ const FACTEUR_BASE_RAYON_PIXEL = 10;     // base pour la détection dynamique de
 // Marqueurs temporaires pendant le workflow d'ajout
 const tempMarkers = [];
 function addTempMarker(lat, lng, html) {
+    const colorHTML = html.replace(/background:[^;"]*;/, 'background:#FFFFFF;');
+
     const m = L.marker([lat, lng], {
         icon: L.divIcon({
             className: '',
             iconSize: [18, 18],
-            html
+            html: colorHTML
         })
     }).addTo(livraisonsLayer);
     tempMarkers.push(m);
