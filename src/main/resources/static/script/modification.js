@@ -259,10 +259,14 @@ async function handleAjoutClick(e) {
 
 // === Envoi au backend ===
 async function ajouterLivraison() {
+    // garde les IDs avant le finally qui les remet à null
+    const pickupId = idNoeudPickupAjout;
+    const deliveryId = idNoeudDeliveryAjout;
+
     const body = {
         mode: "ajouter",
-        idNoeudPickup: idNoeudPickupAjout,
-        idNoeudDelivery: idNoeudDeliveryAjout,
+        idNoeudPickup: pickupId,
+        idNoeudDelivery: deliveryId,
         idPrecedentPickup,
         idPrecedentDelivery,
         dureeEnlevement,
@@ -276,24 +280,35 @@ async function ajouterLivraison() {
             body: JSON.stringify(body)
         });
         const data = await response.json();
-
         const nouvelleTournee = data.data?.tournee;
 
         if (response.ok && data.success && nouvelleTournee) {
-            // Nettoyer l'affichage courant AVANT de redessiner
+            // >>>>>>>>>>>>>>>>>>>>>>>>>> AJOUT CLE <<<<<<<<<<<<<<<<<<<<<<<<<<
+            // 1) Synchroniser la demande avec la nouvelle livraison
+            if (demandeData) {
+                if (!demandeData.livraisons) demandeData.livraisons = [];
+                const existeDeja = demandeData.livraisons.some(l =>
+                    l?.adresseEnlevement?.id === pickupId || l?.adresseLivraison?.id === deliveryId
+                );
+                if (!existeDeja) {
+                    demandeData.livraisons.push({
+                        adresseEnlevement: { id: pickupId },
+                        adresseLivraison:  { id: deliveryId }
+                    });
+                }
+            }
+            // 2) Mettre à jour l'UI comme avant
             resetTournee();
             clearTempMarkers();
 
-            const color = colors[selectedIndex % colors.length];
-            drawTourneeNodes(nouvelleTournee);
-            drawTournee(nouvelleTournee, color, selectedIndex);
-            majTableauTournee(nouvelleTournee, window.tourneeBaseline);
-
-            // Mettre l'état mémoire à jour avant tout redraw global éventuel
             window.toutesLesTournees[selectedIndex] = nouvelleTournee;
 
+            // NB: drawTourneeNodes lit demandeData.livraisons → elle contient maintenant la livraison ajoutée
+            drawTourneeNodes(nouvelleTournee);
+            drawTournee(nouvelleTournee, colors[selectedIndex % colors.length], selectedIndex);
+            majTableauTournee(nouvelleTournee, window.tourneeBaseline);
+
             envoyerNotification("Nouvelle livraison ajoutée avec succès !", "success");
-            // IMPORTANT : pas de updateUIFromEtat() ici, pour ne pas réécraser le rendu
         } else {
             envoyerNotification("Erreur : " + (data.message || "Impossible d’ajouter la livraison !"), "error");
         }
