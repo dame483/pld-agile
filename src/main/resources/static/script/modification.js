@@ -580,6 +580,8 @@ window.retablirModification = async function () {
 
 window.sauvegarderModification = async function () {
     modeSuppressionActif = false;
+    console.log(demandeData);
+    console.log(window.toutesLesTournees);
     try {
         const body = {
             demande: demandeData,

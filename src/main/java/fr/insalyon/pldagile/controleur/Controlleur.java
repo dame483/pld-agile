@@ -324,6 +324,7 @@ public class Controlleur {
     @PostMapping("/sauvegarder-modifications")
     public ResponseEntity<ApiReponse> sauvegarderModifications(@RequestBody ModificationsDTO dto) {
         try {
+            this.demande = dto.getDemande();
             etatActuelle.sauvegarderModification(this, dto.getDemande(), dto.getTournees());
             return ResponseEntity.ok(ApiReponse.succes("Modifications sauvegardées avec succès", null));
         } catch (Exception e) {
