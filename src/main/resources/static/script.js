@@ -70,7 +70,7 @@ function formatHoraireFourchette(horaire, deltaMinutes = 30) {
     return `${format(min)}-${format(max)}`;
 }
 
-function envoyerNotification(message, type = "success", duration = 3000) {
+function envoyerNotification(message, type = "success", duration = 6000) {
     const notification = document.getElementById("notification");
     notification.textContent = message;
     notification.className = "notification " + type;

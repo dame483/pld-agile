@@ -1,3 +1,337 @@
+// ======================================================
+// =============== AJOUT D'UNE LIVRAISON =================
+// ======================================================
+
+let modeAjoutActif = false;
+let idNoeudPickupAjout = null;
+let idNoeudDeliveryAjout = null;
+let idPrecedentPickup = null;
+let idPrecedentDelivery = null;
+let dureeEnlevement = 500;
+let dureeLivraison = 500;
+let couleurAjout = null;
+let noeudsGrises = [];
+
+const RAYON_METRES_PICKUP_DELIVERY = 50; // tolérance libre pour les clics "nouveaux"
+const FACTEUR_BASE_RAYON_PIXEL = 10;     // base pour la détection dynamique des précédents
+
+// Marqueurs temporaires pendant le workflow d'ajout
+const tempMarkers = [];
+function addTempMarker(lat, lng, html) {
+    const m = L.marker([lat, lng], {
+        icon: L.divIcon({
+            className: '',
+            iconSize: [18, 18],
+            html
+        })
+    }).addTo(livraisonsLayer);
+    tempMarkers.push(m);
+}
+function clearTempMarkers() {
+    tempMarkers.forEach(m => {
+        try { livraisonsLayer.removeLayer(m); } catch {}
+    });
+    tempMarkers.length = 0;
+}
+
+// === Vérifie si un nœud est valide comme "précédent" ===
+function estNoeudValideCommePrecedent(noeud) {
+    if (!noeud || !noeud.type) return false;
+    const type = noeud.type.toUpperCase();
+    return ["ENTREPOT", "PICKUP", "DELIVERY"].includes(type);
+}
+
+// === Trouve un nœud valide proche selon le rayon géographique (pour Pickup/Delivery) ===
+function trouverNoeudProcheGeo(latlng, rayonM = RAYON_METRES_PICKUP_DELIVERY) {
+    let closest = null, minDist = Infinity;
+    for (const node of Object.values(carteData.noeuds)) {
+        const d = map.distance(latlng, L.latLng(node.latitude, node.longitude));
+        if (d < minDist && d <= rayonM) {
+            minDist = d;
+            closest = node;
+        }
+    }
+    return closest;
+}
+
+// === Trouve un nœud valide selon la surface visible à l’écran (pour les “précédents”) ===
+function trouverNoeudValideProcheVisuel(latlng) {
+    if (!carteData?.noeuds) return null;
+
+    const clickPt = map.latLngToContainerPoint(latlng);
+    const zoom = map.getZoom();
+    const facteurZoom = Math.pow(1.1, zoom - 10);
+
+    let plusProche = null;
+    let minDistPixels = Infinity;
+
+    for (const n of Object.values(carteData.noeuds)) {
+        if (!estNoeudValideCommePrecedent(n)) continue;
+
+        const nodePt = map.latLngToContainerPoint(L.latLng(n.latitude, n.longitude));
+        const dx = nodePt.x - clickPt.x;
+        const dy = nodePt.y - clickPt.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+
+        let rayonPx = FACTEUR_BASE_RAYON_PIXEL * facteurZoom;
+        switch (n.type.toUpperCase()) {
+            case "PICKUP": rayonPx = 10 * facteurZoom; break;
+            case "DELIVERY": rayonPx = 12 * facteurZoom; break;
+            case "ENTREPOT": rayonPx = 14 * facteurZoom; break;
+        }
+
+        if (dist <= rayonPx && dist < minDistPixels) {
+            minDistPixels = dist;
+            plusProche = n;
+        }
+    }
+
+    return plusProche;
+}
+
+// === Désactivation des popups pendant le mode ajout ===
+function desactiverPopups() {
+    if (livraisonsLayer) livraisonsLayer.eachLayer(l => l.off("click"));
+    if (entrepotLayer) entrepotLayer.eachLayer(l => l.off("click"));
+}
+
+// === Réattacher les handlers SANS redessiner (évite d'écraser le rendu courant) ===
+function reattacherPopups() {
+    // on ne redessine pas ici ; on ne fait que rebrancher les clics si nécessaire
+    if (livraisonsLayer) {
+        livraisonsLayer.eachLayer(layer => {
+            layer.off("click");
+            layer.on("click", e => {
+                if (modeAjoutActif) {
+                    const nodeId = e.target.options.id;
+                    const noeud = carteData.noeuds[nodeId];
+                    if (noeud) handleAjoutClick({ latlng: e.latlng, noeudDirect: noeud });
+                }
+            });
+        });
+    }
+    if (entrepotLayer) {
+        entrepotLayer.eachLayer(layer => {
+            layer.off("click");
+            layer.on("click", e => {
+                if (modeAjoutActif) {
+                    const nodeId = e.target.options.id;
+                    const noeud = carteData.noeuds[nodeId];
+                    if (noeud) handleAjoutClick({ latlng: e.latlng, noeudDirect: noeud });
+                }
+            });
+        });
+    }
+}
+
+// === Indique visuellement le nœud sélectionné ===
+function highlightNode(noeud) {
+    const el = document.querySelector(`[id-noeud="${noeud.id}"]`);
+    if (!el) return;
+    el.style.boxShadow = "0 0 10px 3px yellow";
+    setTimeout(() => el.style.boxShadow = "", 1000);
+}
+
+// (SUPPRIMÉ) === Affichage d’un message utilisateur ===
+// -> Remplacé par envoyerNotification(message, type = "success", duration = 3000)
+
+// === Activation du mode ajout ===
+function activerModeAjout() {
+    if (!carteData || !window.toutesLesTournees.length) {
+        envoyerNotification("Veuillez charger une tournée avant d'ajouter une livraison", "error");
+        return;
+    }
+
+    if (!modeAjoutActif) {
+        modeAjoutActif = true;
+        idNoeudPickupAjout = null;
+        idNoeudDeliveryAjout = null;
+        idPrecedentPickup = null;
+        idPrecedentDelivery = null;
+        clearTempMarkers();
+        desactiverPopups();
+
+        // clic direct sur les marqueurs existants
+        if (livraisonsLayer) {
+            livraisonsLayer.eachLayer(layer => {
+                layer.on("click", e => {
+                    if (modeAjoutActif) {
+                        const nodeId = e.target.options.id;
+                        const noeud = carteData.noeuds[nodeId];
+                        if (noeud) handleAjoutClick({ latlng: e.latlng, noeudDirect: noeud });
+                    }
+                });
+            });
+        }
+        if (entrepotLayer) {
+            entrepotLayer.eachLayer(layer => {
+                layer.on("click", e => {
+                    if (modeAjoutActif) {
+                        const nodeId = e.target.options.id;
+                        const noeud = carteData.noeuds[nodeId];
+                        if (noeud) handleAjoutClick({ latlng: e.latlng, noeudDirect: noeud });
+                    }
+                });
+            });
+        }
+
+        envoyerNotification("Cliquez sur le nœud Pickup à ajouter", "success");
+    }
+}
+
+// === Clic sur la carte ou sur un marqueur ===
+async function handleAjoutClick(e) {
+    if (!modeAjoutActif || !carteData) return;
+
+    let closest = e.noeudDirect || null;
+
+    // --- Étape 1 : sélection Pickup (libre)
+    if (!idNoeudPickupAjout) {
+        if (!closest) closest = trouverNoeudProcheGeo(e.latlng);
+        if (!closest) {
+            envoyerNotification("Aucun nœud proche trouvé pour le Pickup !", "error");
+            return;
+        }
+
+        idNoeudPickupAjout = closest.id;
+        couleurAjout = colors[selectedIndex % colors.length];
+
+        addTempMarker(
+            closest.latitude,
+            closest.longitude,
+            `<div id-noeud="${closest.id}" style="width:18px;height:18px;background:${couleurAjout};
+             border:2px solid black;border-radius:3px;"></div>`
+        );
+
+        highlightNode(closest);
+        envoyerNotification("Sélectionnez le nœud précédent du Pickup", "success");
+        return;
+    }
+
+    // --- Étape 2 : précédent du Pickup (surface dynamique)
+    if (idNoeudPickupAjout && !idPrecedentPickup) {
+        if (!closest) closest = trouverNoeudValideProcheVisuel(e.latlng);
+        if (!closest) {
+            envoyerNotification("Aucun nœud précédent valide trouvé à proximité visuelle !", "error");
+            return;
+        }
+        idPrecedentPickup = closest.id;
+        highlightNode(closest);
+        envoyerNotification("Sélectionnez maintenant le nœud Delivery", "success");
+        return;
+    }
+
+    // --- Étape 3 : sélection Delivery (libre)
+    if (idPrecedentPickup && !idNoeudDeliveryAjout) {
+        if (!closest) closest = trouverNoeudProcheGeo(e.latlng);
+        if (!closest) {
+            envoyerNotification("Aucun nœud proche trouvé pour la livraison !", "error");
+            return;
+        }
+
+        idNoeudDeliveryAjout = closest.id;
+
+        addTempMarker(
+            closest.latitude,
+            closest.longitude,
+            `<div id-noeud="${closest.id}" style="width:18px;height:18px;background:${couleurAjout};
+             border:2px solid black;border-radius:50%;"></div>`
+        );
+
+        highlightNode(closest);
+        envoyerNotification("Sélectionnez maintenant le nœud précédent du Delivery", "success");
+        return;
+    }
+
+    // --- Étape 4 : précédent du Delivery (surface dynamique)
+    if (idNoeudDeliveryAjout && !idPrecedentDelivery) {
+        if (!closest) closest = trouverNoeudValideProcheVisuel(e.latlng);
+        if (!closest) {
+            envoyerNotification("Aucun nœud précédent valide trouvé à proximité visuelle !", "error");
+            return;
+        }
+
+        idPrecedentDelivery = closest.id;
+        highlightNode(closest);
+        await ajouterLivraison();
+    }
+}
+
+// === Envoi au backend ===
+async function ajouterLivraison() {
+    const body = {
+        mode: "ajouter",
+        idNoeudPickup: idNoeudPickupAjout,
+        idNoeudDelivery: idNoeudDeliveryAjout,
+        idPrecedentPickup,
+        idPrecedentDelivery,
+        dureeEnlevement,
+        dureeLivraison
+    };
+
+    try {
+        const response = await fetch("http://localhost:8080/api/tournee/modifier", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body)
+        });
+        const data = await response.json();
+
+        const nouvelleTournee = data.data?.tournee;
+
+        if (response.ok && data.success && nouvelleTournee) {
+            // Nettoyer l'affichage courant AVANT de redessiner
+            resetTournee();
+            clearTempMarkers();
+
+            const color = colors[selectedIndex % colors.length];
+            drawTourneeNodes(nouvelleTournee);
+            drawTournee(nouvelleTournee, color, selectedIndex);
+            majTableauTournee(nouvelleTournee, window.tourneeBaseline);
+
+            // Mettre l'état mémoire à jour avant tout redraw global éventuel
+            window.toutesLesTournees[selectedIndex] = nouvelleTournee;
+
+            envoyerNotification("Nouvelle livraison ajoutée avec succès !", "success");
+            // IMPORTANT : pas de updateUIFromEtat() ici, pour ne pas réécraser le rendu
+        } else {
+            envoyerNotification("Erreur : " + (data.message || "Impossible d’ajouter la livraison !"), "error");
+        }
+    } catch (err) {
+        envoyerNotification("Erreur réseau : " + err.message, "error");
+    } finally {
+        modeAjoutActif = false;
+        idNoeudPickupAjout = null;
+        idNoeudDeliveryAjout = null;
+        idPrecedentPickup = null;
+        idPrecedentDelivery = null;
+        reattacherPopups();
+    }
+}
+
+// === Attacher le clic carte ===
+function attachAjoutListener() {
+    if (map && !map._ajoutListenerSet) {
+        map.on('click', e => {
+            if (!modeAjoutActif) return;
+            handleAjoutClick(e);
+        });
+        map._ajoutListenerSet = true;
+    }
+}
+
+// === Injection dans drawCarte ===
+if (typeof window.drawCarteOriginal === "undefined" && typeof drawCarte !== "undefined") {
+    window.drawCarteOriginal = drawCarte;
+    drawCarte = function (...args) {
+        window.drawCarteOriginal.apply(this, args);
+        attachAjoutListener();
+    };
+}
+
+// ======================================================
+// =============== SUPPRESSION D'UN POINT ================
+// ======================================================
 async function checkEtSupprimer() {
     if (!modeSuppressionActif) return;
     if (!idNoeudPickup && !idNoeudDelivery) return;
@@ -299,7 +633,7 @@ window.activerModeModification = async function (){
         });
 }
 
-window.activerModeAjout = async function (){
-    modeSuppressionActif = false;
-    envoyerNotification("Oups .. Le mode ajout n'est pas encore implementé","error");
-}
+//window.activerModeAjout = async function (){
+//    modeSuppressionActif = false;
+//    envoyerNotification("Oups .. Le mode ajout n'est pas encore implementé","error");
+//}
