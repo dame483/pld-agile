@@ -70,7 +70,7 @@ function formatHoraireFourchette(horaire, deltaMinutes = 30) {
     return `${format(min)}-${format(max)}`;
 }
 
-function envoyerNotification(message, type = "success", duration = 3000) {
+function envoyerNotification(message, type = "success", duration = 6000) {
     const notification = document.getElementById("notification");
     notification.textContent = message;
     notification.className = "notification " + type;
@@ -476,7 +476,7 @@ function drawTourneeTable(tournee){
 
                 let horaire = "";
                 if (noeud === premierNoeud && noeud.type === "ENTREPOT") {
-                    horaire = noeud.horaireDepart || "-";
+                    horaire = noeud.horaireDepart ? noeud.horaireDepart.slice(0, 5) : "-";
                 } else {
                     horaire = formatHoraireFourchette(noeud.horaireArrivee) || "-";
                 }
@@ -933,6 +933,7 @@ document.addEventListener('DOMContentLoaded',async () => {
                 window.toutesLesTournees = data.data.tournees || [];
                 demandeData = data.data.demande ||[];
 
+                drawEntrepot(demandeData.entrepot);
                 drawLivraisons(demandeData);
                 window.toutesLesTournees.forEach((t, i) => {
                     const color = colors[i % colors.length];
