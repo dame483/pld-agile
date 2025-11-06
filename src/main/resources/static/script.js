@@ -227,10 +227,6 @@ function drawCarte(carte) {
         }
 
         if (closest && minDist < 50) {
-            L.popup()
-                .setLatLng([closest.latitude, closest.longitude])
-                .setContent(`<b>Nœud ${closest.id}</b><br>Lat: ${closest.latitude.toFixed(6)}<br>Lng: ${closest.longitude.toFixed(6)}`)
-                .openOn(map);
             console.log("Nœud proche cliqué :", closest.id);
         } else {
             console.log("Aucun nœud proche du clic.");
@@ -284,14 +280,8 @@ function drawLivraisons(d){
                 if (modeSuppressionActif) {
                     idNoeudPickup = nodeId;
                     checkEtSupprimer();
-                    L.popup().setLatLng(e.latlng)
-                        .setContent(`<b>Pickup sélectionné : ${nodeId}</b>`)
-                        .openOn(map);
                     console.log("Pickup sélectionné pour suppression :", nodeId);
                 } else {
-                    L.popup().setLatLng(e.latlng)
-                        .setContent(`<b>Pickup ID ${nodeId}</b>`)
-                        .openOn(map);
                 }
             });
 
@@ -306,14 +296,8 @@ function drawLivraisons(d){
                 if (modeSuppressionActif) {
                     idNoeudDelivery = nodeId;
                     checkEtSupprimer();
-                    L.popup().setLatLng(e.latlng)
-                        .setContent(`<b>Livraison sélectionnée : ${nodeId}</b>`)
-                        .openOn(map);
                     console.log("Livraison sélectionnée pour suppression :", nodeId);
                 } else {
-                    L.popup().setLatLng(e.latlng)
-                        .setContent(`<b>Livraison ID ${nodeId}</b>`)
-                        .openOn(map);
                 }
             });
 
@@ -341,9 +325,6 @@ function drawEntrepot(e){
     }).addTo(entrepotLayer)
       .on('click', ev => {
           const nodeId = ev.target.options.id;
-          L.popup().setLatLng(ev.latlng)
-                   .setContent(`<b>Entrepôt ID ${nodeId}</b>`)
-                   .openOn(map);
           console.log("Entrepôt cliqué :", nodeId);
       });
 }
@@ -566,9 +547,6 @@ function drawTourneeNodes(tourneeData) {
             .on('click', e => {
                 idNoeudPickup = e.target.options.id;
                 checkEtSupprimer();
-                L.popup().setLatLng(e.latlng)
-                    .setContent(`<b>Pickup ID ${idNoeudPickup}</b>`)
-                    .openOn(map);
             });
 
         L.marker([lv.latitude, lv.longitude], {
@@ -582,9 +560,6 @@ function drawTourneeNodes(tourneeData) {
             .on('click', e => {
                 idNoeudDelivery = e.target.options.id;
                 checkEtSupprimer();
-                L.popup().setLatLng(e.latlng)
-                    .setContent(`<b>Livraison ID ${idNoeudDelivery}</b>`)
-                    .openOn(map);
             });
     });
 
