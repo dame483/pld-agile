@@ -5,6 +5,7 @@ import fr.insalyon.pldagile.modele.*;
 import java.lang.reflect.Type;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class ModificationTournee {
@@ -195,6 +196,14 @@ public class ModificationTournee {
             return false;
         }
         return true;
+    }
+
+    public boolean verifierConnexite(long idNoeudDepart, long idNoeudArrivee) {
+            Chemin cheminExistant = calculChemins.getChemin(idNoeudDepart, idNoeudArrivee);
+            if (cheminExistant != null) {
+                return true;
+            }
+            return false;
     }
 
 }
