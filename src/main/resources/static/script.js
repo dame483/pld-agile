@@ -933,6 +933,7 @@ document.addEventListener('DOMContentLoaded',async () => {
                 window.toutesLesTournees = data.data.tournees || [];
                 demandeData = data.data.demande ||[];
 
+                drawEntrepot(demandeData.entrepot);
                 drawLivraisons(demandeData);
                 window.toutesLesTournees.forEach((t, i) => {
                     const color = colors[i % colors.length];
