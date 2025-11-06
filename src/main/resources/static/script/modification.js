@@ -174,44 +174,6 @@ function trouverNoeudValideProcheVisuel(latlng) {
     return plusProche;
 }
 
-// === Désactivation des popups pendant le mode ajout ===
-function desactiverPopups() {
-    if (livraisonsLayer) livraisonsLayer.eachLayer(l => l.off("click"));
-    if (entrepotLayer)    entrepotLayer.eachLayer(l  => l.off("click"));
-}
-
-// === Réattacher les handlers SANS redessiner (évite d'écraser le rendu courant) ===
-// IMPORTANT: on n’intervient que SI le mode Ajout est actif (sinon on laisse
-// les handlers par défaut posés par drawLivraisons/drawTourneeNodes).
-function reattacherPopups() {
-    if (!modeAjoutActif) return;
-
-    if (livraisonsLayer) {
-        livraisonsLayer.eachLayer(layer => {
-            layer.off("click");
-            layer.on("click", e => {
-                if (modeAjoutActif) {
-                    const nodeId = e.target.options.id;
-                    const noeud = carteData.noeuds[nodeId];
-                    if (noeud) handleAjoutClick({ latlng: e.latlng, noeudDirect: noeud });
-                }
-            });
-        });
-    }
-    if (entrepotLayer) {
-        entrepotLayer.eachLayer(layer => {
-            layer.off("click");
-            layer.on("click", e => {
-                if (modeAjoutActif) {
-                    const nodeId = e.target.options.id;
-                    const noeud = carteData.noeuds[nodeId];
-                    if (noeud) handleAjoutClick({ latlng: e.latlng, noeudDirect: noeud });
-                }
-            });
-        });
-    }
-}
-
 // === Indique visuellement le nœud sélectionné ===
 function highlightNode(noeud) {
     const el = document.querySelector(`[id-noeud="${noeud.id}"]`);
@@ -402,9 +364,6 @@ async function ajouterLivraison() {
 
         etatsAjout.length = 0;
         indexEtatCourant = -1;
-
-        // IMPORTANT: ne pas toucher aux handlers si on n’est plus en mode ajout.
-        reattacherPopups(); // no-op si modeAjoutActif === false
     }
 }
 
@@ -800,7 +759,6 @@ window.activerModeAjout = async function (){
         idPrecedentPickup = null;
         idPrecedentDelivery = null;
         clearTempMarkers();
-        desactiverPopups();
 
         // Reset historique et snapshot initial (état "vide")
         etatsAjout.length = 0;
