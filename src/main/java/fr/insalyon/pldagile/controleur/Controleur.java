@@ -41,16 +41,16 @@ public class Controleur {
     }
 
     @PostMapping("/upload-carte")
-    public ResponseEntity<ApiReponse> loadCarte(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<ApiReponse> chargerCarte(@RequestParam("file") MultipartFile file) {
         try {
-            Carte newCarte = etatActuelle.loadCarte(this, file);
+            Carte newCarte = etatActuelle.chargerCarte(this, file);
 
             if (newCarte != null) {
                 this.carte = newCarte;
                 this.demande = null;
 
                 return ResponseEntity.ok(ApiReponse.succes(( "Carte chargée avec succès"), Map.of(
-                        "etatCourant", getCurrentState().getName(),
+                        "etatCourant", getEtatActuelle().getNom(),
                         "carte", newCarte
                 )));
             } else {
@@ -69,18 +69,18 @@ public class Controleur {
 
 
     @PostMapping("/upload-demande")
-    public ResponseEntity<ApiReponse> loadDemandeLivraison(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<ApiReponse> chargerDemandeLivraison(@RequestParam("file") MultipartFile file) {
         try {
             if (this.carte == null) {
                 return ResponseEntity.badRequest().body(ApiReponse.erreur("Veuillez d'abord charger une carte avant la demande !"));
             }
 
-            Object result = etatActuelle.loadDemandeLivraison(this, file, this.carte);
+            Object result = etatActuelle.chargerDemandeLivraison(this, file, this.carte);
 
             if (result instanceof DemandeDeLivraison demande) {
-                this.demande = demande; //
+                this.demande = demande;
                 return ResponseEntity.ok(ApiReponse.succes(("Demande chargée avec succès"), Map.of(
-                        "etatCourant", getCurrentState().getName(),
+                        "etatCourant", getEtatActuelle().getNom(),
                         "demande", demande
                 )));
             } else if (result instanceof Exception e) {
@@ -98,7 +98,7 @@ public class Controleur {
     @PostMapping("/tournee/calculer")
     public ResponseEntity<ApiReponse> calculerTournee(@RequestParam(defaultValue = "1") int nombreLivreurs) {
         try {
-            Object result = etatActuelle.runCalculTournee(this, nombreLivreurs, vitesse);
+            Object result = etatActuelle.lancerCalculTournee(this, nombreLivreurs, vitesse);
 
             if (result instanceof List<?> listeTournees) {
                 Map<String, Object> response = new HashMap<>();
@@ -144,9 +144,9 @@ public class Controleur {
     }
 
     @PostMapping("/tournee/sauvegarde")
-    public ResponseEntity<ApiReponse> saveTournee() {
+    public ResponseEntity<ApiReponse> sauvegarderTournee() {
         try {
-            Object result = etatActuelle.saveTournee(this);
+            Object result = etatActuelle.sauvegarderTournee(this);
 
             if (result instanceof String message) {
                 return ResponseEntity.ok(ApiReponse.succes("La tournée a été sauvegardée",Map.of(
@@ -164,9 +164,9 @@ public class Controleur {
     }
 
     @PostMapping("/upload-tournee")
-    public ResponseEntity<ApiReponse> uploadTournee(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<ApiReponse> chargerTournee(@RequestParam("file") MultipartFile file) {
         try {
-            Object result = etatActuelle.loadTournee(this, file, this.carte);
+            Object result = etatActuelle.chargerTournee(this, file, this.carte);
 
            /* if (result instanceof Exception e) {
                 return ResponseEntity.badRequest().body(ApiReponse.erreur("Exception" + e.getMessage()));
@@ -189,14 +189,14 @@ public class Controleur {
 
 
     @PostMapping("/reset")
-    public ResponseEntity<ApiReponse> resetApplication() {
+    public ResponseEntity<ApiReponse> reinitialiserApplication() {
         try {
             this.carte = null;
             this.demande = null;
             this.etatActuelle = new EtatInitial();
 
             return ResponseEntity.ok(ApiReponse.succes("Application réinitialisée avec succès.", Map.of(
-                    "etatCourant", etatActuelle.getName()
+                    "etatCourant", etatActuelle.getNom()
             )));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(
@@ -208,8 +208,8 @@ public class Controleur {
 
     @GetMapping("/etat")
     public ResponseEntity<ApiReponse> getEtatActuel() {
-        return ResponseEntity.ok(ApiReponse.succes( "Nous sommes dans l'état" + etatActuelle.getName(), Map.of(
-                "etat", etatActuelle.getName(),
+        return ResponseEntity.ok(ApiReponse.succes( "Nous sommes dans l'état" + etatActuelle.getNom(), Map.of(
+                "etat", etatActuelle.getNom(),
                 "carteChargee", carte != null,
                 "demandeChargee", demande != null,
                 "tourneeChargee", etatActuelle instanceof EtatTourneeCalcule
@@ -227,7 +227,7 @@ public class Controleur {
             etatActuelle.passerEnModeModification(this, tourneeCible);
 
             return ResponseEntity.ok(ApiReponse.succes("Passage en mode modification effectué.", Map.of(
-                    "etatCourant", getCurrentState().getName()
+                    "etatCourant", getEtatActuelle().getNom()
             )));
 
         } catch (Exception e) {
@@ -248,7 +248,7 @@ public class Controleur {
 
             return ResponseEntity.ok(ApiReponse.succes("Opération effectuée : " + mode, Map.of(
                     "tournee", tournee,
-                    "etatCourant", getCurrentState().getName()
+                    "etatCourant", getEtatActuelle().getNom()
             )));
 
         } catch (IllegalArgumentException e) {
@@ -257,8 +257,6 @@ public class Controleur {
             return ResponseEntity.internalServerError().body(ApiReponse.erreur(e.getMessage()));
         }
     }
-
-
 
 
 
@@ -291,7 +289,7 @@ public class Controleur {
             }
 
             return ResponseEntity.ok(ApiReponse.succes("Rétablissement effectué", Map.of(
-                    "tournee", tourneeActuelle  // ← Retourne l'état après restauration
+                    "tournee", tourneeActuelle
             )));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(ApiReponse.erreur(e.getMessage()));
@@ -320,11 +318,11 @@ public class Controleur {
         historique.restaurer();
     }
 
-    public void setCurrentState(Etat etat) {
+    public void setEtatActuelle(Etat etat) {
         this.etatActuelle = etat;
     }
 
-    public Etat getCurrentState() {
+    public Etat getEtatActuelle() {
         return etatActuelle;
     }
 

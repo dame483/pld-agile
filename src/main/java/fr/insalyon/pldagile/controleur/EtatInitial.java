@@ -19,11 +19,11 @@ public class EtatInitial implements Etat {
     public EtatInitial() {}
 
     @Override
-    public Carte loadCarte(Controleur c, MultipartFile file) throws XMLFormatException {
-        Object result = uploadXML("carte", file, null);
+    public Carte chargerCarte(Controleur c, MultipartFile file) throws XMLFormatException {
+        Object result = chargerXML("carte", file, null);
 
         if (result instanceof Carte carte) {
-            c.setCurrentState(new EtatCarteChargee(carte));
+            c.setEtatActuelle(new EtatCarteChargee(carte));
             return carte;
         } else if (result instanceof Exception e) {
             if (e instanceof XMLFormatException xmlEx) {
@@ -37,7 +37,7 @@ public class EtatInitial implements Etat {
     }
 
     @Override
-    public Object uploadXML(String type, MultipartFile file, Carte carte) throws XMLFormatException {
+    public Object chargerXML(String type, MultipartFile file, Carte carte) throws XMLFormatException {
         if (file == null || file.isEmpty()) {
             throw new XMLFormatException("Fichier vide ou non sélectionné !");
         }
@@ -69,7 +69,7 @@ public class EtatInitial implements Etat {
     }
 
     @Override
-    public Object loadDemandeLivraison(Controleur c, MultipartFile file, Carte carte) {
+    public Object chargerDemandeLivraison(Controleur c, MultipartFile file, Carte carte) {
         throw new IllegalStateException("Erreur : Impossible de charger une demande de livraison avant de charger une carte.");
     }
 
@@ -80,13 +80,13 @@ public class EtatInitial implements Etat {
     }
 
     @Override
-    public Object saveTournee(Controleur c) {
+    public Object sauvegarderTournee(Controleur c) {
         throw new IllegalStateException("Erreur : Impossible de sauvegarder une tournée qui n'a pas été calculée.");
     }
 
 
     @Override
-    public Object loadTournee(Controleur c, MultipartFile file, Carte carte) {
+    public Object chargerTournee(Controleur c, MultipartFile file, Carte carte) {
         throw new IllegalStateException("Erreur : Impossible de charger une tournée sans carte préalablement chargée.");
     }
 
@@ -96,7 +96,7 @@ public class EtatInitial implements Etat {
     }
 
     @Override
-    public Object runCalculTournee(Controleur c, int nombreLivreurs, double vitesse) {
+    public Object lancerCalculTournee(Controleur c, int nombreLivreurs, double vitesse) {
         throw new IllegalStateException("Erreur : Impossible de calculer une tournée sans carte et demande de livraison.");
     }
 
@@ -106,7 +106,7 @@ public class EtatInitial implements Etat {
     }
 
     @Override
-    public String getName() {
+    public String getNom() {
         return "Etat Initial";
     }
 

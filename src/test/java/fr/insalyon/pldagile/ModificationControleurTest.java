@@ -48,13 +48,13 @@ public class ModificationControleurTest {
         controleur = new Controleur();
 
         EtatModificationTournee etat = new EtatModificationTournee(carte, tournee);
-        controleur.setCurrentState(etat);
+        controleur.setEtatActuelle(etat);
     }
 
 
     @Test
     void testAjoutAnnulationRestaurationSurMemeTournee() throws Exception {
-        EtatModificationTournee etat = (EtatModificationTournee) controleur.getCurrentState();
+        EtatModificationTournee etat = (EtatModificationTournee) controleur.getEtatActuelle();
         Tournee tourneeEtat = etat.getTournee();
 
         // Vérifie que l’état référence bien la même tournée
@@ -166,7 +166,7 @@ public class ModificationControleurTest {
 
     @Test
     void testSuppressionAnnulationRestaurationSurMemeTournee() throws Exception {
-        EtatModificationTournee etat = (EtatModificationTournee) controleur.getCurrentState();
+        EtatModificationTournee etat = (EtatModificationTournee) controleur.getEtatActuelle();
 
         Tournee tourneeEtat = etat.getTournee();
 
@@ -318,7 +318,7 @@ public class ModificationControleurTest {
 
     @Test
     void testDeuxSuppressionsAvecAnnulationsEtRestaurations() throws Exception {
-        EtatModificationTournee etat = (EtatModificationTournee) controleur.getCurrentState();
+        EtatModificationTournee etat = (EtatModificationTournee) controleur.getEtatActuelle();
         Tournee tourneeEtat = etat.getTournee();
 
         assertSame(tournee, tourneeEtat, "L’état doit référencer la même tournée que le test.");
@@ -389,7 +389,7 @@ public class ModificationControleurTest {
 
     @Test
     void testAjoutAnnulationRestaurationSurMemeTournee2() throws Exception {
-        EtatModificationTournee etat = (EtatModificationTournee) controleur.getCurrentState();
+        EtatModificationTournee etat = (EtatModificationTournee) controleur.getEtatActuelle();
         Tournee tourneeEtat = etat.getTournee();
 
         // Vérifie qu'on a bien la même référence au départ
@@ -459,7 +459,7 @@ public class ModificationControleurTest {
 
     @Test
     void testSuppressionAjoutAnnulationRestaurationSurMemeTournee() throws Exception {
-        EtatModificationTournee etat = (EtatModificationTournee) controleur.getCurrentState();
+        EtatModificationTournee etat = (EtatModificationTournee) controleur.getEtatActuelle();
         Tournee tourneeEtat = etat.getTournee();
 
         // Vérifie qu'on a bien la même référence au départ

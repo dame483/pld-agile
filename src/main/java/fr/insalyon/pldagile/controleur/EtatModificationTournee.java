@@ -21,24 +21,24 @@ public class EtatModificationTournee implements Etat {
 
 
     @Override
-    public Carte loadCarte(Controleur c, @RequestParam("file") MultipartFile file) {
+    public Carte chargerCarte(Controleur c, @RequestParam("file") MultipartFile file) {
         throw new IllegalStateException("Erreur : impossible de charger une carte en mode modification.");
     }
 
     @Override
-    public Object loadDemandeLivraison(Controleur c, @RequestParam("file") MultipartFile file, Carte carte) {
+    public Object chargerDemandeLivraison(Controleur c, @RequestParam("file") MultipartFile file, Carte carte) {
         throw new IllegalStateException("Erreur : impossible de charger une demande de livraison en mode modification.");
     }
 
 
     @Override
-    public Object runCalculTournee(Controleur c, int nombreLivreurs, double vitesse) {
+    public Object lancerCalculTournee(Controleur c, int nombreLivreurs, double vitesse) {
         throw new IllegalStateException("Erreur : impossible de recalculer les tournées en mode modification.");
     }
 
 
     @Override
-    public Object uploadXML(String type, MultipartFile file, Carte carte) throws XMLFormatException {
+    public Object chargerXML(String type, MultipartFile file, Carte carte) throws XMLFormatException {
         throw new IllegalStateException("Erreur : impossible de charger un fichier en mode modification de tournée.");
     }
 
@@ -48,12 +48,12 @@ public class EtatModificationTournee implements Etat {
     }
 
     @Override
-    public Object saveTournee(Controleur c) {
+    public Object sauvegarderTournee(Controleur c) {
         throw new IllegalStateException("Erreur : impossible de sauvegarder une tournée complète en mode modification.");
     }
 
     @Override
-    public Object loadTournee(Controleur c, MultipartFile file, Carte carte) {
+    public Object chargerTournee(Controleur c, MultipartFile file, Carte carte) {
         throw new IllegalStateException("Erreur : impossible de charger une tournée en mode modification.");
     }
 
@@ -109,7 +109,6 @@ public class EtatModificationTournee implements Etat {
             default -> throw new IllegalArgumentException("Mode de modification inconnu : " + mode);
         }
 
-        // Exécution de la commande
         c.executerCommande(commande);
         return this.tournee;
     }
@@ -120,11 +119,11 @@ public class EtatModificationTournee implements Etat {
         if (tournees == null || tournees.isEmpty()) {
             throw new IllegalArgumentException("Aucune tournée à sauvegarder.");
         }
-        c.setCurrentState(new EtatTourneeCalcule(carte, demande, tournees));
+        c.setEtatActuelle(new EtatTourneeCalcule(carte, demande, tournees));
     }
 
     @Override
-    public String getName() {
+    public String getNom() {
             return "ModeModificationTournee";
     }
 

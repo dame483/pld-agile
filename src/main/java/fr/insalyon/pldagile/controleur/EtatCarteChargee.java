@@ -22,11 +22,11 @@ public class EtatCarteChargee implements Etat {
     }
 
     @Override
-    public Carte loadCarte(Controleur c, MultipartFile file) throws XMLFormatException {
-        Object result = uploadXML("carte", file, null);
+    public Carte chargerCarte(Controleur c, MultipartFile file) throws XMLFormatException {
+        Object result = chargerXML("carte", file, null);
 
         if (result instanceof Carte carte) {
-            c.setCurrentState(new EtatCarteChargee(carte));
+            c.setEtatActuelle(new EtatCarteChargee(carte));
             return carte;
         } else if (result instanceof Exception e) {
             if (e instanceof XMLFormatException xmlEx) {
@@ -40,17 +40,17 @@ public class EtatCarteChargee implements Etat {
     }
 
     @Override
-    public Object loadDemandeLivraison(Controleur c, @RequestParam("file") MultipartFile file, Carte carte) {
-        Object dem = uploadXML("demande", file, this.carte);
+    public Object chargerDemandeLivraison(Controleur c, @RequestParam("file") MultipartFile file, Carte carte) {
+        Object dem = chargerXML("demande", file, this.carte);
         if (dem instanceof DemandeDeLivraison demande) {
-            c.setCurrentState(new EtatDemandeLivraisonChargee(this.carte, demande));
+            c.setEtatActuelle(new EtatDemandeLivraisonChargee(this.carte, demande));
             return demande;
         }
         return dem;
     }
 
     @Override
-    public Object uploadXML(String type, MultipartFile file, Carte carte) throws XMLFormatException {
+    public Object chargerXML(String type, MultipartFile file, Carte carte) throws XMLFormatException {
         if (file == null || file.isEmpty()) {
             throw new XMLFormatException("Le fichier est vide ou nul.");
         }
@@ -97,7 +97,7 @@ public class EtatCarteChargee implements Etat {
     }
 
     @Override
-    public Object runCalculTournee(Controleur c, int nombreLivreurs, double vitesse) {
+    public Object lancerCalculTournee(Controleur c, int nombreLivreurs, double vitesse) {
         throw new IllegalStateException("Erreur : impossible de calculer une tournée sans demande de livraison.");
     }
 
@@ -107,13 +107,13 @@ public class EtatCarteChargee implements Etat {
     }
 
     @Override
-    public Object saveTournee(Controleur c) {
+    public Object sauvegarderTournee(Controleur c) {
         throw new IllegalStateException("Erreur : impossible de sauvegarder une tournée avant son calcul.");
     }
 
     @Override
-    public Object loadTournee(Controleur c, MultipartFile file, Carte carte) {
-        Object result = uploadXML("tournee", file, carte);
+    public Object chargerTournee(Controleur c, MultipartFile file, Carte carte) {
+        Object result = chargerXML("tournee", file, carte);
 
         if (result instanceof Exception e) {
             return e;
@@ -142,7 +142,7 @@ public class EtatCarteChargee implements Etat {
             return new Exception("Fichier JSON invalide ou format incorrect");
         }
 
-        c.setCurrentState(new EtatTourneeCalcule(carte, demande, toutesLesTournees));
+        c.setEtatActuelle(new EtatTourneeCalcule(carte, demande, toutesLesTournees));
 
         return new TourneeUpload(toutesLesTournees, demande);
     }
@@ -162,7 +162,7 @@ public class EtatCarteChargee implements Etat {
     }
 
     @Override
-    public String getName() {
+    public String getNom() {
         return "Etat Carte Chargee";
     }
 
