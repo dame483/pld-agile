@@ -281,7 +281,6 @@ function drawLivraisons(d){
                     idNoeudPickup = nodeId;
                     checkEtSupprimer();
                     console.log("Pickup sélectionné pour suppression :", nodeId);
-                } else {
                 }
             });
 
