@@ -3,10 +3,10 @@
 
 # Prérequis
 Avant de lancer le projet, assurez-vous d’avoir installé :
-Java Development Kit (JDK) – version 17 ou supérieure recommandée [télécharger JDK] (https://lp.jetbrains.com/intellij-idea-promo/?source=google&medium=cpc&campaign=EMEA_en_FR_IDEA_Search&term=java%20jdk%20download&content=602400219725&gad_source=1&gad_campaignid=9730750225&gbraid=0AAAAADloJzix9EwMMkNYgzI_oreXQ7C3k&gclid=EAIaIQobChMIz9-c4ITckAMVwmhBAh02VhRqEAAYASAAEgJkNPD_BwE)
+Java Development Kit (JDK) – version 17 ou supérieure recommandée https://lp.jetbrains.com/intellij-idea-promo/?source=google&medium=cpc&campaign=EMEA_en_FR_IDEA_Search&term=java%20jdk%20download&content=602400219725&gad_source=1&gad_campaignid=9730750225&gbraid=0AAAAADloJzix9EwMMkNYgzI_oreXQ7C3k&gclid=EAIaIQobChMIz9-c4ITckAMVwmhBAh02VhRqEAAYASAAEgJkNPD_BwE
 
 Apache Maven – outil de gestion de dépendances et de construction du projet
-[Installer Maven] (https://maven.apache.org/install.html)
+https://maven.apache.org/install.html
 
 # Téléchargement des dépendances et compilation
 Cette commande `mvn clean install` nettoie le projet, télécharge toutes les dépendances nécessaires (Spring Boot, etc.) et compile le code source 
@@ -18,7 +18,7 @@ Une fois la compilation terminée, vous pouvez lancer le serveur ackend Spring B
 
 mvn spring-boot:run
 
-Le serveur démarre par défaut sur [localhost:8080] (http://localhost:8080/)
+Le serveur démarre par défaut sur http://localhost:8080/
 
 Si vous avez une interface web, elle sera servie automatiquement à cette adresse si elle est placée dans le dossier `src/main/resources/static`
 
