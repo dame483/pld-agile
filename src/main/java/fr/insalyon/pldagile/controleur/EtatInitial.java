@@ -107,7 +107,7 @@ public class EtatInitial implements Etat {
 
     @Override
     public String getName() {
-        return "État initial";
+        return "Etat Initial";
     }
 
 }
