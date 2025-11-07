@@ -1,0 +1,27 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Winky+Sans:ital,wght@0,700;1,700&display=swap');
+
+body {
+    font-family: Inter, sans-serif;
+    text-align: center;
+    background-color: #12151B;
+    color : #FFFFFF;
+    margin: 0;
+    padding: 0;
+}
+
+h4{
+    margin:0 0 8px 0;
+    font-weight:bold;
+}
+
+.main-text h1 {
+    font-size: 4em;
+    text-align: center;
+    margin-top: -20px;
+}
+
+
+h1 {
+    margin: 0;
+    padding: 0;
+}
