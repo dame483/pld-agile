@@ -3,10 +3,10 @@
 
 # Prérequis
 Avant de lancer le projet, assurez-vous d’avoir installé :
-Java Development Kit (JDK) – version 17 ou supérieure recommandée https://lp.jetbrains.com/intellij-idea-promo/?source=google&medium=cpc&campaign=EMEA_en_FR_IDEA_Search&term=java%20jdk%20download&content=602400219725&gad_source=1&gad_campaignid=9730750225&gbraid=0AAAAADloJzix9EwMMkNYgzI_oreXQ7C3k&gclid=EAIaIQobChMIz9-c4ITckAMVwmhBAh02VhRqEAAYASAAEgJkNPD_BwE
+[Java Development Kit (JDK) – version 17](https://lp.jetbrains.com/intellij-idea-promo/?source=google&medium=cpc&campaign=EMEA_en_FR_IDEA_Search&term=java%20jdk%20download&content=602400219725&gad_source=1&gad_campaignid=9730750225&gbraid=0AAAAADloJzix9EwMMkNYgzI_oreXQ7C3k&gclid=EAIaIQobChMIz9-c4ITckAMVwmhBAh02VhRqEAAYASAAEgJkNPD_BwE
+) (ou version supérieure)
 
-Apache Maven – outil de gestion de dépendances et de construction du projet
-https://maven.apache.org/install.html
+[Apache Maven](https://maven.apache.org/install.html) – outil de gestion de dépendances et de construction du projet
 
 # Téléchargement des dépendances et compilation
 Cette commande `mvn clean install` nettoie le projet, télécharge toutes les dépendances nécessaires (Spring Boot, etc.) et compile le code source 
