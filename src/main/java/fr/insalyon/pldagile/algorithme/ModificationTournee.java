@@ -7,24 +7,67 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Classe responsable de la modification des tournées dans le système de livraison.
+ *
+ * <p>Elle permet d'ajouter ou de supprimer des nœuds de type pickup ou delivery
+ * dans une {@link Tournee}, et met à jour les chemins, durées et horaires en conséquence.</p>
+ */
 public class ModificationTournee {
 
+    /** Instance de {@link CalculChemins} utilisée pour calculer les chemins entre les nœuds. */
     private final CalculChemins calculChemins;
+
+    /** Vitesse moyenne utilisée pour le calcul des durées de déplacement. */
     private final double vitesse;
 
+    /**
+     * Constructeur de {@code ModificationTournee}.
+     *
+     * @param calculChemins l'objet de calcul des chemins
+     * @param vitesse la vitesse moyenne pour les calculs de durée
+     */
     public ModificationTournee(CalculChemins calculChemins, double vitesse) {
         this.calculChemins = calculChemins;
         this.vitesse = vitesse;
     }
 
+    /**
+     * Ajoute un nœud de type pickup à la tournée.
+     *
+     * @param tournee la tournée à modifier
+     * @param idNoeudAjoute l'identifiant du nœud à ajouter
+     * @param idNoeudPrecedent l'identifiant du nœud précédent où insérer le nouveau nœud
+     * @param dureeEnlevement durée de l'enlèvement au nœud
+     * @return la tournée modifiée
+     */
     public Tournee ajouterNoeudPickup(Tournee tournee, long idNoeudAjoute, long idNoeudPrecedent, double dureeEnlevement) {
         return ajouterNoeud(tournee, idNoeudAjoute, idNoeudPrecedent, dureeEnlevement, true);
     }
 
+    /**
+     * Ajoute un nœud de type delivery à la tournée.
+     *
+     * @param tournee la tournée à modifier
+     * @param idNoeudAjoute l'identifiant du nœud à ajouter
+     * @param idNoeudPrecedent l'identifiant du nœud précédent où insérer le nouveau nœud
+     * @param dureeLivraison durée de livraison au nœud
+     * @return la tournée modifiée
+     */
     public Tournee ajouterNoeudDelivery(Tournee tournee, long idNoeudAjoute, long idNoeudPrecedent, double dureeLivraison) {
         return ajouterNoeud(tournee, idNoeudAjoute, idNoeudPrecedent, dureeLivraison, false);
     }
 
+    /**
+     * Ajoute un nœud à la tournée et met à jour les chemins, durées et horaires.
+     *
+     * @param tournee la tournée à modifier
+     * @param idNoeudAjoute l'identifiant du nœud à ajouter
+     * @param idNoeudPrecedent l'identifiant du nœud précédent où insérer le nouveau nœud
+     * @param dureeOperation durée de l'opération au nœud
+     * @param isPickup {@code true} si le nœud est un pickup, {@code false} si c'est un delivery
+     * @return la tournée modifiée
+     */
     public Tournee ajouterNoeud(Tournee tournee, long idNoeudAjoute, long idNoeudPrecedent, double dureeOperation, boolean isPickup)
     {
         // Création du noeud
@@ -62,7 +105,13 @@ public class ModificationTournee {
     }
 
 
-
+    /**
+     * Supprime un nœud de la tournée et met à jour les chemins, durées et horaires.
+     *
+     * @param tournee la tournée à modifier
+     * @param idNoeud l'identifiant du nœud à supprimer
+     * @return la tournée modifiée
+     */
     public Tournee supprimerNoeud(Tournee tournee, long idNoeud) {
         NoeudDePassage n = recupererNoeudSuppression(tournee, idNoeud);
         if (n == null) return tournee;
@@ -90,7 +139,13 @@ public class ModificationTournee {
         return tournee;
     }
 
-
+    /**
+     * Récupère un nœud pour suppression en s'assurant qu'il n'est pas le dépôt.
+     *
+     * @param tournee la tournée
+     * @param idNoeud l'identifiant du nœud
+     * @return le nœud à supprimer ou {@code null} si impossible
+     */
     private NoeudDePassage recupererNoeudSuppression(Tournee tournee, long idNoeud) {
         NoeudDePassage n = tournee.getNoeudParId(idNoeud);
         if (n == null) return null;
@@ -101,12 +156,26 @@ public class ModificationTournee {
         return n;
     }
 
+    /**
+     * Récupère un nœud existant dans la tournée.
+     *
+     * @param tournee la tournée
+     * @param idNoeud l'identifiant du nœud
+     * @return le nœud correspondant ou {@code null} si non trouvé
+     */
     private NoeudDePassage recupererNoeud(Tournee tournee, long idNoeud) {
         NoeudDePassage n = tournee.getNoeudParId(idNoeud);
         if (n == null) return null;
         return n;
     }
 
+    /**
+     * Trouve les chemins avant et après un nœud donné.
+     *
+     * @param tournee la tournée
+     * @param n le nœud de référence
+     * @return un tableau avec le chemin précédent et le chemin suivant
+     */
     private Chemin[] trouverCheminsAutourNoeud(Tournee tournee, NoeudDePassage n) {
         Chemin avant = null, apres = null;
         for (Chemin c : tournee.getChemins()) {
@@ -116,13 +185,26 @@ public class ModificationTournee {
         return new Chemin[]{avant, apres};
     }
 
+    /**
+     * Supprime un chemin spécifique de la tournée.
+     *
+     * @param tournee la tournée
+     * @param chemin le chemin à supprimer
+     */
     private void supprimerChemin(Tournee tournee, Chemin chemin) {
         if (chemin != null) {
             tournee.getChemins().removeIf(c -> c.equals(chemin));
         }
     }
 
-
+    /**
+     * Recalcule un chemin entre deux nœuds et l'insère à l'index donné.
+     *
+     * @param tournee la tournée
+     * @param precedent nœud de départ
+     * @param suivant nœud d'arrivée
+     * @param index position dans la liste des chemins
+     */
     private void recalculerChemin(Tournee tournee, NoeudDePassage precedent, NoeudDePassage suivant, int index) {
         Chemin nouveauChemin = calculChemins.calculerCheminPlusCourt(precedent, suivant);
         if (nouveauChemin == null) {
@@ -132,7 +214,11 @@ public class ModificationTournee {
         tournee.getChemins().add(index, nouveauChemin);
     }
 
-
+    /**
+     * Met à jour les longueurs et durées totales de la tournée.
+     *
+     * @param tournee la tournée
+     */
     private void mettreAJourTotaux(Tournee tournee) {
         double longueur = 0, duree = 0;
         for (Chemin c : tournee.getChemins()) {
@@ -145,7 +231,12 @@ public class ModificationTournee {
     }
 
 
-
+    /**
+     * Met à jour les horaires de départ et d'arrivée pour tous les nœuds.
+     *
+     * @param tournee la tournée
+     * @param vitesse vitesse moyenne
+     */
     private void mettreAJourHoraires(Tournee tournee, double vitesse) {
         LocalTime heureCourante = tournee.getChemins().get(0).getNoeudDePassageDepart().getHoraireDepart();
         List<Chemin> chemins = tournee.getChemins();
@@ -163,6 +254,13 @@ public class ModificationTournee {
         }
     }
 
+    /**
+     * Crée un nœud de passage de type pickup.
+     *
+     * @param idNoeud identifiant du nœud
+     * @param dureeEnlevement durée de l'enlèvement
+     * @return le nœud de passage pickup créé
+     */
     private NoeudDePassage creerNoeudDePassagePickup(long idNoeud, double dureeEnlevement) {
         Noeud noeudAAjouter = calculChemins.getCarte().getNoeudParId(idNoeud);
 
@@ -173,6 +271,13 @@ public class ModificationTournee {
         return noeudDePassagePickupAAjouter;
     }
 
+    /**
+     * Crée un nœud de passage de type delivery.
+     *
+     * @param idNoeud identifiant du nœud
+     * @param dureeLivraison durée de livraison
+     * @return le nœud de passage delivery créé
+     */
     private NoeudDePassage creerNoeudDePassageDelivery(long idNoeud, double dureeLivraison) {
         Noeud noeudAAjouter = calculChemins.getCarte().getNoeudParId(idNoeud);
         long id = noeudAAjouter.getId();

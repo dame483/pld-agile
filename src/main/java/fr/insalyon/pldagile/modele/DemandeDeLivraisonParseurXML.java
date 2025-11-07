@@ -10,8 +10,19 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-
+/**
+ * Classe utilitaire pour parser un fichier XML et générer une demande de livraison.
+ */
 public class DemandeDeLivraisonParseurXML {
+
+    /**
+     * Charge une demande de livraison à partir d'un fichier XML et d'une carte.
+     *
+     * @param fichierXML Le fichier XML contenant la demande de livraison.
+     * @param carte La carte contenant les noeuds existants.
+     * @return Une instance de {@link DemandeDeLivraison} construite à partir du XML.
+     * @throws Exception Si le fichier est invalide, introuvable ou si des noeuds manquent.
+     */
     public static DemandeDeLivraison loadFromFile(File fichierXML, Carte carte) throws Exception {
         if (fichierXML != null && fichierXML.exists() && fichierXML.isFile()) {
             if (carte == null) {
@@ -64,6 +75,12 @@ public class DemandeDeLivraisonParseurXML {
         }
     }
 
+    /**
+     * Convertit une chaîne de type "HH:MM:SS" en instance de {@link LocalTime}.
+     *
+     * @param h Chaîne représentant l'heure au format "HH:MM:SS".
+     * @return Une instance de {@link LocalTime}.
+     */
     private static LocalTime parseHeure(String h) {
         String[] parts = h.split(":");
         int heure = Integer.parseInt(parts[0]);

@@ -3,20 +3,44 @@ package fr.insalyon.pldagile.modele;
 import java.util.List;
 import java.util.Objects;
 
+/**
+ * Représente la tournée d'un livreur, composée d'une liste de chemins entre des nœuds de passage.
+ * Contient également des informations sur la durée totale et la longueur totale de la tournée.
+ */
 public class Tournee {
-    private Livreur livreur; // <-- nouveau champ
+    /** Le livreur associé à cette tournée. */
+    private Livreur livreur;
+
+    /** Liste des chemins formant la tournée. */
     private List<Chemin> chemins;
+
+    /** Durée totale de la tournée (en minutes ou secondes selon convention). */
     private double dureeTotale;
+
+    /** Longueur totale de la tournée (en unités métriques, par exemple mètres). */
     private double longueurTotale;
 
+    /** Constructeur par défaut. */
     public Tournee() {}
 
+    /**
+     * Constructeur avec initialisation des chemins, durée totale et longueur totale.
+     * @param chemins la liste des chemins
+     * @param dureeTotale durée totale de la tournée
+     * @param longueurTotale longueur totale de la tournée
+     */
     public Tournee(List<Chemin> chemins, double dureeTotale, double longueurTotale) {
         this.chemins = chemins;
         this.dureeTotale = dureeTotale;
         this.longueurTotale = longueurTotale;
     }
 
+    /**
+     * Constructeur avec initialisation des chemins, durée totale et longueur totale.
+     * @param chemins la liste des chemins
+     * @param dureeTotale durée totale de la tournée
+     * @param longueurTotale longueur totale de la tournée
+     */
     public Tournee(Livreur livreur, List<Chemin> chemins, double dureeTotale, double longueurTotale) {
         this.livreur = livreur;
         this.chemins = chemins;
@@ -24,6 +48,7 @@ public class Tournee {
         this.longueurTotale = longueurTotale;
     }
 
+    /** Getters et setters */
 
     public Livreur getLivreur() {
         return livreur;
@@ -57,6 +82,12 @@ public class Tournee {
         this.longueurTotale = longueurTotale;
     }
 
+    /**
+     * Retourne le nœud de passage correspondant à l'identifiant donné.
+     * Cherche dans tous les chemins de la tournée.
+     * @param idNoeud identifiant du nœud
+     * @return le NoeudDePassage correspondant, ou null si inexistant
+     */
     public NoeudDePassage getNoeudParId(long idNoeud) {
         for (Chemin c : chemins) {
             if (Objects.equals(c.getNoeudDePassageDepart().getId(), idNoeud)) {
@@ -69,7 +100,7 @@ public class Tournee {
         return null;
     }
 
-
+    /** Deux tournées sont égales si elles ont les mêmes chemins, durée et livreur. */
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof Tournee tournee)) return false;
@@ -83,6 +114,7 @@ public class Tournee {
         return Objects.hash(livreur, chemins, dureeTotale);
     }
 
+    /** Représentation textuelle de la tournée, incluant le livreur, la durée et les chemins. */
     @Override
     public String toString() {
         return String.format("Tournee{livreur=%s, dureeTotale=%.2f, chemins=%s}", livreur, dureeTotale, chemins);

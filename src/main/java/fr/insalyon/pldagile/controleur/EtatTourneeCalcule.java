@@ -17,18 +17,37 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * État représentant une tournée déjà calculée.
+ * Permet de gérer les opérations sur les tournées calculées, telles que
+ * la sauvegarde, la création de feuilles de route et le passage en mode modification.
+ */
 public class EtatTourneeCalcule implements Etat {
 
+    /** La carte du réseau de livraisons */
     private Carte carte;
+
+    /** La demande de livraison associée à la tournée */
     private DemandeDeLivraison demande;
+
+    /** La liste de toutes les tournées calculées */
     private final List<Tournee> toutesLesTournees;
 
+    /**
+     * Constructeur de l'état Tournée Calculée.
+     *
+     * @param carte La carte utilisée pour le calcul des tournées
+     * @param demande La demande de livraison
+     * @param toutesLesTournees Liste des tournées calculées
+     */
     public EtatTourneeCalcule(Carte carte, DemandeDeLivraison demande, List<Tournee> toutesLesTournees) {
         this.carte = carte;
         this.demande = demande;
         this.toutesLesTournees = toutesLesTournees;
     }
 
+
+    /** {@inheritDoc} */
     @Override
     public Carte chargerCarte(Controleur c, MultipartFile file) throws XMLFormatException {
         Object result = chargerXML("carte", file, null);
@@ -47,6 +66,8 @@ public class EtatTourneeCalcule implements Etat {
         }
     }
 
+
+    /** {@inheritDoc} */
     @Override
     public Object chargerDemandeLivraison(Controleur c, @RequestParam("file") MultipartFile file, Carte carte) {
         Object dem = chargerXML("demande", file, this.carte);
@@ -57,6 +78,8 @@ public class EtatTourneeCalcule implements Etat {
         return dem;
     }
 
+
+    /** {@inheritDoc} */
     @Override
     public Object lancerCalculTournee(Controleur c, int nombreLivreurs, double vitesse) {
         try {
@@ -73,6 +96,8 @@ public class EtatTourneeCalcule implements Etat {
         }
     }
 
+
+    /** {@inheritDoc} */
     @Override
     public Object chargerXML(String type, MultipartFile file, Carte carte) throws XMLFormatException {
         if (file == null || file.isEmpty()) {
@@ -121,6 +146,8 @@ public class EtatTourneeCalcule implements Etat {
         }
     }
 
+
+    /** {@inheritDoc} */
     @Override
     public List<Path> creerFeuillesDeRoute(Controleur c) {
         List<Path> chemins = new ArrayList<>();
@@ -157,6 +184,8 @@ public class EtatTourneeCalcule implements Etat {
         }
     }
 
+
+    /** {@inheritDoc} */
     @Override
     public Object chargerTournee(Controleur c, MultipartFile file, Carte carte) {
         Object result = chargerXML("tournee", file, carte);
@@ -193,6 +222,8 @@ public class EtatTourneeCalcule implements Etat {
         return new TourneeUpload(toutesLesTournees, demande);
     }
 
+
+    /** {@inheritDoc} */
     @Override
     public void passerEnModeModification(Controleur c, Tournee tournee) {
         if (tournee == null) {
@@ -202,6 +233,8 @@ public class EtatTourneeCalcule implements Etat {
         c.setEtatActuelle(new EtatModificationTournee(carte, tournee));
     }
 
+
+    /** {@inheritDoc} */
     @Override
     public void sauvegarderModification(Controleur c, DemandeDeLivraison demande, List<Tournee> tournees) {
         throw new IllegalStateException("Erreur : aucune modification à sauvegarder à ce stade.");
@@ -211,6 +244,8 @@ public class EtatTourneeCalcule implements Etat {
         throw new IllegalStateException("Erreur : Pas de modification de tournée possible dans l'état actuel");
     }
 
+
+    /** {@inheritDoc} */
     @Override
     public String getNom() {
         return "Etat Tournée Calculé";

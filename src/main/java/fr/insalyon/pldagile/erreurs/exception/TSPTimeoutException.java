@@ -1,19 +1,26 @@
 package fr.insalyon.pldagile.erreurs.exception;
 
 /**
- * Exception levée lorsqu'un fichier XML ne respecte pas le format attendu.
+ * Exception levée lorsqu'un algorithme TSP dépasse la limite de temps d'exécution.
  * <p>
  * Cette exception est une {@link RuntimeException} et peut être lancée sans être obligatoirement déclarée.
- * Elle signale un problème lors du parsing ou du chargement d'un fichier XML.
+ * Elle signale que le calcul de la tournée optimale (TSP) n'a pas pu être terminé dans le temps imparti.
  */
-public class XMLFormatException extends RuntimeException {
+public class TSPTimeoutException extends RuntimeException {
+
+    /**
+     * Crée une nouvelle exception avec un message par défaut.
+     */
+    public TSPTimeoutException() {
+        super("Le calcul du TSP a dépassé le temps maximal autorisé.");
+    }
 
     /**
      * Crée une nouvelle exception avec un message spécifique.
      *
      * @param message Le message décrivant l'erreur.
      */
-    public XMLFormatException(String message) {
+    public TSPTimeoutException(String message) {
         super(message);
     }
 
@@ -23,7 +30,7 @@ public class XMLFormatException extends RuntimeException {
      * @param message Le message décrivant l'erreur.
      * @param cause   La cause originale de l'exception.
      */
-    public XMLFormatException(String message, Throwable cause) {
+    public TSPTimeoutException(String message, Throwable cause) {
         super(message, cause);
     }
 }

@@ -8,15 +8,48 @@ import java.io.File;
 import java.io.FileWriter;
 import java.util.List;
 
+
+/**
+ * La classe {@code SauvegarderTournee} est responsable de la sauvegarde
+ * des tournées dans un fichier JSON. Chaque tournée contient une liste
+ * de chemins, et chaque chemin contient des tronçons et des nœuds de passage.
+ *
+ * <p>Cette classe permet également de retrouver les correspondances entre
+ * les nœuds de type PICKUP et DELIVERY pour lier les adresses d'enlèvement
+ * et de livraison.</p>
+ */
 public class SauvegarderTournee {
+
+    /**
+     * Liste des tournées à sauvegarder.
+     */
     private List<Tournee> listTournee;
+
+    /**
+     * La demande de livraison associée, utilisée pour retrouver les livraisons
+     * correspondantes aux nœuds de passage.
+     */
     private DemandeDeLivraison demandeDeLivraison;
 
+    /**
+     * Constructeur de la classe {@code SauvegarderTournee}.
+     *
+     * @param listTournee la liste des tournées à sauvegarder
+     * @param demandeDeLivraison la demande de livraison associée
+     */
     public SauvegarderTournee(List<Tournee> listTournee, DemandeDeLivraison demandeDeLivraison) {
         this.listTournee = listTournee;
         this.demandeDeLivraison = demandeDeLivraison;
     }
 
+    /**
+     * Sauvegarde toutes les tournées dans un fichier JSON.
+     *
+     * <p>Chaque tournée est transformée en structure JSON incluant les chemins,
+     * les tronçons et les nœuds de passage avec leurs horaires et durées.</p>
+     *
+     * @throws Exception si une erreur survient lors de la création ou de l'écriture du fichier JSON
+     */
     public void sauvegarderTournee() throws Exception {
         File jsonFile = new File("src/main/java/fr/insalyon/pldagile/sortie/tourneeJson/sauvegardeTourne.json");
         JSONArray tourneesArray = new JSONArray();
@@ -98,6 +131,14 @@ public class SauvegarderTournee {
             throw new Exception("Erreur lors de la sauvegarde de la tournée", e);
         }
     }
+
+    /**
+     * Récupère l'identifiant du nœud PICKUP associé au nœud de passage de départ
+     * si le nœud de passage est de type DELIVERY.
+     *
+     * @param chemin le chemin dont on veut obtenir l'association PICKUP
+     * @return l'identifiant du nœud PICKUP associé, ou 0 si non trouvé
+     */
     private long getPickupAssocieNoeudDePassageDepart(Chemin chemin) {
         Livraison livraisonAssocie = new Livraison();
         long idPickupAssocie = 0;
@@ -114,6 +155,14 @@ public class SauvegarderTournee {
         return idPickupAssocie;
     }
 
+
+    /**
+     * Récupère l'identifiant du nœud PICKUP associé au nœud de passage d'arrivée
+     * si le nœud de passage est de type DELIVERY.
+     *
+     * @param chemin le chemin dont on veut obtenir l'association PICKUP
+     * @return l'identifiant du nœud PICKUP associé, ou 0 si non trouvé
+     */
     private long getPickupAssocieNoeudDePassageArrivee(Chemin chemin) {
         Livraison livraisonAssocie = new Livraison();
         long idPickupAssocie = 0;
@@ -130,6 +179,13 @@ public class SauvegarderTournee {
         return idPickupAssocie;
     }
 
+    /**
+     * Récupère l'identifiant du nœud DELIVERY associé au nœud de passage de départ
+     * si le nœud de passage est de type PICKUP.
+     *
+     * @param chemin le chemin dont on veut obtenir l'association DELIVERY
+     * @return l'identifiant du nœud DELIVERY associé, ou 0 si non trouvé
+     */
     private long getDeliveryAssocieNoeudDePassageDepart(Chemin chemin) {
         Livraison livraisonAssocie = new Livraison();
         long idDeliveryAssocie = 0;
@@ -147,6 +203,13 @@ public class SauvegarderTournee {
         return idDeliveryAssocie;
     }
 
+    /**
+     * Récupère l'identifiant du nœud DELIVERY associé au nœud de passage d'arrivée
+     * si le nœud de passage est de type PICKUP.
+     *
+     * @param chemin le chemin dont on veut obtenir l'association DELIVERY
+     * @return l'identifiant du nœud DELIVERY associé, ou 0 si non trouvé
+     */
     private long getDeliveryAssocieNoeudDePassageArrivee(Chemin chemin) {
         Livraison livraisonAssocie = new Livraison();
         long idDeliveryAssocie = 0;
