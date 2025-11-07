@@ -102,8 +102,7 @@ async function uploadCarte(file) {
             envoyerNotification(res.message || "Erreur lors du chargement de la carte", "error");
             return;
         }
-
-        // succès
+        resetAnimation();
         carteData = res.data.carte;
         resetCarte();
         resetLivraisons();
@@ -130,6 +129,7 @@ async function uploadDemande(file){
             envoyerNotification(await response.text(), "error");
             return;
         }
+        resetAnimation();
         const res=await response.json();
         demandeData = res.data.demande;
         const input = document.getElementById('nbLivreurs');
@@ -181,9 +181,7 @@ function resetLivraisons(){
     if (window.tourneeLayer) window.tourneeLayer.clearLayers();
     if (window.directionNumbersLayer) window.directionNumbersLayer.clearLayers();
 
-    stopAnimation();
-    if (animControl && map) { map.removeControl(animControl); animControl = null; }
-    animPath = []; isAnimating = false; isPaused = false;
+    resetAnimation();
 }
 
 function drawCarte(carte) {
@@ -508,9 +506,7 @@ function drawTourneeNodes(tourneeData) {
     if (window.tourneeLayer) window.tourneeLayer.clearLayers();
     if (window.directionNumbersLayer) window.directionNumbersLayer.clearLayers();
 
-    stopAnimation();
-    if (animControl && map) { map.removeControl(animControl); animControl = null; }
-    animPath = []; isAnimating = false; isPaused = false;
+    resetAnimation();
 
     const n = carteData.noeuds;
     const livraisons = demandeData.livraisons || [];
@@ -717,6 +713,12 @@ function addAnimationButton() {
     pause.disabled = true;
 }
 
+function resetAnimation(){
+     stopAnimation();
+     if (animControl && map) { map.removeControl(animControl); animControl = null; }
+     animPath = []; isAnimating = false; isPaused = false;
+}
+
 // AFFICHAGE GLOBAL
 
 async function updateUIFromEtat() {
@@ -855,12 +857,12 @@ document.addEventListener('DOMContentLoaded',async () => {
             fetch("http://localhost:8080/api/reset", {method: "POST"})
                 .then(response => response.json())
                 .then(async data => {
+                     resetAnimation();
                     if (map) {
                         map.eachLayer(l => map.removeLayer(l));
                         map.remove();
                         map = null;
                     }
-
                     carteData = null;
                     demandeData = null;
                     livraisonsLayer = null;
