@@ -87,10 +87,8 @@ public class SuppressionCheminsTourneeTests {
 
         Tournee tournee = toutesLesTournees.get(0);
 
-        // Choisir un nœud intermédiaire (ni entrepôt, ni dernier)
         NoeudDePassage n = tournee.getChemins().get(1).getNoeudDePassageArrivee();
 
-        // Recherche des chemins avant/après ce nœud
         Chemin avant = null, apres = null;
         for (Chemin c : tournee.getChemins()) {
             if (c.getNoeudDePassageArrivee().equals(n)) avant = c;
@@ -104,7 +102,6 @@ public class SuppressionCheminsTourneeTests {
         System.out.println("Chemin avant : " + avant);
         System.out.println("Chemin après : " + apres);
 
-        // Vérifie que les connexions sont cohérentes
         assertEquals(n, avant.getNoeudDePassageArrivee());
         assertEquals(n, apres.getNoeudDePassageDepart());
         assertEquals(avant.getNoeudDePassageArrivee(), apres.getNoeudDePassageDepart());
@@ -162,56 +159,6 @@ public class SuppressionCheminsTourneeTests {
         assertFalse(tournee.getChemins().contains(apres), "Le chemin après ne doit plus être présent");
 
         System.out.println("Suppression réussie : chemins avant/après supprimés pour le nœud " + n.getId());
-
-        // réaffiche
-        System.out.println("\n===== AFFICHAGE DE LA TOURNEE APRES MODIFICATION =====");
-
-        DateTimeFormatter formatHeure = DateTimeFormatter.ofPattern("HH:mm:ss");
-
-        for (Tournee tourneeModifiee : toutesLesTournees) {
-            Livreur livreur = tourneeModifiee.getLivreur();
-            if (livreur == null) continue;
-
-            System.out.printf("=== Tournée du livreur %d ===%n", livreur.getId());
-
-            double distanceTotale = 0;
-            List<Chemin> chemins = tourneeModifiee.getChemins();
-
-            for (int j = 0; j < chemins.size(); j++) {
-                Chemin c = chemins.get(j);
-                NoeudDePassage depart = c.getNoeudDePassageDepart();
-                NoeudDePassage arrivee = c.getNoeudDePassageArrivee();
-
-                System.out.printf("Chemin %2d : %d (%s) ➜ %d (%s)%n",
-                        j + 1,
-                        depart.getId(), depart.getType(),
-                        arrivee.getId(), arrivee.getType());
-
-                System.out.printf("  Horaire départ : %s | Horaire arrivée : %s%n",
-                        depart.getHoraireDepart() != null ? depart.getHoraireDepart().format(formatHeure) : "N/A",
-                        arrivee.getHoraireArrivee() != null ? arrivee.getHoraireArrivee().format(formatHeure) : "N/A");
-
-                double distanceChemin = c.getLongueurTotal();
-                System.out.printf("  Distance : %.0f m (%d tronçons)%n",
-                        distanceChemin, c.getTroncons().size());
-
-                distanceTotale += distanceChemin;
-            }
-
-            // Résumé final
-            System.out.println("\n--- Résumé ---");
-            System.out.printf("Nombre de chemins : %d%n", chemins.size());
-            System.out.printf("Distance totale : %.0f m%n", distanceTotale);
-            System.out.printf("Durée totale : %.0f s%n", tourneeModifiee.getDureeTotale());
-
-            NoeudDePassage entrepotRetour = chemins.get(chemins.size() - 1).getNoeudDePassageArrivee();
-            if (entrepotRetour.getHoraireArrivee() != null)
-                System.out.printf("Heure de retour estimée : %s%n",
-                        entrepotRetour.getHoraireArrivee().format(formatHeure));
-
-            System.out.println("=========================================\n");
-
-        }
 
     }
 
@@ -304,7 +251,6 @@ public class SuppressionCheminsTourneeTests {
         assertNotNull(avant, "Il doit exister un chemin avant le nœud supprimé");
         assertNotNull(apres, "Il doit exister un chemin après le nœud supprimé");
 
-        // Enregistre les extrémités
         NoeudDePassage precedent = avant.getNoeudDePassageDepart();
         NoeudDePassage suivant = apres.getNoeudDePassageArrivee();
 
@@ -312,30 +258,22 @@ public class SuppressionCheminsTourneeTests {
         if (avant != null) {
             index = tournee.getChemins().indexOf(avant);
         }
-       // System.out.println(index);
-        // Supprime les anciens chemins
+
         Chemin finalAvant = avant;
         Chemin finalApres = apres;
         tournee.getChemins().removeIf(c -> c.equals(finalAvant) || c.equals(finalApres));
 
-        // Calcule le nouveau chemin direct
         CalculChemins calculChemins = new CalculChemins(ville);
         Chemin nouveauChemin = calculChemins.calculerCheminPlusCourt(precedent, suivant);
 
-        // Insertion du nouveau chemin au bon index
         tournee.getChemins().add(index, nouveauChemin);
 
-        // === Vérifications ===
         List<Chemin> chemins = tournee.getChemins();
 
-        // Vérifie que le nouveau chemin a été inséré
         assertTrue(chemins.contains(nouveauChemin), "Le nouveau chemin doit être présent dans la tournée");
 
-        // Vérifie qu’il est bien à la bonne position
         int indexNouveau = chemins.indexOf(nouveauChemin);
-        //System.out.printf("Index du nouveau chemin : %d\n", indexNouveau);
 
-        // S’il y avait un chemin avant, il doit être juste avant
         if (indexNouveau > 0) {
             Chemin precedentDansListe = chemins.get(indexNouveau - 1);
             assertEquals(precedent, precedentDansListe.getNoeudDePassageArrivee(),
@@ -348,9 +286,6 @@ public class SuppressionCheminsTourneeTests {
             assertEquals(suivant, suivantDansListe.getNoeudDePassageDepart(),
                     "Le nœud de départ du chemin suivant doit correspondre à l'arrivée du nouveau chemin");
         }
-
-        System.out.println("✅ Nouveau chemin inséré correctement entre les bons nœuds.");
-
 
     }
 
@@ -400,16 +335,6 @@ public class SuppressionCheminsTourneeTests {
                     "Le noeud supprimé ne doit plus être l'arrivée d'un chemin");
         }
 
-        // Affichage simplifié pour vérification manuelle
-        System.out.println("Tournée après suppression du noeud " + idNoeudASupprimer + " :");
-        for (int i = 0; i < tourneeModifiee.getChemins().size(); i++) {
-            Chemin c = tourneeModifiee.getChemins().get(i);
-            System.out.printf("Chemin %d : %d -> %d, longueur=%.0f m\n",
-                    i + 1,
-                    c.getNoeudDePassageDepart().getId(),
-                    c.getNoeudDePassageArrivee().getId(),
-                    c.getLongueurTotal());
-        }
     }
 
     @Test
@@ -427,7 +352,6 @@ public class SuppressionCheminsTourneeTests {
         List<Tournee> toutesLesTournees = calculTournees.calculerTournees();
         Tournee tournee = toutesLesTournees.get(0);
 
-        // Supprimer un noeud avec ton ModificationTournee
         CalculChemins calculChemins = new CalculChemins(ville);
         ModificationTournee modificationTournee = new ModificationTournee(calculChemins, vitesse);
 
@@ -445,7 +369,7 @@ public class SuppressionCheminsTourneeTests {
         assertEquals(dureeTotale, tournee.getDureeTotale(), 1.0, "Durée totale incorrecte");
     }
 
-   /* @Test
+    @Test
     public void testSuppressionDeuxNoeud() throws Exception {
         // Charger la carte
         File fichierCarte = new File("src/main/resources/donnees/plans/petitPlan.xml");
@@ -503,7 +427,7 @@ public class SuppressionCheminsTourneeTests {
                     c.getNoeudDePassageArrivee().getId(),
                     c.getLongueurTotal());
         }
-    }*/
+    }
 
     @Test
     public void testSupprimerNoeudIgnoreEntrepot() throws Exception {
