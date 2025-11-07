@@ -128,17 +128,16 @@ public class EtatInitial implements Etat {
     /**
      * Pas de sauvegarde de modification possible dans cet état.
      */
-    public Object chargerTournee(Controleur c, MultipartFile file, Carte carte) {
-        throw new IllegalStateException("Erreur : Impossible de charger une tournée sans carte préalablement chargée.");
+    @Override
     public void sauvegarderModification(Controleur c, DemandeDeLivraison demande, List<Tournee> tournees) {
         throw new IllegalStateException("Erreur : Aucune modification à sauvegarder à l’état initial.");
-    }
+        }
 
-    /**
-     * Le calcul de tournée n'est pas possible dans cet état.
-     */
-    @Override
-    public Object lancerCalculTournee(Controleur c, int nombreLivreurs, double vitesse) {
+        /**
+         * Le calcul de tournée n'est pas possible dans cet état.
+         */
+        @Override
+        public Object lancerCalculTournee(Controleur c, int nombreLivreurs, double vitesse) {
         throw new IllegalStateException("Erreur : Impossible de calculer une tournée sans carte et demande de livraison.");
     }
 
@@ -149,6 +148,14 @@ public class EtatInitial implements Etat {
     @Override
     public void passerEnModeModification(Controleur c, Tournee tournee) {
         throw new IllegalStateException("Erreur : Impossible de passer en mode modification à l’état initial.");
+    }
+
+    /**
+     * Impossible de modifier une tournée sans tournée
+     */
+    @Override
+    public Tournee modifierTournee(Controleur c, String mode, Map<String, Object> body, double vitesse) {
+        throw new IllegalStateException("Erreur : Impossible de modifier une tournée sans être en mode modification.");
     }
 
     /**
