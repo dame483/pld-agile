@@ -1,30 +1,35 @@
 package fr.insalyon.pldagile.controleur;
 
-import java.util.Stack;
+import java.util.LinkedList;
 
 public class ListeDeCommandes {
-    private Stack<Commande> historique = new Stack<>();
-    private Stack<Commande> pileRefaire = new Stack<>();
+
+    private LinkedList<Commande> commandes = new LinkedList<>();
+    private int indexActuel = -1;
 
     public void executerCommande(Commande commande) {
         commande.executer();
-        historique.push(commande);
-        pileRefaire.clear();
+        indexActuel++;
+
+        // Ajoute à la position actuelle et garde l'historique complet
+        if (indexActuel < commandes.size()) {
+            commandes.add(indexActuel, commande);
+        } else {
+            commandes.add(commande);
+        }
     }
 
     public void annuler() {
-        if (!historique.isEmpty()) {
-            Commande commande = historique.pop();
-            commande.annuler();
-            pileRefaire.push(commande);
+        if (indexActuel >= 0) {
+            commandes.get(indexActuel).annuler();
+            indexActuel--;
         }
     }
 
     public void restaurer() {
-        if (!pileRefaire.isEmpty()) {
-            Commande commande = pileRefaire.pop();
-            commande.executer();
-            historique.push(commande);
+        if (indexActuel < commandes.size() - 1) {
+            indexActuel++;
+            commandes.get(indexActuel).executer();
         }
     }
 }

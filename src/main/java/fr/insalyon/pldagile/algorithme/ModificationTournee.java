@@ -141,8 +141,9 @@ public class ModificationTournee {
             duree += c.getNoeudDePassageArrivee().getDuree();
         }
         tournee.setLongueurTotale(longueur);
-        tournee.setDureeTotale(duree);
+        tournee.setDureeTotale(Math.round(duree));
     }
+
 
 
 
@@ -153,15 +154,21 @@ public class ModificationTournee {
         for (int i = 0; i < chemins.size(); i++) {
             Chemin c = chemins.get(i);
             c.getNoeudDePassageDepart().setHoraireDepart(heureCourante);
-            heureCourante = heureCourante.plusSeconds((long)(c.getLongueurTotal() / vitesse));
+
+            long tempsTrajet = Math.round(c.getLongueurTotal() / vitesse);
+            heureCourante = heureCourante.plusSeconds(tempsTrajet);
+
             c.getNoeudDePassageArrivee().setHoraireArrivee(heureCourante);
-            heureCourante = heureCourante.plusSeconds((long)(c.getNoeudDePassageArrivee().getDuree()));
+
+            long tempsArret = Math.round(c.getNoeudDePassageArrivee().getDuree());
+            heureCourante = heureCourante.plusSeconds(tempsArret);
 
             if (i != chemins.size() - 1) {
                 c.getNoeudDePassageArrivee().setHoraireDepart(heureCourante);
             }
         }
     }
+
 
     private NoeudDePassage creerNoeudDePassagePickup(long idNoeud, double dureeEnlevement) {
         Noeud noeudAAjouter = calculChemins.getCarte().getNoeudParId(idNoeud);
