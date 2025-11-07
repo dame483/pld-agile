@@ -1,7 +1,6 @@
 package fr.insalyon.pldagile.controleur;
 
 import fr.insalyon.pldagile.erreurs.exception.ContrainteDePrecedenceException;
-import fr.insalyon.pldagile.erreurs.exception.GestionnaireException;
 import fr.insalyon.pldagile.erreurs.exception.XMLFormatException;
 import fr.insalyon.pldagile.modele.Carte;
 import fr.insalyon.pldagile.modele.DemandeDeLivraison;
@@ -90,11 +89,9 @@ public class Controleur {
 
         }
         catch (XMLFormatException e) {
-            GestionnaireException gestionnaireException = new GestionnaireException();
-            return gestionnaireException.handleException(e);
+            return ResponseEntity.badRequest().body(ApiReponse.erreur("Exception : " + e.getMessage()));
         } catch (Exception e) {
-            GestionnaireException gestionnaireException = new GestionnaireException();
-            return gestionnaireException.handleException(e);
+            return ResponseEntity.badRequest().body(ApiReponse.erreur("Exception : " + e.getMessage()));
         }
     }
 
