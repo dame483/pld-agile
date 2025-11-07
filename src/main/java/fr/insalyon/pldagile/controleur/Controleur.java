@@ -432,7 +432,6 @@ public class Controleur {
      *
      * @param etat le nouvel état
      */
-    public void setCurrentState(Etat etat) {
         this.etatActuelle = etat;
     }
 
@@ -442,7 +441,6 @@ public class Controleur {
      *
      * @return l’état actuel
      */
-    public Etat getCurrentState() {
         return etatActuelle;
     }
 
